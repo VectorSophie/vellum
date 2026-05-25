@@ -1,0 +1,10 @@
+{
+  "name": "tetohira-clone",
+  "version": "1.0.0",
+  "description": "Local clone of tetohira for study and remixing",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": { "node": ">=16" }
+}
