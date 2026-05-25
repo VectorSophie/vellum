@@ -1,0 +1,46 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm/
+package-lock.json
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+out/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs/
+*.log
+
+# Claude Code local tooling (memory, settings)
+.claude/
+
+# Temp / cache
+.cache/
+*.tmp
+*.temp
