@@ -20,6 +20,30 @@ const MIME = {
 
 http.createServer((req, res) => {
   let urlPath = req.url.split('?')[0];
+
+  // Dev-only: receive recorded jamo stroke samples and write them as a fixture
+  // under tools/fixtures/ for offline recognizer tuning.
+  if (req.method === 'POST' && urlPath === '/save-samples') {
+    let body = '';
+    req.on('data', (chunk) => { body += chunk; });
+    req.on('end', () => {
+      try {
+        JSON.parse(body); // validate
+        const dir = path.join(ROOT, 'tools', 'fixtures');
+        fs.mkdirSync(dir, { recursive: true });
+        const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const file = path.join('tools', 'fixtures', `samples-${stamp}.json`);
+        fs.writeFileSync(path.join(ROOT, file), body);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, file }));
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: false, error: String(e) }));
+      }
+    });
+    return;
+  }
+
   if (urlPath === '/' || urlPath === '') urlPath = '/index.html';
 
   const filePath = path.join(ROOT, urlPath);

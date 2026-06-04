@@ -20,16 +20,24 @@
   #log div { white-space: nowrap; }
   #hint { position: absolute; top: 12px; left: 0; right: 0; text-align: center;
     font-size: 14px; opacity: 0.5; pointer-events: none; }
+  #tools { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 8px; }
+  #tools button { font: inherit; font-size: 12px; padding: 6px 10px; cursor: pointer;
+    background: #fff8; border: 1px solid #1c120a55; border-radius: 6px; color: var(--ink); }
 </style>
 </head>
 <body>
 <div id="stage">
-  <div id="hint">한글 자모를 하나씩 그려보세요 — draw one jamo at a time</div>
+  <div id="hint">한 글자씩 이어서 쓰고, 글자 사이에 잠깐 멈추세요 — write a syllable, pause between syllables</div>
   <div id="syllable"></div>
   <canvas id="draw"></canvas>
   <div id="hud">
     <div>last jamo: <span id="last-jamo">—</span></div>
     <div id="log"></div>
+  </div>
+  <div id="tools">
+    <button id="clearbtn">clear</button>
+    <button id="copy">copy samples</button>
+    <button id="save">save samples</button>
   </div>
 </div>
 <script type="module" src="js/jamo/main.js"></script>

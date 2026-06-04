@@ -1,25 +1,28 @@
-// strokes.js — capture drawn strokes on a canvas and flush them per jamo.
+// strokes.js — capture drawn strokes on a canvas and emit raw stroke events.
 //
-// A "jamo" is one or more strokes drawn close together in time. After the pen
-// lifts and no new stroke begins within IDLE_MS, the accumulated stroke-set is
-// flushed to onFlush(strokes) — this is the rhythm gap that separates jamo,
-// the same forward-only cadence as tetohira.
+// Two events, no recognition logic of its own:
+//   onStroke(stroke) — fired immediately on each pen-up, with the completed
+//                      stroke (array of [x, y] points). Drives live, per-stroke
+//                      incremental recognition.
+//   onIdle()         — fired after idleMs with no drawing. This is the rhythm
+//                      gap that ends a syllable, the same forward-only cadence
+//                      as tetohira (you pause between syllables).
 //
-// No recognition/audio/compose deps. Emits raw [x, y] point arrays; draws ink
-// on the canvas purely as input feedback.
+// Draws ink on the canvas purely as input feedback. Ink is cleared on idle.
 
 export class StrokeCapture {
   constructor(canvas, opts = {}) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.idleMs = opts.idleMs ?? 600;
-    this.onFlush = opts.onFlush || (() => {});
+    this.onStroke = opts.onStroke || (() => {});
+    this.onIdle = opts.onIdle || (() => {});
     this.onStrokeStart = opts.onStrokeStart || (() => {});
 
-    this._strokes = [];     // accumulated strokes for the current jamo
     this._current = null;   // stroke in progress
     this._drawing = false;
     this._idleTimer = null;
+    this._anyThisSyllable = false; // have we drawn since the last idle?
 
     this._onDown = this._down.bind(this);
     this._onMove = this._move.bind(this);
@@ -47,7 +50,7 @@ export class StrokeCapture {
   _down(e) {
     e.preventDefault();
     if (this._idleTimer) { clearTimeout(this._idleTimer); this._idleTimer = null; }
-    if (this._strokes.length === 0) this.onStrokeStart();
+    if (!this._anyThisSyllable) this.onStrokeStart();
     this._drawing = true;
     this._current = [this._pos(e)];
     this.ctx.beginPath();
@@ -65,18 +68,20 @@ export class StrokeCapture {
   _up() {
     if (!this._drawing) return;
     this._drawing = false;
-    if (this._current && this._current.length > 0) this._strokes.push(this._current);
+    const stroke = this._current;
     this._current = null;
-    this._idleTimer = setTimeout(() => this._flush(), this.idleMs);
+    if (!stroke || stroke.length === 0) return;
+    this._anyThisSyllable = true;
+    this.onStroke(stroke);
+    this._idleTimer = setTimeout(() => this._idle(), this.idleMs);
   }
 
-  _flush() {
+  _idle() {
     this._idleTimer = null;
-    if (this._strokes.length === 0) return;
-    const strokes = this._strokes;
-    this._strokes = [];
+    if (!this._anyThisSyllable) return;
+    this._anyThisSyllable = false;
     this.clearInk();
-    this.onFlush(strokes);
+    this.onIdle();
   }
 
   clearInk() {

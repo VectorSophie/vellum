@@ -42,6 +42,18 @@ export function composeCV(consonant, vowel) {
   return String.fromCharCode(HANGUL_BASE + (cho * JUNG_COUNT + jung) * JONG_COUNT);
 }
 
+// Compose a list of jamo into a display string (CV). Pure; for rendering an
+// in-progress syllable from its committed (and tentative) jamo.
+export function composeList(jamos) {
+  const c = new Composer();
+  let display = '';
+  for (const j of jamos) {
+    const r = c.accept(j);
+    if (r.display) display = r.display;
+  }
+  return display;
+}
+
 // Stateful CV composer. Feed it jamo; it returns the current display string.
 export class Composer {
   constructor() {

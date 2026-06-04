@@ -1,6 +1,6 @@
-// Playwright end-to-end check for the jamo pipeline.
-// Drives the real page: simulates pointer strokes, asserts composed output,
-// and runs a full self-recognition sweep via the in-page harness.
+// Playwright end-to-end check for the incremental jamo pipeline.
+// Drives the real page: simulates per-stroke drawing with an idle gap to end
+// the syllable, asserts the composed block, and replays a real captured sample.
 import { chromium } from 'playwright';
 import { TEMPLATES } from '../js/jamo/templates.js';
 
@@ -18,38 +18,58 @@ let pass = 0, fail = 0;
 const fails = [];
 function check(label, cond) { if (cond) pass++; else { fail++; fails.push(label); } }
 
-// --- 1. Real pointer strokes: draw ㄱ then ㅏ -> 가 ---
 const canvas = await page.$('#draw');
 const box = await canvas.boundingBox();
-function pt(nx, ny) { return [box.x + 200 + nx * 180, box.y + 150 + ny * 180]; }
-async function drawStroke(poly) {
-  const [sx, sy] = pt(poly[0][0], poly[0][1]);
+function pt(nx, ny, ox, s) { return [box.x + ox + nx * s, box.y + 120 + ny * s]; }
+async function drawStroke(poly, ox, s) {
+  const [sx, sy] = pt(poly[0][0], poly[0][1], ox, s);
   await page.mouse.move(sx, sy);
   await page.mouse.down();
   for (let i = 1; i < poly.length; i++) {
-    const [x, y] = pt(poly[i][0], poly[i][1]);
+    const [x, y] = pt(poly[i][0], poly[i][1], ox, s);
     await page.mouse.move(x, y, { steps: 6 });
   }
   await page.mouse.up();
+  await page.waitForTimeout(120); // within-syllable gap (< idle)
 }
-async function drawJamo(strokes) {
-  for (const s of strokes) await drawStroke(s);
-  await page.waitForTimeout(750); // exceed idle flush
+// Draw a syllable: each jamo's strokes placed at a column offset, then idle.
+async function drawSyllable(jamoStrokeSets) {
+  let ox = 220;
+  for (const strokes of jamoStrokeSets) {
+    for (const st of strokes) await drawStroke(st, ox, 150);
+    ox += 170; // next jamo to the right
+  }
+  await page.waitForTimeout(750); // exceed idle -> end syllable
 }
 
-const gi = TEMPLATES.find((t) => t.char === 'ㄱ');
-const a = TEMPLATES.find((t) => t.char === 'ㅏ');
-await drawJamo(gi.strokes);
-await drawJamo(a.strokes);
-const st = await page.evaluate(() => window.__jamo.state());
-check('real strokes ㄱ+ㅏ -> 가 (got ' + st.syllable + ')', st.syllable === '가');
+// --- 1. Live incremental: draw ㄱ then ㅏ -> 가 ---
+const gi = TEMPLATES.find((t) => t.char === 'ㄱ').strokes;
+const a = TEMPLATES.find((t) => t.char === 'ㅏ').strokes;
+await drawSyllable([gi, a]);
+let st = await page.evaluate(() => window.__jamo.state());
+check('incremental ㄱ+ㅏ -> 가 (got ' + st.syllable + ')', st.syllable === '가');
 await page.screenshot({ path: 'tools/jamo-screenshot.png' });
 
-// --- 2. Full self-recognition sweep via in-page recognize() (no pointer) ---
-// Feed each template (scaled to canvas coords + jitter) through recognize().
+// --- 2. Another: ㄴ then ㅗ -> 노 (vertical consonant + bottom vowel) ---
+const n = TEMPLATES.find((t) => t.char === 'ㄴ').strokes;
+const o = TEMPLATES.find((t) => t.char === 'ㅗ').strokes;
+await drawSyllable([n, o]);
+st = await page.evaluate(() => window.__jamo.state());
+check('incremental ㄴ+ㅗ -> 노 (got ' + st.syllable + ')', st.syllable === '노');
+
+// --- 3. Replay a real captured 가 (sample 1) via feedSyllable ---
+const real_ga = [
+  [[517.6,345.4],[519.2,345.4],[528,343],[544.8,339],[568.8,335.8],[606.4,331.8],[632.8,331],[642.4,331],[644,331],[644.8,332.6],[646.4,345.4],[646.4,359],[644.8,380.6],[640,403],[638.4,407.8],[638.4,409.4],[637.6,409.4]],
+  [[690.4,324.6],[692,327.8],[694.4,339],[695.2,355],[695.2,377.4],[695.2,399.8],[694.4,419],[693.6,425.4],[693.6,427],[692.8,427],[691.2,426.2],[689.6,423]],
+  [[699.2,386.2],[700,384.6],[708.8,379.8],[719.2,375],[740,369.4],[757.6,367],[764.8,367],[768,367],[768.8,367]],
+];
+const realRes = await page.evaluate((s) => window.__jamo.feedSyllable(s), real_ga);
+check('real captured 가 -> 가 (got ' + realRes.block + ')', realRes.block === '가');
+
+// --- 4. Self-recognition sweep (combined-path) ---
 function toCanvas(strokes, jitter) {
   const ox = 250, oy = 180, s = 220;
-  return strokes.map((st) => st.map(([x, y]) => [
+  return strokes.map((stk) => stk.map(([x, y]) => [
     ox + x * s + (Math.random() - 0.5) * jitter,
     oy + y * s + (Math.random() - 0.5) * jitter,
   ]));
@@ -62,9 +82,9 @@ for (const t of TEMPLATES) {
 
 check('no console errors (' + errors.join(' | ') + ')', errors.length === 0);
 
-console.log('\n=== jamo e2e ===');
+console.log('\n=== jamo e2e (incremental) ===');
 console.log('PASS ' + pass + '  FAIL ' + fail);
-if (fails.length) { console.log('Failures:'); for (const f of fails) console.log('  ✗ ' + f); }
+if (fails.length) { console.log('Failures:'); for (const f of fails) console.log('  x ' + f); }
 console.log(fail === 0 ? '\nALL GREEN' : '\nRED');
 
 await browser.close();
