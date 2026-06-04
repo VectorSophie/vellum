@@ -6,5 +6,10 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
-  "engines": { "node": ">=16" }
+  "engines": {
+    "node": ">=16"
+  },
+  "devDependencies": {
+    "playwright": "^1.60.0"
+  }
 }
