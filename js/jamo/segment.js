@@ -47,6 +47,7 @@ export class IncrementalSegmenter {
     this.onJamo = opts.onJamo || (() => {});
     this.onSyllable = opts.onSyllable || (() => {});
     this.onDisplay = opts.onDisplay || (() => {});
+    this.onBlock = opts.onBlock || (() => {}); // final composed block on idle
     this._reset();
   }
 
@@ -94,9 +95,11 @@ export class IncrementalSegmenter {
     this._emitDisplay();
   }
 
-  // Idle gap: end of syllable. Commit whatever is in progress and reset.
+  // Idle gap: end of syllable. Commit whatever is in progress, emit the final
+  // composed block, and reset.
   idle() {
     if (this._cur.length > 0) this._commitCur();
+    if (this._syllable.length > 0) this.onBlock(composeList(this._syllable));
     this._reset();
   }
 
