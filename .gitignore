@@ -40,8 +40,9 @@ logs/
 # Claude Code local tooling (memory, settings)
 .claude/
 
-# Test artifacts
-tools/jamo-screenshot.png
+# Test artifacts (screenshots/probes from Playwright runs)
+tools/*-screenshot.png
+tools/*-probe.png
 
 # Temp / cache
 .cache/
