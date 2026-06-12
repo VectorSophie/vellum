@@ -8227,8 +8227,23 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
             h: c
         }
     }, A.prototype._update = function() {
-        var t, e;
-        this._starting || (t = this.__time, this.__time -= 1e3 * s.delta, this.__time < 0 && 0 <= t && ($("#view").css("opacity", 1), Date.now(), t = this._optimize(), e = this._rec.exec(this._list), this._ctx.clearRect(0, 0, s.stw * this._pixelRatio, s.sth * this._pixelRatio), e) && 0 < e.length && u.main.draw(e[0], t))
+        if (this._starting) return;
+        var prev = this.__time;
+        this.__time -= 1e3 * s.delta;
+        if (this.__time < 0 && 0 <= prev) {
+            $("#view").css("opacity", 1);
+            var raw = this._list.map(function(st) {
+                return st.map(function(p) { return [p[0], p[1]]; });
+            });
+            var pos = this._optimize();
+            this._ctx.clearRect(0, 0, s.stw * this._pixelRatio, s.sth * this._pixelRatio);
+            if (raw.length && window.recognizeHangul) {
+                window.recognizeHangul(raw, s.stw, s.sth).then(function(cands) {
+                    var ch = window.pickHangul(cands);
+                    if (ch) u.main.draw(ch, pos);
+                }).catch(function(err) { console.warn("recognizeHangul failed", err); });
+            }
+        }
     }, A.prototype._resize = function() {
         var t = s.stw,
             e = s.sth;
