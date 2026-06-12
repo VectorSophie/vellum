@@ -1,0 +1,22 @@
+/* Self-hosted Korean fonts (full Hangul in one file each) for reliable canvas rendering */
+@font-face {
+  font-family: 'Jua';
+  src: url('Jua-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Gaegu';
+  src: url('Gaegu-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Do Hyeon';
+  src: url('DoHyeon-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}

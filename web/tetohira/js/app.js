@@ -1,0 +1,8448 @@
+var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__extends || (() => {
+        var n = function(t, e) {
+            return (n = Object.setPrototypeOf || ({
+                    __proto__: []
+                }
+                instanceof Array ? function(t, e) {
+                    t.__proto__ = e
+                } : function(t, e) {
+                    for (var i in e) Object.prototype.hasOwnProperty.call(e, i) && (t[i] = e[i])
+                }))(t, e)
+        };
+        return function(t, e) {
+            if ("function" != typeof e && null !== e) throw new TypeError("Class extends value " + String(e) + " is not a constructor or null");
+
+            function i() {
+                this.constructor = t
+            }
+            n(t, e), t.prototype = null === e ? Object.create(e) : (i.prototype = e.prototype, new i)
+        }
+    })(),
+    __awaiter = this && this.__awaiter || function(t, a, s, u) {
+        return new(s = s || Promise)(function(i, e) {
+            function n(t) {
+                try {
+                    r(u.next(t))
+                } catch (t) {
+                    e(t)
+                }
+            }
+
+            function o(t) {
+                try {
+                    r(u.throw(t))
+                } catch (t) {
+                    e(t)
+                }
+            }
+
+            function r(t) {
+                var e;
+                t.done ? i(t.value) : ((e = t.value) instanceof s ? e : new s(function(t) {
+                    t(e)
+                })).then(n, o)
+            }
+            r((u = u.apply(t, a || [])).next())
+        })
+    },
+    __generator = this && this.__generator || function(n, o) {
+        var r, a, s, u = {
+                label: 0,
+                sent: function() {
+                    if (1 & s[0]) throw s[1];
+                    return s[1]
+                },
+                trys: [],
+                ops: []
+            },
+            h = {
+                next: t(0),
+                throw: t(1),
+                return: t(2)
+            };
+        return "function" == typeof Symbol && (h[Symbol.iterator] = function() {
+            return this
+        }), h;
+
+        function t(i) {
+            return function(t) {
+                var e = [i, t];
+                if (r) throw new TypeError("Generator is already executing.");
+                for (; u = h && e[h = 0] ? 0 : u;) try {
+                    if (r = 1, a && (s = 2 & e[0] ? a.return : e[0] ? a.throw || ((s = a.return) && s.call(a), 0) : a.next) && !(s = s.call(a, e[1])).done) return s;
+                    switch (a = 0, (e = s ? [2 & e[0], s.value] : e)[0]) {
+                        case 0:
+                        case 1:
+                            s = e;
+                            break;
+                        case 4:
+                            return u.label++, {
+                                value: e[1],
+                                done: !1
+                            };
+                        case 5:
+                            u.label++, a = e[1], e = [0];
+                            continue;
+                        case 7:
+                            e = u.ops.pop(), u.trys.pop();
+                            continue;
+                        default:
+                            if (!(s = 0 < (s = u.trys).length && s[s.length - 1]) && (6 === e[0] || 2 === e[0])) {
+                                u = 0;
+                                continue
+                            }
+                            if (3 === e[0] && (!s || e[1] > s[0] && e[1] < s[3])) u.label = e[1];
+                            else if (6 === e[0] && u.label < s[1]) u.label = s[1], s = e;
+                            else {
+                                if (!(s && u.label < s[2])) {
+                                    s[2] && u.ops.pop(), u.trys.pop();
+                                    continue
+                                }
+                                u.label = s[2], u.ops.push(e)
+                            }
+                    }
+                    e = o.call(n, u)
+                } catch (t) {
+                    e = [6, t], a = 0
+                } finally {
+                    r = s = 0
+                }
+                if (5 & e[0]) throw e[1];
+                return {
+                    value: e[0] ? e[1] : void 0,
+                    done: !0
+                }
+            }
+        }
+    },
+    __spreadArray = this && this.__spreadArray || function(t, e, i) {
+        if (i || 2 === arguments.length)
+            for (var n, o = 0, r = e.length; o < r; o++) !n && o in e || ((n = n || Array.prototype.slice.call(e, 0, o))[o] = e[o]);
+        return t.concat(n || Array.prototype.slice.call(e))
+    };
+(t => {
+    e.get = function(t) {
+        return this._data[t]
+    }, e.add = function(t, e) {
+        this._data[t] = e
+    }, e._data = {};
+    var r = e;
+
+    function e() {}
+    t.Assets = r, i.time = Date.now() / 1e3, i.delta = 0, i.isMobile = aidn.util.checkMobile(), i.isJa = aidn.util.checkJapanese(), i.isFull = aidn.util.enabledFullscreen();
+    var n = i;
+
+    function i() {}
+
+    function o() {
+        this.__keyCount = 0, this.__updates = {}, this.__resizes = {}, this._isFit = !0, n.main = this
+    }
+
+    function a() {
+        this._ori = 0, this._dx = 0, this._dy = 0, this._rx = 0, this._ry = 0, this.__updates = {}, this.__keyCount = 0
+    }
+
+    function s() {
+        this.listeners = {}
+    }
+    t.Ref = n, o.prototype.initialize = function(t) {
+        var e = this;
+        void 0 === t && (t = null), this.__resize(), t && 0 == t.isFit && (this._isFit = !1), aidn.util.needExpandArea(!0), aidn.window.addDummyDiv(), document.addEventListener("visibilitychange", function() {
+            return e._visibility(document.hidden)
+        }), window.addEventListener("pagehide", function() {
+            return e._pageHide()
+        })
+    }, o.prototype._start = function() {
+        var t = this;
+        n.time = Date.now() / 1e3, aidn.window.resize(function() {
+            return t._resize()
+        }, this._isFit), this._resize(), this._update()
+    }, o.prototype.addUpdate = function(t, e) {
+        t.__keyUpdate || (t.__keyUpdate = "key_" + this.__keyCount++), this.__updates[t.__keyUpdate] = e
+    }, o.prototype.removeUpdate = function(t) {
+        t.__keyUpdate && delete this.__updates[t.__keyUpdate]
+    }, o.prototype.addResize = function(t, e) {
+        t.__keyResize || (t.__keyResize = "key_" + this.__keyCount++), this.__resizes[t.__keyResize] = e
+    }, o.prototype.removeResize = function(t) {
+        t.__keyResize && delete this.__resizes[t.__keyResize]
+    }, o.prototype._update = function() {
+        var t, e = Date.now() / 1e3;
+        for (t in n.delta = e - n.time, n.time = e, this.__updates) this.__updates[t]()
+    }, o.prototype._resize = function() {
+        for (var t in this.__resize(), this.__resizes) this.__resizes[t]()
+    }, o.prototype.__resize = function() {
+        n.stw = aidn.window.width(), n.sth = aidn.window.height()
+    }, o.prototype._visibility = function(t) {}, o.prototype._pageHide = function() {}, t.MainBase = o, a.prototype.start = function() {
+        var e = this;
+        aidn.util.checkMobile() ? (window.addEventListener("deviceorientation", function(t) {
+            return e._deviceorientation(t)
+        }), window.addEventListener("orientationchange", function(t) {
+            return e._orientationchange(t)
+        }, !1), this._orientationchange()) : ($("body").on("mousemove", function(t) {
+            return e._mouseMove(t)
+        }), this._update())
+    }, a.prototype.addUpdate = function(t, e) {
+        t.__keyx || (t.__keyx = "keyx_" + this.__keyCount, this.__keyCount++), this.__updates[t.__keyx] = e
+    }, a.prototype.removeUpdate = function(t) {
+        t.__keyx && delete this.__updates[t.__keyx]
+    }, a.prototype._updateRate = function(t, e) {
+        for (var i in this.__updates) this.__updates[i](t, e)
+    }, a.prototype._mouseMove = function(t) {
+        var e = n.stw / 2,
+            i = n.sth / 2,
+            t = aidn.event.getPos(t);
+        this._dx = (t.x - e) / e, this._dy = (t.y - i) / i
+    }, a.prototype._update = function() {
+        var t = this;
+        this._rx += (this._dx - this._rx) / 5, this._ry += (this._dy - this._ry) / 5, this._updateRate(this._rx, this._ry), window.requestAnimationFrame(function() {
+            return t._update()
+        })
+    }, a.prototype._deviceorientation = function(t) {
+        var e = t.gamma,
+            t = t.beta,
+            i = (e = 0 != this._ori && (i = t, t = e, e = i, 90 == this._ori && (t = -t), -90 == this._ori) ? -e : e) / 35,
+            i = Math.max(i, -1),
+            e = (i = Math.min(i, 1), t / 35),
+            e = Math.max(e, -1);
+        e = Math.min(e, 1), this._updateRate(i, e)
+    }, a.prototype._orientationchange = function(t) {
+        void 0 === t && (t = null), this._ori = parseInt(window.orientation.toString()) || 0, -1 == this._ori && (this._ori = 0)
+    }, t.DeviceManager = a, s.prototype.dispatchEvent = function(t) {
+        var e, i = t instanceof l ? (e = t.type, t) : new l(e = t);
+        if (null != this.listeners[e])
+            for (var n = (i.currentTarget = this).listeners[e].length, o = 0; o < n && this.listeners[e]; o++) {
+                var r = this.listeners[e][o];
+                try {
+                    r.handler(i)
+                } catch (t) {
+                    window.console && console.error(t.stack)
+                }
+            }
+    }, s.prototype.addEventListener = function(t, e, i) {
+        void 0 === i && (i = 0), null == this.listeners[t] && (this.listeners[t] = []), this.listeners[t].push(new L(t, e, i)), this.listeners[t].sort(function(t, e) {
+            return e.priolity - t.priolity
+        })
+    }, s.prototype.removeEventListener = function(t, e) {
+        if (this.hasEventListener(t, e))
+            for (var i = 0; i < this.listeners[t].length; i++) {
+                var n = this.listeners[t][i];
+                if (n.equalCurrentListener(t, e)) return n.handler = null, void this.listeners[t].splice(i, 1)
+            }
+    }, s.prototype.clearEventListener = function() {
+        this.listeners = {}
+    }, s.prototype.containEventListener = function(t) {
+        return null != this.listeners[t] && 0 < this.listeners[t].length
+    }, s.prototype.hasEventListener = function(t, e) {
+        if (null != this.listeners[t])
+            for (var i = 0; i < this.listeners[t].length; i++)
+                if (this.listeners[t][i].equalCurrentListener(t, e)) return !0;
+        return !1
+    }, t.EventDispatcher = c = s, u.prototype.equalCurrentListener = function(t, e) {
+        return this.type == t && this.handler == e
+    };
+    var L = u;
+
+    function u(t, e, i) {
+        void 0 === e && (e = null), void 0 === i && (i = 0), this.type = t = void 0 === t ? null : t, this.handler = e, this.priolity = i
+    }
+    var h, l = function(t, e) {
+            void 0 === e && (e = null), this.type = t = void 0 === t ? null : t, this.data = e
+        },
+        c = (t.Event = l, __extends(f, h = c), f.prototype.execute = function() {}, f.prototype.cancel = function() {}, f.prototype._dispatchComplete = function(t) {
+            void 0 === t && (t = null), this._loaded = !0;
+            var e = new p(p.COMPLETE);
+            e.data = t, this.dispatchEvent(e)
+        }, f.prototype._dispatchFailed = function(t) {
+            void 0 === t && (t = null);
+            var e = new p(p.FAILED);
+            e.data = t, this.dispatchEvent(e)
+        }, f.prototype._dispatchProgress = function(t) {
+            var e = new p(p.PROGRESS);
+            e.progress = t, this.dispatchEvent(e)
+        }, f);
+
+    function f() {
+        var t = h.call(this) || this;
+        return t._loaded = !1, t
+    }
+    t.CommandBase = c, __extends(_, d = l), _.COMPLETE = "complete", _.FAILED = "failed", _.PROGRESS = "progress";
+    var d, p = _;
+
+    function _(t) {
+        return d.call(this, t) || this
+    }
+    t.CommandEvent = p, __extends(g, v = c), Object.defineProperty(g.prototype, "total", {
+        get: function() {
+            return this._total
+        },
+        enumerable: !1,
+        configurable: !0
+    }), g.prototype.execute = function() {
+        if (this._loaded = !1, this._now = this._compnum = this._compRate = 0, this._compflags = [], this._progRates = [], this._total <= this._compnum) this._dispatchProgress(1), this._dispatchComplete();
+        else
+            for (var t = Math.min(this._total, this._connectionNum), e = 0; e < t; e++) this._execute()
+    }, g.prototype.cancel = function() {
+        if (!(this._total <= this._compnum))
+            for (var t = 0; t < this._total; t++) try {
+                var e = this._commands[t];
+                this._removeEvents(e), e.cancel()
+            } catch (t) {}
+    }, g.prototype.add = function(t, e) {
+        void 0 === e && (e = 1), this._commands[this._total] = t, this._rates[this._total] = e, this._sum += e, this._total++
+    }, g.prototype._execute = function() {
+        var t, e = this;
+        this._now < this._total ? (this._rates[this._now] = this._rates[this._now] / this._sum, this._progRates[this._now] = 0, (t = this._commands[this._now]).__id = this._now, this._now++, t.addEventListener(p.COMPLETE, function(t) {
+            return e._complete(t)
+        }), t.addEventListener(p.PROGRESS, function(t) {
+            return e._progress(t)
+        }), t.addEventListener(p.FAILED, function(t) {
+            return e._failed(t)
+        }), t.execute()) : this._total <= this._compnum && (this._dispatchProgress(1), this._dispatchComplete())
+    }, g.prototype._removeEvents = function(t) {
+        t.clearEventListener()
+    }, g.prototype._completeCommand = function(t, e) {}, g.prototype._complete = function(t) {
+        var t = t.currentTarget.__id,
+            e = this._commands[t];
+        this._removeEvents(e), this._compRate += this._rates[t], this._compflags[t] = !0, this.__progress(), this._completeCommand(e, t), this._compnum++, this._execute()
+    }, g.prototype._progress = function(t) {
+        var e = t.currentTarget.__id;
+        this._progRates[e] = t.progress * this._rates[e], this.__progress()
+    }, g.prototype.__progress = function() {
+        for (var t = 0, e = 0; e < this._now; e++) this._compflags[e] || (t += this._progRates[e]);
+        this._dispatchProgress(this._compRate + t)
+    }, g.prototype._failed = function(t) {
+        t = t.currentTarget.__id, t = this._commands[t];
+        this._removeEvents(t), this._dispatchFailed()
+    }, Object.defineProperty(g.prototype, "loaded", {
+        get: function() {
+            return this._loaded
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var v, m = g;
+
+    function g(t) {
+        void 0 === t && (t = 1);
+        var e = v.call(this) || this;
+        return e._rates = [], e._sum = 0, e._commands = [], e._now = 0, e._total = 0, e._compnum = 0, e._compflags = [], e._connectionNum = t, e
+    }
+    t.SequentialCommand = m, __extends(x, y = c), x.prototype.execute = function() {
+        function t() {
+            return i._complete()
+        }
+
+        function e(t) {
+            return i._progress(t)
+        }
+        var i = this;
+        this._audio = new aidn.AutoAudio(null), this._isplay ? (this._audio.load([this._url], null, this._trimvol, e), this._audio.play(0, !1, t, 0, 0)) : this._audio.load([this._url], t, this._trimvol, e)
+    }, x.prototype._progress = function(t) {
+        this._dispatchProgress(t)
+    }, x.prototype._complete = function() {
+        this._isplay && this._audio.stop();
+        var t = (t = this._key) || this._url;
+        r.add(t, this._audio), this._dispatchComplete()
+    };
+    var y, b = x;
+
+    function x(t, e, i, n) {
+        void 0 === e && (e = null), void 0 === i && (i = !1), void 0 === n && (n = -1);
+        var o = y.call(this) || this;
+        return o._key = e, o._url = t, o._isplay = i, o._trimvol = n, o
+    }
+    t.AudioLoadCommand = b, __extends(S, w = c), S.prototype.execute = function() {
+        var t = this,
+            e = new Image;
+        e.onload = function() {
+            S.setupImage(e, t._name, t._type), t._complete()
+        }, e.src = this._url
+    }, S.prototype._complete = function() {
+        this._dispatchComplete()
+    }, S.setupImage = function(t, e, i) {
+        var n, o;
+        (i = void 0 === i ? -1 : i) == M.PIXI ? ((o = window.PIXI).BaseTexture ? (n = new o.Texture(new o.BaseTexture(t)), o.Texture.addToCache ? o.Texture.addToCache(n, e) : o.Texture.addTextureToCache(n, e)) : n = o.Texture.from(t), r.add(e, n)) : i == M.THREE ? ((o = new window.THREE.Texture(t)).needsUpdate = !0, r.add(e, o)) : r.add(e, t)
+    };
+    var w, U = S;
+
+    function S(t, e, i) {
+        void 0 === e && (e = null), void 0 === i && (i = -1);
+        var n = w.call(this) || this;
+        return n._url = t, n._type = i, (n._name = e) || (n._name = t), n
+    }
+    t.ImageLoadCommand = U, __extends(H, B = m);
+    var B, b = H;
+
+    function H(t, e, i) {
+        void 0 === i && (i = -1);
+        for (var n = B.call(this, e = void 0 === e ? 1 : e) || this, o = t.length, r = 0; r < o; r++) n.add(new F(t[r], i));
+        return n
+    }
+    t.ScriptsLoaderCommand = b, __extends(E, z = c), E.prototype.execute = function() {
+        var t = this;
+        $.ajax({
+            url: this._url + "",
+            cache: !0,
+            dataType: "script"
+        }).then(function() {
+            return t._complete()
+        }, function() {
+            return t._failed()
+        })
+    }, E.prototype._complete = function() {
+        this._dispatchComplete()
+    }, E.prototype._failed = function() {
+        this._dispatchFailed()
+    };
+    var z, F = E;
+
+    function E(t, e) {
+        void 0 === e && (e = -1);
+        var i = z.call(this) || this;
+        return i._url = t, i._ver = e, i
+    }
+    t.ScriptLoaderCommand = F, T.PIXI = 0, T.THREE = 1, T.IMG = 2;
+    var M = T;
+
+    function T() {}
+    t.JsonBase64Type = M, __extends(R, N = c), R.prototype.execute = function() {
+        var t, e = this;
+        this._json ? this._complete(this._json) : (t = {
+            method: "GET",
+            url: this._url,
+            dataType: "json",
+            success: function(t) {
+                return e._complete(t)
+            },
+            xhr: function() {
+                var t = $.ajaxSettings.xhr();
+                return t.onprogress = function(t) {
+                    t.lengthComputable && e._dispatchProgress(e._jsonRate * (t.loaded / t.total))
+                }, t
+            }
+        }, $.ajax(t))
+    }, R.prototype._setupAudio = function(t) {
+        this._context = t
+    }, R.prototype._complete = function(t) {
+        var e, i = 0;
+        for (e in this._data = t) this._keys[i++] = e;
+        this._now = -1, this._len = i, this._next()
+    }, R.prototype._next = function() {
+        var t, e, i, n, o = this;
+        this._now++, this._now < this._len ? (this._dispatchProgress(this._jsonRate + (1 - this._jsonRate) * (this._now / this._len)), t = this._keys[this._now], e = this._data[t], 0 < t.lastIndexOf(".mp3") || 0 < t.lastIndexOf(".ogg") ? aidn.util.webaudio ? (this._context && (aidn.___waContext = this._context), i = new aidn.WebAudio, r.add(t, i), i.load(e, function() {
+            return o._next()
+        })) : setTimeout(function() {
+            return o._next()
+        }, 10) : ((n = new Image).onload = function() {
+            return o._nextComp(n)
+        }, n.src = e)) : this._dispatchComplete()
+    }, R.prototype._nextComp = function(t) {
+        var e = this,
+            i = this._keys[this._now];
+        U.setupImage(t, i, this._type), setTimeout(function() {
+            return e._next()
+        }, 10)
+    };
+    var N, m = R;
+
+    function R(t, e, i) {
+        void 0 === e && (e = 0), void 0 === i && (i = .3);
+        var n = N.call(this) || this;
+        return n._keys = [], n._context = null, n._json = null, "string" == typeof t ? n._url = t : n._json = t, n._type = e, n._jsonRate = i, n
+    }
+
+    function C() {}
+
+    function P(t, e) {
+        void 0 === e && (e = 0), this.x = t = void 0 === t ? 0 : t, this.y = e
+    }
+
+    function O() {}
+    t.JsonBase64LoadCommand = R, C.init = function(t) {
+        var e = this,
+            t = void 0 === t ? {} : t,
+            i = t.scale,
+            t = t.color,
+            t = void 0 === t ? "#000" : t,
+            i = (this._scale = void 0 === i ? 1 : i, this._elem = $('<div style="position:absolute; z-index:1000; width: calc(60px + 6vmin); height: calc(60px + 6vmin); border-radius:100%; transform: translate(-50%, -50%); pointer-events: none; opacity: 0;"></div>'));
+        i.css("background", t), $("body").append(i), window.addEventListener(n.isMobile ? "touchstart" : "mousedown", function(t) {
+            return e._touch(t)
+        })
+    }, C._touch = function(t) {
+        t = aidn.event.getPos(t);
+        this._elem.css({
+            left: t.x,
+            top: t.y
+        }), gsap.killTweensOf(this._elem), gsap.fromTo(this._elem, {
+            scale: 0,
+            opacity: 1
+        }, {
+            scale: this._scale,
+            opacity: 0,
+            duration: .3
+        })
+    }, t.TouchInteraction = C, P.prototype.set = function(t, e) {
+        return void 0 === e && (e = 0), this.x = t = void 0 === t ? 0 : t, this.y = e, this
+    }, P.prototype.clone = function() {
+        return new P(this.x, this.y)
+    }, P.prototype.distance = function(t) {
+        var e = this.x - t.x,
+            t = this.y - t.y;
+        return Math.sqrt(e * e + t * t)
+    }, t.Point = P, O.random = function(t) {
+        var e = this.seed;
+        return null != (t = void 0 === t ? null : t) && (e = t), (this.seed = e = (e = (e ^= e << 13) ^ e >> 17) ^ e << 15) / 4294967296 + .5
+    }, O.randInt = function(t, e, i) {
+        return void 0 === i && (i = null), Math.floor(this.rand(t, e + 1, i))
+    }, O.rand = function(t, e, i) {
+        return this.random(i = void 0 === i ? null : i) * (e - t) + t
+    }, O.arrayShuffle = function(t) {
+        for (var e = t.length, i = 0; i < e; i++) {
+            var n = this.randInt(0, e - 1),
+                o = t[i];
+            t[i] = t[n], t[n] = o
+        }
+    }, O.pickupRandom = function(t, e, i) {
+        void 0 === e && (e = !1), void 0 === i && (i = null);
+        for (var n = t.length, o = 0, r = [], a = 0; a < n; a++) o += t[a].priority, r.push(o);
+        for (var s = this.rand(0, o, i), u = 0, a = 0; a < n; a++)
+            if (s <= r[a]) {
+                u = a;
+                break
+            } return (e ? t.splice(a, 1)[0] : t[u]).value
+    }, O.seed = 0, __extends(k, I = t.Rand = b = O), k.getServerTime = function() {
+        return __awaiter(this, arguments, void 0, function(t) {
+            var e, i, n, o, t = void 0 === t ? {} : t,
+                r = t.path,
+                a = void 0 === r ? "./" : r,
+                r = t.timeout,
+                s = void 0 === r ? 3e3 : r;
+            return __generator(this, function(t) {
+                switch (t.label) {
+                    case 0:
+                        if (-1 != this._offsetTime) return [3, 4];
+                        t.label = 1;
+                    case 1:
+                        return t.trys.push([1, 3, , 4]), e = performance.now(), [4, fetch(a + "?t=" + Date.now(), {
+                            method: "HEAD",
+                            cache: "no-store",
+                            signal: AbortSignal.timeout(s)
+                        })];
+                    case 2:
+                        return (i = t.sent(), o = performance.now(), i = i.headers.get("Date")) ? (i = new Date(i).getTime(), n = Date.now(), o = (o - e) / 2, this._offsetTime = i + o - n, [3, 4]) : [2, Date.now()];
+                    case 3:
+                        return t.sent(), [2, Date.now()];
+                    case 4:
+                        return [2, Date.now() + this._offsetTime]
+                }
+            })
+        })
+    }, k._offsetTime = -1;
+    var I, c = k;
+
+    function k() {
+        return null !== I && I.apply(this, arguments) || this
+    }
+
+    function A() {}
+
+    function j() {}
+
+    function D() {}
+    t.Util = k, A.randInt = function(t, e) {
+        return Math.floor(this.rand(t, e + 1))
+    }, A.rand = function(t, e) {
+        return Math.random() * (e - t) + t
+    }, A.toRad = function(t) {
+        return t * Math.PI / 180
+    }, A.toDeg = function(t) {
+        return 180 * t / Math.PI
+    }, A.distance = function(t, e, i) {
+        for (var n = (i = void 0 === i ? "x,y,z" : i).split(","), o = 0, r = 0, a = n.length; r < a; r++) {
+            var s = n[r],
+                s = t[s] - e[s];
+            o += s * s
+        }
+        return Math.sqrt(o)
+    }, A.angle = function(t, e, i) {
+        for (var n = (i = void 0 === i ? "x,y" : i).split(","), o = [], r = 0; r < 2; r++) {
+            var a = n[r];
+            o[r] = e[a] - t[a]
+        }
+        return Math.atan2(o[1], o[0])
+    }, A.getRotatePoint = function(t) {
+        var e = t.x,
+            e = void 0 === e ? 0 : e,
+            i = t.y,
+            i = void 0 === i ? 0 : i,
+            n = t.cx,
+            n = void 0 === n ? 0 : n,
+            o = t.cy,
+            o = void 0 === o ? 0 : o,
+            t = t.rad,
+            t = void 0 === t ? 0 : t,
+            r = Math.cos(t),
+            t = Math.sin(t);
+        return {
+            x: (e - n) * r - (i - o) * t + n,
+            y: (e - n) * t + (i - o) * r + o
+        }
+    }, A.getMinimumDistance = function(t, e) {
+        for (var i = Number.MAX_VALUE, n = 0, o = e.length; n < o; n++) var r = A.distance(t, e[n], "x,y"),
+            i = Math.min(r, i);
+        return i
+    }, A.toBaseN = function(t, e) {
+        void 0 === e && (e = 62);
+        for (var i = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", n = (e = Math.min(i.length, e), ""); 0 < t;) n = i[t % e] + n, t = Math.floor(t / e);
+        return n || "0"
+    }, A.fromBaseN = function(t, e) {
+        void 0 === e && (e = 62);
+        for (var i = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", n = (e = Math.min(i.length, e), 0), o = 0; o < t.length; o++) n = n * e + i.indexOf(t[o]);
+        return n
+    }, A.toBase62 = function(t) {
+        return this.toBaseN(t, 62)
+    }, A.fromBase62 = function(t) {
+        return this.fromBaseN(t, 62)
+    }, A.pickupRandom = function(t, e) {
+        void 0 === e && (e = !1);
+        for (var i = t.length, n = 0, o = [], r = 0; r < i; r++) n += t[r].priority, o.push(n);
+        for (var a = this.rand(0, n), s = 0, r = 0; r < i; r++)
+            if (a <= o[r]) {
+                s = r;
+                break
+            } return (e ? t.splice(r, 1)[0] : t[s]).value
+    }, t.MathUtil = A, Object.defineProperty(j, "bigIntSupported", {
+        get: function() {
+            return void 0 !== window.BigInt
+        },
+        enumerable: !1,
+        configurable: !0
+    }), j.toBaseN = function(t, e) {
+        if (0 === t) return "0";
+        for (var i = this.DIGITS, n = Math.min(i.length, e), o = ""; 0 < t;) o = i[t % n] + o, t = parseInt((t / n).toString(), 10);
+        return o
+    }, j.fromBaseN = function(t, e) {
+        if (null === t || 0 === t.length) return 0;
+        for (var i = this.DIGITS, n = Math.min(i.length, e), o = 0, r = 0, a = t.length; r < a; r++) {
+            var s = i.indexOf(t[r]);
+            if (s < 0 || e <= s) return NaN;
+            o += s * Math.pow(n, a - r - 1)
+        }
+        return o
+    }, j.toBaseNBig = function(t, e) {
+        if (t === window.BigInt(0)) return "0";
+        for (var i = this.DIGITS, n = window.BigInt(Math.min(i.length, e)), o = ""; 0 < t;) {
+            o = i[parseInt((t % n).toString())] + o;
+            t /= n
+        }
+        return o
+    }, j.fromBaseNBig = function(t, e) {
+        if (null === t || 0 === t.length) return window.BigInt(0);
+        for (var i = this.DIGITS, n = window.BigInt(Math.min(i.length, e)), o = window.BigInt(0), r = 0, a = t.length; r < a; r++) {
+            var s = i.indexOf(t[r]);
+            if (s < 0 || e <= s) return null;
+            for (var s = window.BigInt(s), u = window.BigInt(1), h = 0; h < a - r - 1; h++) u *= n;
+            o += s * u
+        }
+        return o
+    }, j.fromBaseNtoM = function(t, e, i) {
+        return this.toBaseN(this.fromBaseN(t, e), i)
+    }, j.fromBaseNtoMBig = function(t, e, i) {
+        return this.toBaseNBig(this.fromBaseNBig(t, e), i)
+    }, j.DIGITS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", t.NumUtil = j, D.enable = function() {
+        aidn.util.checkMobile() && aidn.util.wakeLock()
+    }, D.disable = function() {
+        aidn.util.checkMobile() && aidn.util.wakeRelease()
+    }, t.NoSleepManager = D
+})(aidnlib = aidnlib || {}), (t => {
+    function e() {}
+    e.colToRgb = function(t) {
+        return t < 0 ? t = 0 : 16777215 < t && (t = 16777215), [t >> 16, t >> 8 & 255, 255 & t]
+    }, e.rgbToCol = function(t) {
+        return t.length < 3 ? 0 : 256 * t[0] * 256 + 256 * t[1] + t[2]
+    }, e.rgbStrToCol = function(t) {
+        t = t.replace(/rgb\((.+)\)/, "$1").split(",");
+        return this.rgbToCol([parseInt(t[0]), parseInt(t[1]), parseInt(t[2])])
+    }, e.colToHex = function(t) {
+        return "#" + this.colToRgb(t).map(function(t) {
+            return ("0" + t.toString(16)).slice(-2)
+        }).join("")
+    }, e.hexToCol = function(t) {
+        t = t.substring(1);
+        return 3 == t.length && (t = [t.charAt(0), t.charAt(0), t.charAt(1), t.charAt(1), t.charAt(2), t.charAt(2)].join("")), parseInt(t, 16)
+    }, e.hslToCol = function(t) {
+        return this.rgbToCol(this.hslToRgb(t))
+    }, e.colToHsl = function(t) {
+        return this.rgbToHsl(this.colToRgb(t))
+    }, e.rgbToHsl = function(t) {
+        var e, i = t[0],
+            n = t[1],
+            o = t[2],
+            t = (i /= 255, n /= 255, o /= 255, Math.max(i, n, o)),
+            r = Math.min(i, n, o),
+            a = (t + r) / 2;
+        if (t === r) e = u = 0;
+        else {
+            var s = t - r,
+                u = .5 < a ? s / (2 - t - r) : s / (t + r);
+            switch (t) {
+                case i:
+                    e = (n - o) / s + (n < o ? 6 : 0);
+                    break;
+                case n:
+                    e = (o - i) / s + 2;
+                    break;
+                case o:
+                    e = (i - n) / s + 4
+            }
+            e /= 6
+        }
+        return [360 * e, 100 * u, 100 * a]
+    }, e.hslToRgb = function(t) {
+        var e, i, n, o, r = t[0],
+            a = t[1],
+            t = t[2];
+        return r /= 360, t /= 100, 0 == (a /= 100) ? i = n = o = t : (i = (e = function(t, e, i) {
+            return i < 0 && (i += 1), 1 < i && --i, i < 1 / 6 ? t + 6 * (e - t) * i : i < .5 ? e : i < 2 / 3 ? t + (e - t) * (2 / 3 - i) * 6 : t
+        })(a = 2 * t - (t = t < .5 ? t * (1 + a) : t + a - t * a), t, r + 1 / 3), n = e(a, t, r), o = e(a, t, r - 1 / 3)), [Math.round(255 * i), Math.round(255 * n), Math.round(255 * o)]
+    }, e.rgbToHsv = function(t) {
+        var e, i = t[0],
+            n = t[1],
+            o = t[2],
+            t = (i /= 255, n /= 255, o /= 255, Math.max(i, n, o)),
+            r = Math.min(i, n, o),
+            a = t,
+            s = t - r,
+            u = 0 === t ? 0 : s / t;
+        if (t === r) e = 0;
+        else {
+            switch (t) {
+                case i:
+                    e = (n - o) / s + (n < o ? 6 : 0);
+                    break;
+                case n:
+                    e = (o - i) / s + 2;
+                    break;
+                case o:
+                    e = (i - n) / s + 4
+            }
+            e /= 6
+        }
+        return [360 * e, 100 * u, 100 * a]
+    }, e.hsvToRgb = function(t) {
+        var e, i, n, o = t[0],
+            r = t[1],
+            a = t[2],
+            t = (o /= 360, r /= 100, a /= 100, Math.floor(6 * o)),
+            o = 6 * o - t,
+            s = a * (1 - r),
+            u = a * (1 - o * r),
+            h = a * (1 - (1 - o) * r);
+        switch (t % 6) {
+            case 0:
+                e = a, i = h, n = s;
+                break;
+            case 1:
+                e = u, i = a, n = s;
+                break;
+            case 2:
+                e = s, i = a, n = h;
+                break;
+            case 3:
+                e = s, i = u, n = a;
+                break;
+            case 4:
+                e = h, i = s, n = a;
+                break;
+            case 5:
+                e = a, i = s, n = u
+        }
+        return [Math.round(255 * e), Math.round(255 * i), Math.round(255 * n)]
+    }, e.oklchToCol = function(t) {
+        return this.rgbToCol(this.oklchToRgb(t))
+    }, e.colToOklch = function(t) {
+        return this.rgbToOklch(this.colToRgb(t))
+    }, e.rgbToOklch = function(t) {
+        function e(t) {
+            return .04045 < t ? Math.pow((t + .055) / 1.055, 2.4) : t / 12.92
+        }
+        var i = t[0] / 255,
+            n = t[1] / 255,
+            t = t[2] / 255,
+            o = .2119034982 * (i = e(i)) + .6806995451 * (n = e(n)) + .1073969566 * (t = e(t)),
+            r = .0883024619 * i + .2817188501 * n + .6299787032 * t,
+            i = Math.cbrt(.4122214708 * i + .5363325363 * n + .0514459929 * t),
+            n = Math.cbrt(o),
+            t = Math.cbrt(r),
+            o = .2104542553 * i + .793617785 * n - .0040720468 * t,
+            r = 1.9779984951 * i - 2.428592205 * n + .4505937099 * t,
+            i = .0259040371 * i + .7827717662 * n - .808675766 * t,
+            n = Math.sqrt(r * r + i * i),
+            t = 180 * Math.atan2(i, r) / Math.PI;
+        return [o, n, t < 0 ? 360 + t : t]
+    }, e.oklchToRgb = function(t) {
+        for (var e = t[0], i = t[1], n = t[2], o = 0, r = 0, a = 0, s = 0; s < 50; s++) {
+            var u = i * Math.cos(n * Math.PI / 180),
+                h = i * Math.sin(n * Math.PI / 180),
+                l = e + .3963377774 * u + .2158037573 * h,
+                c = e - .1055613458 * u - .0638541728 * h,
+                u = e - .0894841775 * u - 1.291485548 * h,
+                h = l * l * l,
+                l = c * c * c,
+                c = u * u * u,
+                u = 4.0767416621 * h - 3.3077115913 * l + .2309699292 * c,
+                f = -1.2684380046 * h + 2.6097574011 * l - .3413193965 * c,
+                h = -.0041960863 * h - .7034186147 * l + 1.707614701 * c,
+                l = function(t) {
+                    return t <= .0031308 ? 12.92 * t : 1.055 * Math.pow(t, 1 / 2.4) - .055
+                },
+                u = Math.round(255 * Math.max(0, Math.min(1, l(u)))),
+                f = Math.round(255 * Math.max(0, Math.min(1, l(f)))),
+                h = Math.round(255 * Math.max(0, Math.min(1, l(h))));
+            if (0 == s && (o = u, r = f, a = h), 0 <= u && u <= 255 && 0 <= f && f <= 255 && 0 <= h && h <= 255) return [u, f, h];
+            i -= .005
+        }
+        Math.max(0, Math.min(255, o)), Math.max(0, Math.min(255, r)), Math.max(0, Math.min(255, a));
+        return [255, 255, 255]
+    }, e.getLuminance = function(t) {
+        return .299 * (t = "number" == typeof t ? this.colToRgb(t) : t)[0] + .587 * t[1] + .114 * t[2]
+    }, e.getColorDistance = function(t, e, i) {
+        void 0 === i && (i = !0), "number" == typeof t && (t = this.colToRgb(t)), "number" == typeof e && (e = this.colToRgb(e));
+        var n = t[0] - e[0],
+            o = t[1] - e[1],
+            t = t[2] - e[2];
+        return i ? Math.sqrt(2 * n * n + 4 * o * o + 3 * t * t) : Math.sqrt(n * n + o * o + t * t)
+    }, e.getContrastRatio = function(t, e) {
+        "number" == typeof t && (t = this.colToRgb(t)), "number" == typeof e && (e = this.colToRgb(e));
+        t = this._getRelativeLuminance(t), e = this._getRelativeLuminance(e);
+        return (Math.max(t, e) + .05) / (Math.min(t, e) + .05)
+    }, e._getRGBForCalculateLuminance = function(t) {
+        t /= 255;
+        return t <= .03928 ? t / 12.92 : Math.pow((.055 + t) / 1.055, 2.4)
+    }, e._getRelativeLuminance = function(t) {
+        return .2126 * this._getRGBForCalculateLuminance(t[0]) + .7152 * this._getRGBForCalculateLuminance(t[1]) + .0722 * this._getRGBForCalculateLuminance(t[2])
+    }, t.ColorUtil = e
+})(color = color || {}), (t => {
+    function e(t, e, i) {
+        void 0 === e && (e = 120), void 0 === i && (i = 32), this._opt = {
+            volRate: 1
+        }, this._isPlaying = !1, this._stopFlag = !1, this._nb = -1, this._wa = t, this._bpm = e, this._beat = 6e4 / e, this._totalBeat = i
+    }
+    Object.defineProperty(e.prototype, "audio", {
+        get: function() {
+            return this._wa
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(e.prototype, "volume", {
+        get: function() {
+            return this._volume
+        },
+        set: function(t) {
+            this._volume = t, this._wa.volume = t, "undefined" != typeof TweenMax ? TweenMax.killTweensOf(this._wa) : "undefined" != typeof gsap ? gsap.killTweensOf(this._wa) : "undefined" != typeof jQuery && $(this._wa).stop()
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(e.prototype, "currentTime", {
+        get: function() {
+            return this._getCurrentTime() - this._st / 1e3
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(e.prototype, "duration", {
+        get: function() {
+            return this._totalBeat * this._beat / 1e3
+        },
+        enumerable: !1,
+        configurable: !0
+    }), e.prototype._getCurrentTime = function() {
+        return aidn.___waContext ? aidn.___waContext.currentTime : "undefined" == typeof performance ? Date.now() / 1e3 : performance.now() / 1e3
+    }, e.prototype.play = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.startTime,
+            e = void 0 === e ? 0 : e,
+            i = t.volume,
+            i = void 0 === i ? 1 : i,
+            n = t.fadetime,
+            n = void 0 === n ? 0 : n,
+            o = t.delay,
+            o = void 0 === o ? 0 : o,
+            r = t.callback,
+            r = void 0 === r ? null : r,
+            a = t.loop,
+            a = void 0 !== a && a,
+            s = t.beatCallback,
+            s = void 0 === s ? null : s,
+            t = t.ease,
+            t = void 0 === t ? null : t;
+        this._stopComplete(), this._play({
+            startTime: e,
+            volume: i,
+            fadetime: n,
+            delay: o,
+            callback: r,
+            loop: a,
+            beatCallback: s,
+            ease: t
+        })
+    }, e.prototype._play = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.startTime,
+            e = void 0 === e ? 0 : e,
+            i = t.volume,
+            i = void 0 === i ? 1 : i,
+            n = t.fadetime,
+            n = void 0 === n ? 0 : n,
+            o = t.delay,
+            o = void 0 === o ? 0 : o,
+            r = t.callback,
+            r = void 0 === r ? null : r,
+            a = t.loop,
+            a = void 0 !== a && a,
+            s = t.beatCallback,
+            s = void 0 === s ? null : s,
+            t = t.ease,
+            t = void 0 === t ? null : t;
+        this._wa.play(e, !1, null, 0, n <= 0 ? i : 0, o), 0 < n && ("undefined" != typeof TweenMax ? TweenMax.fromTo(this._wa, n, {
+            volume: 0
+        }, {
+            volume: i,
+            ease: t || Power2.easeOut
+        }) : "undefined" != typeof gsap ? (gsap.killTweensOf(this._wa), gsap.fromTo(this._wa, {
+            volume: 0
+        }, {
+            volume: i,
+            duration: n,
+            ease: t || Power2.easeOut
+        })) : "undefined" != typeof jQuery && (this._wa.volume = 0, $(this._wa).stop(!0).animate({
+            volume: i
+        }, 1e3 * n))), this._st = 1e3 * (this._getCurrentTime() + o - e), this._volume = i, this._loop = a, this._callback = r, this._beatCallback = s, this._stopFlag || (this._opt.volRate = 1), this._isPlaying = !0, this._update()
+    }, e.prototype.stop = function(t) {
+        var e = this,
+            t = (void 0 === t ? {} : t).fadetime,
+            t = void 0 === t ? 0 : t;
+        this._stopFlag = !0, t <= 0 ? this._stopComplete() : "undefined" != typeof TweenMax ? TweenMax.to(this._wa, t, {
+            volume: 0,
+            ease: Power2.easeOut,
+            onComplete: function() {
+                return e._stopComplete()
+            }
+        }) : "undefined" != typeof gsap ? gsap.to(this._wa, {
+            volume: 0,
+            duration: t,
+            ease: Power2.easeOut,
+            onComplete: function() {
+                return e._stopComplete()
+            }
+        }) : "undefined" != typeof jQuery ? $(this._wa).stop(!0).animate({
+            volume: 0
+        }, 1e3 * t, "linear", function() {
+            return e._stopComplete()
+        }) : this._stopComplete()
+    }, e.prototype._stopComplete = function() {
+        try {
+            this._stopFlag = !1, this._isPlaying = !1, this._wa.stop()
+        } catch (t) {}
+    }, e.prototype._update = function() {
+        var t, e, i, n = this;
+        this._isPlaying && (t = 1e3 * this._getCurrentTime() - this._st, e = Math.floor(t / this._beat), this._nb != e && (this._nb = e, this._beatCallback) && ((i = this._nb) < 0 && (i += this._totalBeat), this._beatCallback(i)), i = e % this._totalBeat, this._totalBeat - 1 <= i && (this._stopFlag || (e = ((e + this._totalBeat - i) * this._beat - t) / 1e3, this._callback && this._callback(e), this._loop && (i = {
+            volume: this._volume,
+            delay: e,
+            callback: this._callback,
+            loop: this._loop,
+            beatCallback: this._beatCallback
+        }, this._play(i)))), window.requestAnimationFrame(function() {
+            return n._update()
+        }))
+    }, t.WebAudioManager = e, Object.defineProperty(i.prototype, "volume", {
+        get: function() {
+            return this._wa.volume
+        },
+        set: function(t) {
+            this._wa.volume = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(i.prototype, "filterBiquad", {
+        get: function() {
+            return this._filterBiquad
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(i.prototype, "filterPitchShift", {
+        get: function() {
+            return this._filterPitchShift
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(i.prototype, "audio", {
+        get: function() {
+            return this._wa
+        },
+        enumerable: !1,
+        configurable: !0
+    }), i.prototype.initBiquad = function(t) {
+        var e;
+        void 0 === t && (t = null), this._filterBiquad || (t ? (e = t.createBiquadFilter(), this._wa.addNode(e)) : e = this._wa.initBiquadFilter("allpass"), this._filterBiquad = new r(e))
+    }, i.prototype.initPitchShift = function(t) {
+        void 0 === t && (t = null), this._filterPitchShift || (t = t || aidn.___waContext, t = new h(t), this._wa.addNode(t.getNode()), this._filterPitchShift = new s(t))
+    }, i.prototype.play = function(t, e, i, n, o) {
+        this._wa.play((n = void 0 === n ? 0 : n) / 1e3, !1, null, i = void 0 === i ? 0 : i, t = void 0 === t ? 1 : t, e = void 0 === e ? 0 : e, o = void 0 === o ? !0 : o)
+    }, i.prototype.stop = function(t, e) {
+        var i = this;
+        void 0 === e && (e = 0), (t = void 0 === t ? 0 : t) <= 0 ? this._wa.stop(e) : $(this._wa).animate({
+            volume: 0
+        }, {
+            easing: "linear",
+            duration: 1e3 * t,
+            complete: function() {
+                return i._wa.stop(e)
+            }
+        })
+    };
+    var n = i;
+
+    function i(t) {
+        this._wa = t
+    }
+
+    function o(t) {
+        void 0 === t && (t = 120), this._beat = -2, this._startTime = 0, this._isStarting = !1, this._volume = 1, this._maxBeat = 0, this.__keyCount = 0, this.__beats = {}, this._nodeList = [], this._isOutput = !0, this._dest = null, this._loopNum = -1, this._callbackRecordingEnd = null, this._beatCounts = [], this.__shottimes = {}, this._beatInterval = 6e4 / t, this._volumeLoops = [], this._volumeOneShots = [], this._audioLoops = [], this._audioOneShots = [], this._loopParams = [], this._idlist = []
+    }
+    t.AudioAsset = n, o.prototype._getCurrentTime = function() {
+        return aidn.___waContext ? aidn.___waContext.currentTime : "undefined" == typeof performance ? Date.now() / 1e3 : performance.now() / 1e3
+    }, Object.defineProperty(o.prototype, "volume", {
+        get: function() {
+            return this._volume
+        },
+        set: function(t) {
+            this._volume = t = t < 0 ? 0 : t;
+            for (var e = this._audioLoops.length, i = 0; i < e; i++)(n = this._audioLoops[i]) && (n.volume = this._volumeLoops[i] * this._volume);
+            for (var n, e = this._audioOneShots.length, i = 0; i < e; i++)(n = this._audioOneShots[i]) && (n.volume = this._volumeOneShots[i] * this._volume)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(o.prototype, "trackTime", {
+        get: function() {
+            return this.time % this.duration
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(o.prototype, "time", {
+        get: function() {
+            return this._startTime <= 0 ? 0 : 1e3 * this._getCurrentTime() - this._startTime
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(o.prototype, "beat", {
+        get: function() {
+            return Math.floor(this.time / this._beatInterval)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(o.prototype, "beatInterval", {
+        get: function() {
+            return this._beatInterval
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(o.prototype, "isStarting", {
+        get: function() {
+            return this._isStarting
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(o.prototype, "duration", {
+        get: function() {
+            return this._maxBeat * this._beatInterval
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(o.prototype, "durationRec", {
+        get: function() {
+            return 0 < this._loopNum ? this.duration * this._loopNum : -1
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(o.prototype, "maxBeat", {
+        get: function() {
+            return this._maxBeat
+        },
+        enumerable: !1,
+        configurable: !0
+    }), o.prototype._addNodeList = function(t) {
+        for (var e = 0; e < this._nodeList.length; e++) {
+            var i = this._nodeList[e];
+            t.audio.addNode(i.node, i.isSub)
+        }
+    }, o.prototype.addNode = function(t, e) {
+        void 0 === e && (e = !0);
+        for (var i = 0; i < this._audioLoops.length; i++) this._audioLoops[i] && this._audioLoops[i].audio.addNode(t, e);
+        for (i = 0; i < this._audioOneShots.length; i++) this._audioOneShots[i] && this._audioOneShots[i].audio.addNode(t, e);
+        this._nodeList.push({
+            node: t,
+            isSub: e
+        })
+    }, o.prototype.addBeatHandler = function(t, e) {
+        t.__keyb || (t.__keyb = "keyb_" + this.__keyCount, this.__keyCount++), this.__beats[t.__keyb] = e
+    }, o.prototype.removeBeatHandler = function(t) {
+        t.__keyb && delete this.__beats[t.__keyb]
+    }, o.prototype.addLoop = function(t, e, i) {
+        return void 0 === i && (i = 1), t instanceof aidn.WebAudio ? t = new n(t) : t instanceof aidn.AutoAudio && (t = new n(t.audio)), this._maxBeat < e.total && (this._maxBeat = e.total), e.flag = !1, t.volume = i, this._volumeLoops.push(i), this._audioLoops.push(t), this._loopParams.push(e), this._addNodeList(t), t
+    }, o.prototype.addOneShot = function(t, e, i) {
+        return void 0 === i && (i = 1), t instanceof aidn.WebAudio ? t = new n(t) : t instanceof aidn.AutoAudio && (t = new n(t.audio)), t.volume = i, this._volumeOneShots[e] = i, this._audioOneShots[e] = t, this._addNodeList(t), t
+    }, o.prototype.start = function(t) {
+        void 0 === t && (t = .5), this._startTime = 1e3 * this._getCurrentTime() + this._beatInterval * t, this._isOutput = !0, this._isStarting = !0, this._update()
+    }, o.prototype.stop = function() {
+        this._isOutput = !0, this._isStarting = !1;
+        for (var t = this._audioLoops.length, e = 0; e < t; e++) this._audioLoops[e].stop(), this._loopParams[e].flag = !1;
+        this.stopOneShot(-1)
+    }, o.prototype.startRecording = function(t, e, i) {
+        void 0 === t && (t = .5), void 0 === e && (e = -1), void 0 === i && (i = null), this._isOutput = !1;
+        var n = this._dest;
+        return this._loopNum = e, this._callbackRecordingEnd = i, this._beatCounts = [], n || (n = this._dest = aidn.___waContext.createMediaStreamDestination(), this.addNode(n)), this._startTime = 1e3 * this._getCurrentTime() + this._beatInterval * t, this._isStarting = !0, this._update(), n
+    }, o.prototype.setupBiquad = function(t, e, i, n) {
+        void 0 === n && (n = null);
+        t = this._audioOneShots[t];
+        t && (t.initBiquad(n), t.filterBiquad.type = e, t.filterBiquad.frequency = i)
+    }, o.prototype.setupPitchShift = function(t, e, i) {
+        void 0 === i && (i = null);
+        t = this._audioOneShots[t];
+        t && (t.initPitchShift(i), t.filterPitchShift.shift = e)
+    }, o.prototype.addList = function(t, e) {
+        void 0 === e && (e = -1), this._idlist.push(t)
+    }, o.prototype.deleteList = function(t) {
+        this._idlist[t] && (this._idlist[t] = null)
+    }, o.prototype.playOneShot = function(t, e, i, n, o) {
+        if (void 0 === n && (n = 0), void 0 === o && (o = 0), t < 0) return -1;
+        var r = this.time,
+            e = this.beat + 1 + (e = void 0 === e ? 0 : e);
+        if (i = void 0 === i ? !0 : i) {
+            i = 1e3 * this._getCurrentTime();
+            if (0 < this.__shottimes[e])
+                if (i - this.__shottimes[e] < 2 * this._beatInterval) return -1;
+            this.__shottimes[e] = i
+        }
+        i = (e * this._beatInterval - r) / 1e3 + n, i < 0 && (i = 0), e = this._audioOneShots[t];
+        return e && e.play(this._volumeOneShots[t] * this._volume, i, 0, o, this._isOutput), i
+    }, o.prototype.stopOneShot = function(t, e) {
+        var i = this.beat;
+        if ((t = void 0 === t ? -1 : t) < (this.__shottimes[i + 1 + (e = void 0 === e ? 0 : e)] = 0))
+            for (var n = this._audioOneShots.length, o = 0; o < n; o++) this.stopOneShot(o, e);
+        else {
+            var r = this.time,
+                i = ((i + e) * this._beatInterval - r) / 1e3,
+                r = this._audioOneShots[t];
+            r && r.stop(0, i)
+        }
+    }, o.prototype._update = function() {
+        var t = this;
+        if (this._isStarting) {
+            var e = this.time,
+                i = this.beat;
+            if (this._isOutput) i != this._beat && this._updateBeat(i, e);
+            else {
+                var n = e / this.duration;
+                if (this._loopNum <= n) return this._callbackRecordingEnd && this._callbackRecordingEnd(), void this.stop();
+                i != this._beat && ((n = i % this._maxBeat) < 0 && (n = this._maxBeat + n), 0 < this._beatCounts[n] ? this._beatCounts[n]++ : this._beatCounts[n] = 1, this._beatCounts[n] <= Math.ceil(this._loopNum) ? this._updateBeat(i, e) : this._beat = i)
+            }
+            window.requestAnimationFrame(function() {
+                return t._update()
+            })
+        }
+    }, o.prototype._updateBeat = function(t, e) {
+        this._beat = t;
+        for (var i, n = 0, o = this._audioLoops.length, r = 0; r < o; r++) {
+            for (var a, s = this._audioLoops[r], u = this._loopParams[r], h = t % u.total, l = (h < 0 && (h = u.total + h), n < u.total && (n = u.total), u.start - 1), c = (l < 0 && (l = u.total - 1), !1), f = 0; f < 3; f++) h == (l = (l = u.start - f) < 0 ? u.total - f : l) && (c = !0, u.flag || (u.flag = !0, a = u.start - h, (a = ((t + (a = u.start < h ? u.start + u.total - h : a)) * this._beatInterval - e) / 1e3) < 0 && (a = 0), s.play(this._volumeLoops[r] * this._volume, a, 0, 0, this._isOutput)));
+            c || (u.flag = !1)
+        }
+        for (i in (h = t % n) < 0 && (h = n + h), this.__beats) this.__beats[i](h, this._beatInterval, n, t);
+        this._updateList(t, e)
+    }, o.prototype._updateList = function(t, e) {
+        for (var i = this._idlist.length, n = 0; n < i; n++) {
+            var o = this._idlist[n];
+            this._updateListOne(t, e, o)
+        }
+    }, o.prototype._updateListOne = function(t, e, i) {
+        var n = i.length,
+            t = 1 + t % n,
+            i = i[t = n <= t ? 0 : t];
+        this.playOneShot(i, 0, !1)
+    }, t.AudioManager = o, Object.defineProperty(a.prototype, "type", {
+        get: function() {
+            return this._filter.type
+        },
+        set: function(t) {
+            this._filter.type = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(a.prototype, "frequency", {
+        get: function() {
+            return this._filter.frequency.value
+        },
+        set: function(t) {
+            this._filter.frequency.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(a.prototype, "Q", {
+        get: function() {
+            return this._filter.Q.value
+        },
+        set: function(t) {
+            this._filter.Q.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var r = a;
+
+    function a(t) {
+        this._filter = t
+    }
+    Object.defineProperty(u.prototype, "rate", {
+        get: function() {
+            return this._filter.rate
+        },
+        set: function(t) {
+            this._filter.rate = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(u.prototype, "shift", {
+        set: function(t) {
+            this._filter.rate = 0 == t ? 1 : Math.pow(Math.pow(2, 1 / 12), t)
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var s = u;
+
+    function u(t) {
+        this._filter = t
+    }
+    l.prototype.getNode = function() {
+        return this._processor
+    }, l.prototype._onaudioprocess = function(t) {
+        for (var e = t.inputBuffer.getChannelData(0), i = t.outputBuffer.getChannelData(0), n = this._pshift(this.rate, e), o = 0; o < e.length; o++) i[o] = n[o]
+    }, l.prototype._pshift = function(t, e) {
+        var i = this._bufferSize;
+        this._fft.forward(e);
+        for (var n = 0; n < i; n++) this._a_real[n] = 0, this._a_imag[n] = 0;
+        for (n = 0; n < i; n++) {
+            var o = Math.floor(n * t),
+                r = i / 2 < n ? 0 : 1;
+            0 <= o && o < i && (this._a_real[o] += this._fft.real[n] * r, this._a_imag[o] += this._fft.imag[n] * r)
+        }
+        return this._fft.inverse(this._a_real, this._a_imag)
+    };
+    var h = l;
+
+    function l(t, e) {
+        void 0 === e && (e = 1024);
+        var i = this,
+            n = (this.rate = 1, t.createScriptProcessor(e, 1, 1));
+        n.onaudioprocess = function(t) {
+            return i._onaudioprocess(t)
+        }, this._context = t, this._bufferSize = e = n.bufferSize, this._processor = n, this._fft = new FFT(e, t.sampleRate), this._a_real = new Array(e), this._a_imag = new Array(e)
+    }
+})(aidnaudio = aidnaudio || {}), (t => {
+    o.checkEnableMediabunny = function() {
+        return !1
+    }, o.prototype.setup = function(t, e) {
+        this._canvas = t, this._destination = e
+    }, o.prototype.start = function() {
+        return __awaiter(this, arguments, void 0, function(t) {
+            var e, i, t = (void 0 === t ? {} : t).fps,
+                n = void 0 === t ? 30 : t;
+            return __generator(this, function(t) {
+                switch (t.label) {
+                    case 0:
+                        return this._nowframes = 0, this._fps = n, e = this._target = new Mediabunny.BufferTarget, e = this._output = new Mediabunny.Output({
+                            format: new Mediabunny.Mp4OutputFormat,
+                            target: e
+                        }), i = this._videoSource = new Mediabunny.CanvasSource(this._canvas, {
+                            codec: "avc",
+                            bitrate: Mediabunny.QUALITY_MEDIUM
+                        }), e.addVideoTrack(i), i = this._destination.stream.getAudioTracks()[0], i = this._audioSource = new Mediabunny.MediaStreamAudioTrackSource(i, {
+                            codec: "aac",
+                            bitrate: Mediabunny.QUALITY_MEDIUM
+                        }), e.addAudioTrack(i), [4, e.start()];
+                    case 1:
+                        return t.sent(), o.recording = !0, this._startTime = performance.now(), this._update(), [2]
+                }
+            })
+        })
+    }, o.prototype._update = function() {
+        return __awaiter(this, void 0, void 0, function() {
+            var e, i, n = this;
+            return __generator(this, function(t) {
+                switch (t.label) {
+                    case 0:
+                        if (!o.recording) return [2];
+                        if (e = performance.now() - this._startTime, !(1e3 / this._fps * this._nowframes <= e)) return [3, 4];
+                        t.label = 1;
+                    case 1:
+                        return t.trys.push([1, 3, , 4]), [4, this._videoSource.add(e / 1e3, 1 / this._fps)];
+                    case 2:
+                        return t.sent(), this._nowframes++, [3, 4];
+                    case 3:
+                        return i = t.sent(), console.error("Frame capture error:", i), [3, 4];
+                    case 4:
+                        return requestAnimationFrame(function() {
+                            return n._update()
+                        }), [2]
+                }
+            })
+        })
+    }, o.prototype.end = function() {
+        return __awaiter(this, void 0, void 0, function() {
+            return __generator(this, function(t) {
+                switch (t.label) {
+                    case 0:
+                        return o.recording ? (o.recording = !1, this._videoSource.close(), this._audioSource.close(), [4, this._output.finalize()]) : [2];
+                    case 1:
+                        return t.sent(), [2]
+                }
+            })
+        })
+    }, o.prototype.getBlob = function() {
+        var t = this._target.buffer;
+        return new Blob([t])
+    }, o.prototype.getMimeType = function() {
+        return "video/mp4"
+    }, o.recording = !1;
+    var e = o;
+
+    function o() {
+        this._fps = 30, this._startTime = 0, this._nowframes = 0;
+        $("head").append('<script type="module">import * as Mediabunny from "https://cdn.jsdelivr.net/npm/mediabunny@1.45/+esm";window.Mediabunny = Mediabunny;<\/script>')
+    }
+    u.checkEnableMuxer = function() {
+        return !aidn.util.checkiOS() && !aidn.util.checkSafari() && !!MediaRecorder.isTypeSupported("audio/mp4; codecs=mp4a.40.2")
+    }, u.prototype.setup = function(t, e) {
+        this._canvas = t, this._destination = e
+    }, u.prototype.start = function(t) {
+        this._fps = (t = void 0 === t ? 30 : t) <= 0 ? 30 : t, this._muxer = null, this._videoEncoder = null, this._audioEncoder = null, this._writableStream = null;
+        var e, t = this._destination.stream.getAudioTracks()[0],
+            i = t ? t.getSettings().sampleRate : 0,
+            n = t ? t.getSettings().channelCount : 0,
+            o = this._canvas,
+            r = Math.max(o.width, o.height),
+            a = Math.min(o.width, o.height),
+            r = r <= 1280 && a <= 720 ? "avc1.420020" : "avc1.42002a",
+            s = (console.log("sampleRate", i), console.log("channelCount", n), this._muxer = new Mp4Muxer.Muxer({
+                target: new Mp4Muxer.ArrayBufferTarget,
+                video: {
+                    codec: "avc",
+                    width: o.width,
+                    height: o.height,
+                    frameRate: this._fps
+                },
+                audio: t ? {
+                    codec: "aac",
+                    sampleRate: i,
+                    numberOfChannels: n
+                } : void 0,
+                fastStart: "in-memory",
+                firstTimestampBehavior: "offset"
+            }));
+        (this._videoEncoder = new VideoEncoder({
+            output: function(t, e) {
+                return s.addVideoChunk(t, e)
+            },
+            error: function(t) {
+                return console.error(t)
+            }
+        })).configure({
+            codec: r,
+            width: o.width,
+            height: o.height,
+            bitrate: this._bitrateVideo
+        }), t && ((e = this._audioEncoder = new AudioEncoder({
+            output: function(t, e) {
+                return s.addAudioChunk(t, e)
+            },
+            error: function(t) {
+                return console.error(t)
+            }
+        })).configure({
+            codec: "mp4a.40.2",
+            sampleRate: i,
+            numberOfChannels: n,
+            bitrate: this._bitrateAudio
+        }), a = new MediaStreamTrackProcessor({
+            track: t
+        }), r = this._writableStream = new WritableStream({
+            write: function(t) {
+                if (u.recording) try {
+                    e.encode(t), t.close()
+                } catch (t) {}
+            }
+        }), a.readable.pipeTo(r)), u.recording = !0, this._nowframes = 0, this._lastKeyframeTime = -1 / 0, this._startTime = performance.now(), this._update()
+    }, u.prototype._update = function() {
+        var t, e, i, n = this;
+        u.recording && (t = performance.now() - this._startTime, 1e3 / this._fps * this._nowframes <= t && (e = new VideoFrame(this._canvas, {
+            timestamp: 1e6 * this._nowframes / this._fps,
+            duration: 1e6 / this._fps
+        }), this._nowframes++, (i = 5e3 < t - this._lastKeyframeTime) && (this._lastKeyframeTime = t), this._videoEncoder.encode(e, {
+            keyFrame: i
+        }), e.close()), requestAnimationFrame(function() {
+            return n._update()
+        }))
+    }, u.prototype.end = function() {
+        return __awaiter(this, void 0, void 0, function() {
+            return __generator(this, function(t) {
+                switch (t.label) {
+                    case 0:
+                        u.recording = !1, t.label = 1;
+                    case 1:
+                        return t.trys.push([1, 5, , 6]), [4, this._videoEncoder.flush()];
+                    case 2:
+                        return (t.sent(), this._audioEncoder) ? [4, this._audioEncoder.flush()] : [3, 4];
+                    case 3:
+                        t.sent(), t.label = 4;
+                    case 4:
+                        return this._muxer.finalize(), [3, 6];
+                    case 5:
+                        return t.sent(), [3, 6];
+                    case 6:
+                        try {
+                            this._videoEncoder && this._videoEncoder.close(), this._audioEncoder && this._audioEncoder.close()
+                        } catch (t) {}
+                        t.label = 7;
+                    case 7:
+                        return (t.trys.push([7, 10, , 11]), this._writableStream) ? [4, this._writableStream.close()] : [3, 9];
+                    case 8:
+                        t.sent(), t.label = 9;
+                    case 9:
+                        return [3, 11];
+                    case 10:
+                        return t.sent(), [3, 11];
+                    case 11:
+                        return [2]
+                }
+            })
+        })
+    }, u.prototype.getBlob = function() {
+        var t = this._muxer.target.buffer;
+        return new Blob([t])
+    }, u.prototype.getMimeType = function() {
+        return "video/mp4"
+    }, u.recording = !1;
+    var i = u;
+
+    function u() {
+        this._fps = 30, this._bitrateVideo = 1e6, this._bitrateAudio = 128e3, this._nowframes = 0, this._startTime = 0, this._lastKeyframeTime = 0;
+        new aidnlib.ScriptLoaderCommand("https://cdn.jsdelivr.net/npm/mp4-muxer@5.2/build/mp4-muxer.min.js").execute()
+    }
+
+    function n() {
+        this._stopped = !1, this._useMuxer = !1, this._useMediabunny = !1, this._useMediabunny = e.checkEnableMediabunny(), this._useMediabunny ? this._mediabunnyMng = new e : (this._useMuxer = i.checkEnableMuxer(), this._useMuxer && (this._muxuerMng = new i))
+    }
+
+    function r() {
+        this._isCoreLoaded = !1, this._preloading = !1, this._intervalId = -1
+    }
+    Object.defineProperty(n, "isSupported", {
+        get: function() {
+            var t, e;
+            return 0 <= this.__supported ? 1 == this.__supported : (t = document.createElement("canvas"), e = "undefined" != typeof MediaRecorder && void 0 !== t.captureStream, this.__supported = e ? 1 : 0, t = null, e)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), n.prototype.init = function(t, e) {
+        if (this._audio) try {
+            if (this._audio.duration == e.duration) return
+        } catch (t) {}
+        this._canvas = t;
+        var t = "__nodeIndex",
+            i = "__oscillator";
+        if (void 0 !== e.play) {
+            this._audio = e;
+            var n = this._audio[t];
+            if (null != n && 0 <= n) {
+                this._audio.removeNode(n);
+                try {
+                    var o = this._audio[i];
+                    o.stop(), o.disconnect()
+                } catch (t) {}
+            }
+            this._destination = this._audio._context.createMediaStreamDestination(), this._audio[t] = this._audio.addNode(this._destination, !0)
+        } else this._audio = null, this._destination = e;
+        n = (this._audio ? this._audio._context : this._destination.context).createOscillator();
+        n.connect(this._destination), n.frequency.value = 0, n.frequency.setValueAtTime(0, 0), n.start(0), this._audio && (this._audio[i] = n), this._useMediabunny ? this._mediabunnyMng.setup(this._canvas, this._destination) : this._useMuxer && this._muxuerMng.setup(this._canvas, this._destination)
+    }, n.prototype.setOriginalVolume = function(t) {
+        void 0 === t && (t = 1), this._audio && (this._gain || (this._gain = this._audio._context.createGain(), this._audio.addNode(this._gain)), this._gain.gain.value = t = 1 < (t = t < 0 ? 0 : t) ? 1 : t)
+    }, n.prototype.setCanvas = function(t) {
+        this._canvas = t
+    }, n.prototype.start = function(t) {
+        var e = this,
+            i = (this._objectUrl && (window.URL.revokeObjectURL(this._objectUrl), this._objectUrl = null), this._outputBlob = null, this._blobs = [], this._stopped = !1, 30),
+            n = 1e3;
+        if (0 < t.fps && (i = t.fps), 0 < t.timeslice && (n = t.timeslice), -1 == t.fps && (i = -1), this._useMediabunny) this._mediabunnyMng.start({
+            fps: i
+        });
+        else if (this._useMuxer) this._muxuerMng.start(i);
+        else {
+            this._mediaStream = null, this._mediaRecorder = null;
+            var o, t = this._canvas,
+                t = i < 0 ? t.captureStream() : t.captureStream(i),
+                i = this._destination.stream,
+                r = this._mediaStream = new MediaStream,
+                a = ([t, i].forEach(function(t) {
+                    t.getTracks().forEach(function(t) {
+                        return r.addTrack(t)
+                    })
+                }), {}),
+                s = ["video/mp4", "video/webm"];
+            for (o in s) {
+                var u = s[o];
+                if (MediaRecorder.isTypeSupported(u)) {
+                    a = {
+                        mimeType: u
+                    };
+                    break
+                }
+            }
+            console.log("options:", a);
+            t = this._mediaRecorder = new MediaRecorder(r, a);
+            t.ondataavailable = function(t) {
+                return e._dataAvailable(t)
+            }, t.onstop = function(t) {
+                return e._stopRecording(t)
+            }, n <= 0 ? t.start() : t.start(n)
+        }
+    }, n.prototype.stop = function(t) {
+        var e = !1;
+        if (!(t = void 0 === t ? null : t)) {
+            if (e = !0, !this._useMediabunny && !this._useMuxer) {
+                this._mediaRecorder.ondataavailable = null, this._mediaRecorder.onstop = null;
+                for (var i = this._mediaStream.getTracks(), n = 0; n < i.length; n++) this._mediaStream.removeTrack(i[n])
+            }
+            this._outputBlob = null, this._blobs.length = 0
+        }
+        this._stopHandler = t, this._stop(e)
+    }, n.prototype.setObjectUrl = function(t) {
+        var e, i = (i = t.objUrl) || this.getObjectUrl();
+        t.videoId && (document.getElementById(t.videoId).src = i), t.linkId && (e = "record", t.filename && (e = t.filename), (t = document.getElementById(t.linkId)).setAttribute("download", e + "." + this.getExtension()), t.href = i)
+    }, n.prototype.getBlob = function() {
+        return this._outputBlob
+    }, n.prototype.getObjectUrl = function() {
+        return this._objectUrl || (this._objectUrl = URL.createObjectURL(this._outputBlob))
+    }, n.prototype.getMimeType = function() {
+        return this._mediabunnyMng ? this._mediabunnyMng.getMimeType() : this._useMuxer ? this._muxuerMng.getMimeType() : this._mediaRecorder ? this._mediaRecorder.mimeType : null
+    }, n.prototype.getExtension = function(t) {
+        var e, i = (t = void 0 === t ? !0 : t) ? "mp4" : "MP4";
+        return 0 < (e = this._useMediabunny ? this._mediabunnyMng.getMimeType() : this._useMuxer ? this._muxuerMng.getMimeType() : this._mediaRecorder.mimeType).indexOf("webm") && (i = t ? "webm" : "WebM"), i = 0 < e.indexOf("matroska") ? t ? "mkv" : "MKV" : i
+    }, n.prototype._stop = function(t) {
+        var e, i = this;
+        if (void 0 === t && (t = !1), !this._stopped) {
+            this._stopped = !0;
+            try {
+                this._useMediabunny ? (e = this._mediabunnyMng.end(), t || e.then(function() {
+                    return i._stopRecording(null)
+                })) : this._useMuxer ? (e = this._muxuerMng.end(), t || e.then(function() {
+                    return i._stopRecording(null)
+                })) : this._mediaRecorder.stop()
+            } catch (t) {}
+        }
+    }, n.prototype._dataAvailable = function(t) {
+        t.data && this._blobs.push(t.data)
+    }, n.prototype._stopRecording = function(t) {
+        var e;
+        this._useMediabunny ? this._outputBlob = this._mediabunnyMng.getBlob() : this._useMuxer ? this._outputBlob = this._muxuerMng.getBlob() : (e = this._mediaRecorder.mimeType, this._outputBlob = new Blob(this._blobs, {
+            type: e
+        })), this._stopHandler && this._stopHandler(this)
+    }, n.__supported = -1, t.RecorderManager = n, Object.defineProperty(r, "isSupported", {
+        get: function() {
+            if (0 <= this.__supported) return 1 == this.__supported;
+            this.__supported = 1;
+            var e = "undefined" != typeof SharedArrayBuffer;
+            if (e) try {
+                new WebAssembly.Memory({
+                    initial: 32752,
+                    maximum: 32752
+                });
+                this.__supported = 1
+            } catch (t) {
+                this.__supported = 0, e = !1
+            } else this.__supported = 0;
+            return e
+        },
+        enumerable: !1,
+        configurable: !0
+    }), r.prototype.start = function(i) {
+        return __awaiter(this, void 0, void 0, function() {
+            var e = this;
+            return __generator(this, function(t) {
+                return this._params = i, this._preloading ? (clearInterval(this._intervalId), this._intervalId = setInterval(function() {
+                    return e._checkStarting()
+                }, 100)) : (this._objectUrl && (window.URL.revokeObjectURL(this._objectUrl), this._objectUrl = null), this._outputBlob = null, this._filename = i.filename, this._blob = i.blob, this._duration = i.duration, this._progressHandler = i.progress, this._completeHandler = i.complete, this._errorHandler = i.error, this._targetExt = i.targetExt || "mp4", i.preloadComplete = function() {
+                    return e._scriptsLoadComplete()
+                }, this.preloadJS(i)), [2]
+            })
+        })
+    }, r.prototype._checkStarting = function() {
+        this._preloading || (clearInterval(this._intervalId), this.start(this._params))
+    }, r.prototype.preloadJS = function(t) {
+        var e, i = this;
+        this._preloading || (t = t || {}, this._preloading = !0, this._preloadCompleteHandler = t.preloadComplete, e = t.ffmpegVer || "0.11.6", this._ffmpegCoreVer = t.ffmpegCoreVer || "0.11.0", void 0 === window.FFmpeg ? ((t = new aidnlib.ScriptLoaderCommand("https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@" + e + "/dist/ffmpeg.min.js")).addEventListener(aidnlib.CommandEvent.COMPLETE, function() {
+            return i.__preloadScriptComplete()
+        }), t.execute()) : this.__preloadCore())
+    }, r.prototype.__preloadScriptComplete = function() {
+        this.__preloadCore()
+    }, r.prototype.__preloadCore = function() {
+        return __awaiter(this, void 0, void 0, function() {
+            var e, i = this;
+            return __generator(this, function(t) {
+                switch (t.label) {
+                    case 0:
+                        return e = this._ffmpeg || ((e = {
+                            log: !1,
+                            progress: function(t) {
+                                return i._ffmpegProgress(t)
+                            }
+                        }).corePath = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@" + this._ffmpegCoreVer + "/dist/ffmpeg-core.js", this._ffmpeg = window.FFmpeg.createFFmpeg(e)), this._isCoreLoaded ? [3, 2] : [4, e.load()];
+                    case 1:
+                        t.sent(), t.label = 2;
+                    case 2:
+                        return this._isCoreLoaded = !0, this._preloading = !1, this._preloadCompleteHandler && this._preloadCompleteHandler(), [2]
+                }
+            })
+        })
+    }, r.prototype.getBlob = function() {
+        return this._outputBlob
+    }, r.prototype.getObjectUrl = function() {
+        return this._objectUrl || (this._objectUrl = URL.createObjectURL(this._outputBlob))
+    }, r.prototype.getExtension = function() {
+        return this._targetExt
+    }, r.prototype._error = function(t) {
+        void 0 === t && (t = 0), this._errorHandler && this._errorHandler(t)
+    }, r.prototype._start = function() {
+        return __awaiter(this, void 0, void 0, function() {
+            var e, i, n, o;
+            return __generator(this, function(t) {
+                switch (t.label) {
+                    case 0:
+                        return e = this._ffmpeg, i = this._filename, [4, this._blob.arrayBuffer()];
+                    case 1:
+                        return o = t.sent(), n = this._targetExt, e.FS("writeFile", i, new Uint8Array(o)), [4, e.run("-i", i, "output." + n)];
+                    case 2:
+                        return t.sent(), o = e.FS("readFile", "output." + n), this._outputBlob = new Blob([o.buffer], {
+                            type: "video/" + n
+                        }), this._completeHandler && this._completeHandler(this), [2]
+                }
+            })
+        })
+    }, r.prototype._scriptsLoadComplete = function() {
+        var t = this;
+        this._start().catch(function() {
+            return t._error()
+        })
+    }, r.prototype._ffmpegProgress = function(t) {
+        var e;
+        0 <= t.ratio ? e = t.ratio : 0 <= t.time && (e = t.time / this._duration), !isNaN(e) && this._progressHandler && this._progressHandler(e)
+    }, r.__supported = -1, t.FFMpegManager = r
+})(recorder = recorder || {}), (o => {
+    var r, a, s = aidn.SceneManager,
+        u = aidnlib.Ref,
+        t = aidnlib.MainBase,
+        h = aidnlib.CommandEvent,
+        e = (o.rand = aidn.math.rand, o.randInt = aidn.math.randInt, o.toRad = aidn.math.toRad, o.toDeg = aidn.math.toDeg, (e = r = o.SceneId || (o.SceneId = {}))[e.LOADING = 0] = "LOADING", e[e.TOP = 1] = "TOP", e[e.MAIN = 2] = "MAIN", __extends(i, a = t), i.prototype.initialize = function() {
+            var e = this,
+                t = (0 < location.href.indexOf("aidn.jp") && 1 != aidn.util.getQuery().log && (console.log = function() {}), o.Context.main = this, (u.isMobile ? $(".pc") : $(".sp")).hide(), aidn.util.checkJapanese()),
+                i = parseInt(aidn.util.getCookie("lang")),
+                n = (0 == i ? t = !0 : 1 == i && (t = !1), this._changeLanguage(t), location.href.split("#")[0].split("?")[0]),
+                i = ($("#tw").on("click", function(t) {
+                    t.preventDefault();
+                    t = document.title + "\n" + n;
+                    aidn.social.shareTw(null, !0, t, "daniwell_aidn")
+                }), $("#fb").on("click", function(t) {
+                    t.preventDefault(), aidn.social.shareFb(n, !0)
+                }), this._scene = new s, this._scene.init([{
+                    id: r.LOADING,
+                    target: "#loading"
+                }, {
+                    id: r.TOP,
+                    target: "#top, .top"
+                }, {
+                    id: r.MAIN,
+                    target: "#main, .main"
+                }]), this._show(r.LOADING), this._initEvents(), a.prototype.initialize.call(this), new o.InitCommand);
+            i.addEventListener(h.PROGRESS, function(t) {
+                return e._initProgress(t)
+            }), i.addEventListener(h.COMPLETE, function(t) {
+                return e._initComplete(t)
+            }), i.execute()
+        }, i.prototype._initEvents = function() {
+            var e = this;
+            $("#language").on("click", function(t) {
+                return e._clickLanguage(t)
+            }), $("#bt_start").on("click", function(t) {
+                return e._clickStart(t)
+            }), $("#bt_about").on("click", function(t) {
+                return e._clickAbout(t)
+            }), $("#bt_close").on("click", function(t) {
+                return e._clickClose(t)
+            })
+        }, i.prototype._initProgress = function(t) {
+            t.progress
+        }, i.prototype._initComplete = function(t) {
+            console.log("init complete"), this._show(r.TOP), this._start()
+        }, i.prototype._show = function(t) {
+            return o.Context.sceneId != t && (o.Context.sceneId = t, this._scene.show(t), !0)
+        }, i.prototype._clickStart = function(t) {
+            t.preventDefault(), this._show(r.MAIN)
+        }, i.prototype._clickAbout = function(t) {
+            t.preventDefault(), $("#about").addClass("active"), aidn.window.scrollOn()
+        }, i.prototype._clickClose = function(t) {
+            t.preventDefault(), $("#about").removeClass("active"), aidn.window.scrollOff()
+        }, i.prototype._clickLanguage = function(t) {
+            t.preventDefault(), this._changeLanguage(!u.isJa)
+        }, i.prototype._visibility = function(t) {}, i.prototype._changeLanguage = function(t) {
+            u.isJa = t, $("html").attr("lang", ""), t ? ($(":lang(ja)").show(), $(":lang(en)").hide(), $("#language .jp").addClass("active"), $("#language .en").removeClass("active"), $("html").attr("lang", "ja")) : ($(":lang(ja)").hide(), $(":lang(en)").show(), $("#language .jp").removeClass("active"), $("#language .en").addClass("active"), $("html").attr("lang", "en")), aidn.util.setCookie("lang", t ? 0 : 1, 604800)
+        }, i);
+
+    function i() {
+        return null !== a && a.apply(this, arguments) || this
+    }
+    o.CustomMainBase = e
+})(app = app || {}), (t => {
+    var o, e = aidnlib.CommandBase,
+        r = aidnlib.Assets,
+        s = aidnlib.Ref,
+        i = (__extends(n, o = e), n.prototype.execute = function() {
+            var i = this;
+            window.JSZipUtils.getBinaryContent(this._url, function(t, e) {
+                i._zipComplete(t, e)
+            })
+        }, n.prototype._zipComplete = function(t, e) {
+            var i = this;
+            window.JSZipUtils.loadAsync(e).then(function(t) {
+                i._binayComplete(t)
+            })
+        }, n.prototype._binayComplete = function(t) {
+            var e, i = 0;
+            for (e in (this._zip = t).files) this._keys[i++] = e;
+            this._now = -1, this._len = i, this._next()
+        }, n.prototype._next = function() {
+            var e, i;
+            this._now++, this._now < this._len ? (this._dispatchProgress(this._now / this._len), i = (e = this)._keys[this._now], this._zip.file(i).async("arraybuffer").then(function(t) {
+                e._arrayComplete(t, i)
+            })) : this._dispatchComplete()
+        }, n.prototype._arrayComplete = function(t, e) {
+            var i, n, o = this;
+            0 < e.lastIndexOf(".vmd") && (t = (n = this._loader).parser.parseVmd(t, !0), this._vs.push(t), i = this._mesh, n = n.animationBuilder.build(t, i), r.add("Motion" + this._n, n), r.add(e, n), this._n++), setTimeout(function() {
+                return o._next()
+            }, 10)
+        }, n);
+
+    function n(t, e, i) {
+        var n = o.call(this) || this;
+        return n._keys = [], n._n = 0, n._vs = [], n._url = t, n._loader = e, n._mesh = i, n
+    }
+    t.ZipLoadCommand = i, __extends(u, a = e), u.prototype.execute = function() {
+        var e = this,
+            t = (this._loader || (this._loader = r.get("loader")), this._mesh || (this._mesh = r.get("mesh")), new XMLHttpRequest);
+        (this._xhr = t).open("GET", this._url, !0), t.responseType = "arraybuffer", t.onload = function(t) {
+            return e._loadComplete(t)
+        }, t.send()
+    }, u.prototype._loadComplete = function(t) {
+        var e = this._xhr.response,
+            i = this._loader,
+            e = i.parser.parseVmd(e, !0),
+            n = this._mesh,
+            i = i.animationBuilder.build(e, n);
+        r.add(this._key, i), this._dispatchComplete()
+    };
+    var a, i = u;
+
+    function u(t, e, i, n) {
+        void 0 === e && (e = "motion"), void 0 === i && (i = null), void 0 === n && (n = null);
+        var o = a.call(this) || this;
+        return o._url = t, o._loader = i, o._mesh = n, o._key = e, o
+    }
+    t.ThreeVmdLoadCommand = u, __extends(l, h = e), l.prototype.execute = function() {
+        var e = this,
+            t = new THREE.MMDLoader;
+        r.add("loader", t), r.add(this._pmdUrl + "_loader", t), t.load(this._pmdUrl, function(t) {
+            e._complete(t)
+        }, function(t) {
+            e._progress(t)
+        })
+    }, l.prototype._progress = function(t) {
+        t.lengthComputable && (t = t.loaded / t.total, this._dispatchProgress(t))
+    }, l.prototype._complete = function(t) {
+        r.add(this._key, t), r.add(this._pmdUrl, t), this._dispatchComplete()
+    };
+    var h, i = l;
+
+    function l(t, e) {
+        void 0 === e && (e = "mesh");
+        var i = h.call(this) || this;
+        return i._pmdUrl = t, i._key = e, i
+    }
+
+    function c(t, e) {
+        void 0 === e && (e = null), t = (t = void 0 === t ? null : t) || new THREE.Object3D, this._target = t, e ? (this._parent = e, this._parent.add(this._target)) : this._parent = t.parent
+    }
+    t.ThreePmdLoadCommand = l, c.prototype.setPosVec = function(t, e) {
+        return this.setPos(t.x, t.y, t.z, e = void 0 === e ? 1 : e), this
+    }, c.prototype.setPos = function(t, e, i, n) {
+        return 1 == (n = void 0 === n ? 1 : n) ? (this.x = t, this.y = e, this.z = i) : (this.x += (t - this.x) * n, this.y += (e - this.y) * n, this.z += (i - this.z) * n), this
+    }, c.prototype.setRot = function(t, e, i) {
+        return this.rotationX = t, this.rotationY = e, this.rotationZ = i, this
+    }, c.prototype.getPos = function() {
+        return this._target.position.clone()
+    }, c.prototype.getRot = function() {
+        return this._target.rotation
+    }, c.prototype.get2D = function(t, e) {
+        void 0 === e && (e = null);
+        var i = .5 * s.stw,
+            n = .5 * s.sth,
+            o = this._target.position.clone();
+        return e && o.add(e), o.project(t), o.x = Math.round((o.x + 1) * i), o.y = Math.round((1 - o.y) * n), new THREE.Vector2(o.x, o.y)
+    }, c.prototype.setQuaternion = function(t, e, i, n) {
+        1 < (n = (n = void 0 === n ? 1 : n) < 0 ? 0 : n) && (n = 1);
+        var o = new THREE.Quaternion;
+        return o.setFromEuler(new THREE.Euler(t, e, i, "XYZ")), this._target.quaternion.slerp(o, n), this
+    }, Object.defineProperty(c.prototype, "parent", {
+        get: function() {
+            return this._parent
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "target", {
+        get: function() {
+            return this._target
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "x", {
+        get: function() {
+            return this._target.position.x
+        },
+        set: function(t) {
+            this._target.position.x = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "y", {
+        get: function() {
+            return this._target.position.y
+        },
+        set: function(t) {
+            this._target.position.y = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "z", {
+        get: function() {
+            return this._target.position.z
+        },
+        set: function(t) {
+            this._target.position.z = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "rotationX", {
+        get: function() {
+            return this._target.rotation.x
+        },
+        set: function(t) {
+            this._target.rotation.x = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "rotationY", {
+        get: function() {
+            return this._target.rotation.y
+        },
+        set: function(t) {
+            this._target.rotation.y = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "rotationZ", {
+        get: function() {
+            return this._target.rotation.z
+        },
+        set: function(t) {
+            this._target.rotation.z = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "scale", {
+        get: function() {
+            return this._target.scale.x
+        },
+        set: function(t) {
+            t = this.__checkSc(t), this._target.scale.set(t, t, t)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "scaleX", {
+        get: function() {
+            return this._target.scale.x
+        },
+        set: function(t) {
+            t = this.__checkSc(t), this._target.scale.x = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "scaleY", {
+        get: function() {
+            return this._target.scale.y
+        },
+        set: function(t) {
+            t = this.__checkSc(t), this._target.scale.y = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "scaleZ", {
+        get: function() {
+            return this._target.scale.z
+        },
+        set: function(t) {
+            t = this.__checkSc(t), this._target.scale.z = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(c.prototype, "visible", {
+        get: function() {
+            return this._target.visible
+        },
+        set: function(t) {
+            this._target.visible = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), c.prototype.__checkSc = function(t) {
+        return t = 0 == t ? .001 : t
+    }, Object.defineProperty(c.prototype, "renderOrder", {
+        get: function() {
+            return this._target.renderOrder
+        },
+        set: function(t) {
+            this._target.renderOrder = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), e = c, t.ObjectBase = e, __extends(d, f = e);
+    var f, i = d;
+
+    function d() {
+        return null !== f && f.apply(this, arguments) || this
+    }
+    t.ThreeBase = d, Object.defineProperty(_.prototype, "bone", {
+        get: function() {
+            return this._bone
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "defRot", {
+        get: function() {
+            return this._defRot
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "defPos", {
+        get: function() {
+            return this._defPos
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "x", {
+        get: function() {
+            return this._bone.position.x
+        },
+        set: function(t) {
+            this._bone.position.x = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "y", {
+        get: function() {
+            return this._bone.position.y
+        },
+        set: function(t) {
+            this._bone.position.y = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "z", {
+        get: function() {
+            return this._bone.position.z
+        },
+        set: function(t) {
+            this._bone.position.z = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "rotationX", {
+        get: function() {
+            return this._bone.rotation.x
+        },
+        set: function(t) {
+            this._bone.rotation.x = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "rotationY", {
+        get: function() {
+            return this._bone.rotation.y
+        },
+        set: function(t) {
+            this._bone.rotation.y = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "rotationZ", {
+        get: function() {
+            return this._bone.rotation.z
+        },
+        set: function(t) {
+            this._bone.rotation.z = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "scale", {
+        get: function() {
+            return this._bone.scale.x
+        },
+        set: function(t) {
+            this._bone.scale.set(t, t, t)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), _.prototype.add = function() {
+        for (var t, e = [], i = 0; i < arguments.length; i++) e[i] = arguments[i];
+        (t = this._bone).add.apply(t, e)
+    }, _.prototype.setRot = function(t, e, i) {
+        return this._bone.rotation.set(t, e, i), this
+    }, _.prototype.setQuaternion = function(t, e, i, n) {
+        1 < (n = (n = void 0 === n ? 1 : n) < 0 ? 0 : n) && (n = 1);
+        t = (new THREE.Quaternion).setFromEuler(new THREE.Euler(t, e, i, "XYZ"));
+        return this._bone.quaternion.slerp(t, n), this
+    }, _.prototype.setQuaternionFromEuler = function(t, e) {
+        1 < (e = (e = void 0 === e ? 1 : e) < 0 ? 0 : e) && (e = 1);
+        t = (new THREE.Quaternion).setFromEuler(t);
+        return this._bone.quaternion.slerp(t, e), this
+    };
+    var p = _;
+
+    function _(t) {
+        this._bone = t, this._defRot = t.rotation.clone(), this._defPos = t.position.clone()
+    }
+    t.BoneManager = p, __extends(m, v = e), Object.defineProperty(m.prototype, "mesh", {
+        get: function() {
+            return this._mesh
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(m.prototype, "bones", {
+        get: function() {
+            return this._bones
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(m.prototype, "acs", {
+        get: function() {
+            return this._acs
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(m.prototype, "morphs", {
+        get: function() {
+            return this._mesh.morphTargetInfluences
+        },
+        enumerable: !1,
+        configurable: !0
+    }), m.prototype.logInfo = function() {
+        var t = this._mesh;
+        console.log("mesh.morphTargetDictionary:"), console.log(t.morphTargetDictionary), console.log("mesh.skeleton.bones:"), console.log(t.skeleton.bones)
+    }, m.prototype.initAnimation = function(t, e) {
+        void 0 === e && (e = -1);
+        var i = new THREE.MMDAnimationHelper({
+            sync: !1
+        });
+        i.enabled.physics = !1, this._helper = i, this._helper.add(this._mesh, {
+            animation: t,
+            physics: !1
+        });
+        i = this._helper.objects.get(this._helper.meshes[0]).mixer._actions;
+        return this._acs = i, this.playAnimationId(e), i
+    }, m.prototype.playAnimationId = function(t) {
+        void 0 === t && (t = -1);
+        for (var e = this._acs, i = 0; i < e.length; i++) e[i].weight = i == t ? 1 : 0
+    }, m.prototype.update = function() {
+        this._helper ? this._helper.update(s.delta) : this._ikSolver && this._ikSolver.update()
+    };
+    var v, i = m;
+
+    function m(t, e, i, n, o) {
+        void 0 === i && (i = !1), void 0 === n && (n = !0), void 0 === o && (o = !1);
+        for (var r = v.call(this, t, e) || this, a = ((r._mesh = t).geometry.userData && t.geometry.userData.MMD && n && (r._ikSolver = new THREE.CCDIKSolver(t, t.geometry.userData.MMD.iks)), r._bones = [], t.skeleton.bones.length), s = 0; s < a; s++) r._bones[s] = new p(t.skeleton.bones[s]);
+        for (var u = t.material, s = 0; s < u.length; s++) {
+            var h = u[s];
+            o && h.map && (h.map.encoding = THREE.sRGBEncoding), i && (h = {
+                map: h.map,
+                skinning: !0
+            }, (h = new THREE.MeshBasicMaterial(h)).userData.outlineParameters = [], t.material[s] = h, t.material[s].needsUpdate = !0)
+        }
+        return r
+    }
+    t.MMDManager = m, Object.defineProperty(g.prototype, "x", {
+        get: function() {
+            return this._position.getX(this._index)
+        },
+        set: function(t) {
+            this._position.setX(this._index, t)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(g.prototype, "y", {
+        get: function() {
+            return this._position.getY(this._index)
+        },
+        set: function(t) {
+            this._position.setY(this._index, t)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(g.prototype, "z", {
+        get: function() {
+            return this._position.getZ(this._index)
+        },
+        set: function(t) {
+            this._position.setZ(this._index, t)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(g.prototype, "w", {
+        get: function() {
+            return this._position.getW(this._index)
+        },
+        set: function(t) {
+            this._position.setW(this._index, t)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(g.prototype, "index", {
+        get: function() {
+            return this._index
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(g.prototype, "originalPosition", {
+        get: function() {
+            return this._originalPosition
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var L = g;
+
+    function g(t, e) {
+        void 0 === e && (e = 0), this._index = 0, this._position = t.attributes.position, this._index = e, this._originalPosition = new THREE.Vector3(this.x, this.y, this.z)
+    }
+    Object.defineProperty(y.prototype, "x", {
+        get: function() {
+            return this._vertices[0].x
+        },
+        set: function(t) {
+            for (var e = 0; e < this._total; e++) this._vertices[e].x = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "y", {
+        get: function() {
+            return this._vertices[0].y
+        },
+        set: function(t) {
+            for (var e = 0; e < this._total; e++) this._vertices[e].y = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "z", {
+        get: function() {
+            return this._vertices[0].z
+        },
+        set: function(t) {
+            for (var e = 0; e < this._total; e++) this._vertices[e].z = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "w", {
+        get: function() {
+            return this._vertices[0].w
+        },
+        set: function(t) {
+            for (var e = 0; e < this._total; e++) this._vertices[e].w = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "originalPosition", {
+        get: function() {
+            return this._vertices[0].originalPosition
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var U = y;
+
+    function y(t) {
+        this._total = 0, this._vertices = t, this._total = t.length
+    }
+    __extends(x, b = e), x.prototype.centerTrans = function(t, e, i) {
+        void 0 === t && (t = 0), void 0 === e && (e = 0), void 0 === i && (i = 0), this._geometry && (this._geometry.applyMatrix ? this._geometry.applyMatrix((new THREE.Matrix4).makeTranslation(t, e, i)) : this._geometry.applyMatrix4((new THREE.Matrix4).makeTranslation(t, e, i)))
+    }, x.prototype.updateTexture = function(t, e, i) {
+        void 0 === e && (e = !1), void 0 === i && (i = !1), this._map && i && this._map.dispose(), this._material.map = t, this._material.needsUpdate = !0, this._map = this._material.map, this._material.blending = e ? THREE.AdditiveBlending : THREE.NormalBlending
+    }, x.prototype.updateVertices = function() {
+        this._geometry && (this._geometry.attributes.position.needsUpdate = !0)
+    }, Object.defineProperty(x.prototype, "alpha", {
+        get: function() {
+            return this._material.opacity
+        },
+        set: function(t) {
+            this._material.opacity = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "mesh", {
+        get: function() {
+            return this._mesh
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "geometry", {
+        get: function() {
+            return this._geometry
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "material", {
+        get: function() {
+            return this._material
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "vertices", {
+        get: function() {
+            return this._vertices
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "indexedVertices", {
+        get: function() {
+            return this._indexedVertices
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "texture", {
+        get: function() {
+            return this._map
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "texOffsetX", {
+        get: function() {
+            return this._map.offset.x
+        },
+        set: function(t) {
+            this._map.offset.x = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "texOffsetY", {
+        get: function() {
+            return this._map.offset.y
+        },
+        set: function(t) {
+            this._map.offset.y = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "texRepeatX", {
+        get: function() {
+            return this._map.repeat.x
+        },
+        set: function(t) {
+            this._map.repeat.x = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "texRepeatY", {
+        get: function() {
+            return this._map.repeat.y
+        },
+        set: function(t) {
+            this._map.repeat.y = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "color", {
+        get: function() {
+            return this._color.getHex()
+        },
+        set: function(t) {
+            this._material.color.set(t)
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var b, i = x;
+
+    function x(t, e) {
+        var i = b.call(this, t, e = void 0 === e ? null : e) || this;
+        if (i._vertices = [], i._indexedVertices = [], t.geometry) try {
+            i._mesh = t
+        } catch (t) {}
+        if (t.geometry) {
+            i._geometry = t.geometry;
+            var n = {},
+                o = i._geometry.attributes.position.count;
+
+            function r(t) {
+                return Math.round(100 * t)
+            }
+            for (var a, s = 0; s < o; s++) {
+                var u = new L(i._geometry, s),
+                    h = [r((i._vertices[s] = u).x), r(u.y), r(u.z)].join("_");
+                n[h] || (n[h] = []), n[h].push(u)
+            }
+            for (a in n) i._indexedVertices.push(new U(n[a]))
+        }
+        return t.material && (i._material = t.material, i._map = i._material.map, i._color = i._material.color), i
+    }
+    t.PrimBase = i, __extends(S, w = i), Object.defineProperty(S.prototype, "sprite", {
+        get: function() {
+            return this._sprite
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(S.prototype, "material", {
+        get: function() {
+            return this._sprite.material
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(S.prototype, "rotation", {
+        get: function() {
+            return this._sprite.material.rotation
+        },
+        set: function(t) {
+            this._sprite.material.rotation = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var w, e = S;
+
+    function S(t, e) {
+        var i = this,
+            e = new THREE.Sprite(e);
+        return (i = w.call(this, e, t) || this)._sprite = e, i
+    }
+    t.PrimSprite = e, __extends(M, E = i), Object.defineProperty(M.prototype, "line", {
+        get: function() {
+            return this._line
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(M.prototype, "material", {
+        get: function() {
+            return this._line.material
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var E, e = M;
+
+    function M(t, e, i, n) {
+        void 0 === e && (e = null), void 0 === i && (i = -1), void 0 === n && (n = 1);
+        var o, r = this,
+            a = [],
+            t = (t.forEach(function(t) {
+                a.push(t)
+            }), (new THREE.BufferGeometry).setFromPoints(a));
+        return 0 <= i ? (i = new THREE.LineBasicMaterial({
+            color: i,
+            linewidth: n,
+            linecap: "square",
+            linejoin: "miter",
+            transparent: !0
+        }), o = new THREE.Line(t, i)) : (o = new THREE.Line(t)).visible = !1, (r = E.call(this, o, e) || this)._line = o, r
+    }
+    t.PrimLine = e, __extends(R, T = i);
+    var T, e = R;
+
+    function R(t, e, i, n, o, r) {
+        void 0 === i && (i = 1), void 0 === n && (n = 1), void 0 === o && (o = 1), void 0 === r && (r = 1);
+        var a = this,
+            i = new THREE.PlaneGeometry(i, n, o, r),
+            n = new THREE.Mesh(i, e);
+        return (a = T.call(this, n, t) || this)._mesh = n, a
+    }
+    t.PrimPlane = e, __extends(P, C = i);
+    var C, e = P;
+
+    function P(t, e, i, n, o, r, a, s) {
+        void 0 === r && (r = 1), void 0 === a && (a = 1), void 0 === s && (s = 1);
+        var u = this,
+            i = new THREE.BoxGeometry(i, n, o, r, a, s),
+            n = new THREE.Mesh(i, e);
+        return (u = C.call(this, n, t) || this)._mesh = n, u
+    }
+    t.PrimCube = e, __extends(I, O = i);
+    var O, e = I;
+
+    function I(t, e, i, n, o) {
+        void 0 === n && (n = 8), void 0 === o && (o = 6);
+        var r = this,
+            i = new THREE.SphereGeometry(i, n, o),
+            n = new THREE.Mesh(i, e);
+        return (r = O.call(this, n, t) || this)._mesh = n, r
+    }
+    t.PrimSphere = e, __extends(A, k = i);
+    var k, e = A;
+
+    function A(t, e, i, n, o, r, a, s) {
+        void 0 === r && (r = 8), void 0 === a && (a = 1), void 0 === s && (s = !1);
+        var u = this,
+            i = new THREE.CylinderGeometry(i, n, o, r, a, s),
+            n = new THREE.Mesh(i, e);
+        return (u = k.call(this, n, t) || this)._mesh = n, u
+    }
+    t.PrimCylinder = e, __extends(H, B = i);
+    var B, e = H;
+
+    function H(t, e, i, n, o, r) {
+        void 0 === o && (o = 8), void 0 === r && (r = 1);
+        var a = this,
+            i = new THREE.RingGeometry(i, n, o, r),
+            n = new THREE.Mesh(i, e);
+        return (a = B.call(this, n, t) || this)._mesh = n, a
+    }
+    t.PrimRing = e, __extends(F, z = i);
+    var z, e = F;
+
+    function F(t, e, i, n, o, r) {
+        void 0 === n && (n = 2), void 0 === o && (o = 8), void 0 === r && (r = 8);
+        var a = this,
+            i = new THREE.TorusGeometry(i, n, r, o),
+            n = new THREE.Mesh(i, e);
+        return (a = z.call(this, n, t) || this)._mesh = n, a
+    }
+
+    function j() {
+        this._velocity = {
+            x: 0,
+            y: 0,
+            z: 0
+        }, this._acceleration = {
+            x: 0,
+            y: 0,
+            z: 0
+        }, this._velocityRot = {
+            x: 0,
+            y: 0,
+            z: 0
+        }
+    }
+
+    function D() {}
+    t.PrimTorus = e, Object.defineProperty(j.prototype, "velocity", {
+        get: function() {
+            return this._velocity
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(j.prototype, "acceleration", {
+        get: function() {
+            return this._acceleration
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(j.prototype, "velocityRot", {
+        get: function() {
+            return this._velocityRot
+        },
+        enumerable: !1,
+        configurable: !0
+    }), j.prototype.initialize = function(t) {
+        return this._target = t, this._velocity = {
+            x: 0,
+            y: 0,
+            z: 0
+        }, this._acceleration = {
+            x: 0,
+            y: 0,
+            z: 0
+        }, this._velocityRot = {
+            x: 0,
+            y: 0,
+            z: 0
+        }, this
+    }, j.prototype.update = function() {
+        var t, e = s.delta;
+        for (t in this._velocity) this._target[t] += this._velocity[t] * e;
+        for (t in this._velocity) this._velocity[t] += this._acceleration[t] * e;
+        for (t in this._velocityRot) this._target["rotation" + t.toUpperCase()] += this._velocityRot[t] * e
+    }, t.MovementManager = j, D.from2Dto3D = function(t) {
+        var e = t.camera,
+            i = t.x,
+            n = t.y,
+            o = isNaN(t.z) ? 1 : t.z,
+            r = s.stw,
+            a = s.sth,
+            i = i / (r = 0 < t.width ? t.width : r) * 2 - 1,
+            r = -n / (a = 0 < t.height ? t.height : a) * 2 + 1,
+            n = new THREE.Vector3(0, 0, o),
+            t = (n.project(e), new THREE.Vector3(i, r, n.z));
+        return t.unproject(e), t
+    }, D.from3Dto2D = function(t) {
+        var e = s.stw,
+            i = s.sth,
+            e = .5 * (e = 0 < t.width ? t.width : e),
+            i = .5 * (i = 0 < t.height ? t.height : i),
+            n = new THREE.Vector3(t.pos.x, t.pos.y, t.pos.z);
+        return n.project(t.camera), n.x = Math.round((n.x + 1) * e), n.y = Math.round((1 - n.y) * i), {
+            x: n.x,
+            y: n.y
+        }
+    }, D.get3dArea = function(t, e) {
+        var i = this.from2Dto3D({
+                x: 0,
+                y: 0,
+                z: t,
+                camera: e
+            }),
+            e = this.from2Dto3D({
+                x: s.stw,
+                y: s.sth,
+                z: t,
+                camera: e
+            });
+        return {
+            minX: i.x,
+            minY: e.y,
+            maxX: e.x,
+            maxY: i.y,
+            width: e.x - i.x,
+            height: i.y - e.y,
+            z: t
+        }
+    }, D.getIntersectPoint = function(t, e, i, n) {
+        void 0 === n && (n = !1);
+        var o = new THREE.Vector2,
+            t = (o.x = t.x / s.stw * 2 - 1, o.y = 2 * -(t.y / s.sth) + 1, new THREE.Raycaster),
+            o = (t.setFromCamera(o, e), t.intersectObject(i));
+        return 0 < o.length ? (e = o[0], n ? i.parent.worldToLocal(e.point) : e.point) : null
+    }, t.ThreeUtil = D
+})(three = three || {}), (t => {
+    var e, i = aidnlib.Ref,
+        n = (Object.defineProperty(o.prototype, "pass", {
+            get: function() {
+                return this._pass
+            },
+            enumerable: !1,
+            configurable: !0
+        }), Object.defineProperty(o.prototype, "uniforms", {
+            get: function() {
+                return this._pass.uniforms
+            },
+            enumerable: !1,
+            configurable: !0
+        }), Object.defineProperty(o.prototype, "enabled", {
+            get: function() {
+                return this._pass.enabled
+            },
+            set: function(t) {
+                this._pass.enabled = t
+            },
+            enumerable: !1,
+            configurable: !0
+        }), o);
+
+    function o(t) {
+        this._pass = new THREE.ShaderPass(t), this._pass.enabled = !1
+    }
+
+    function r() {
+        return e.call(this, I.WipeShader) || this
+    }
+    t.EffectPassBase = n, __extends(r, e = n), Object.defineProperty(r.prototype, "color", {
+        get: function() {
+            return this.pass.uniforms.color.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(r.prototype, "progress", {
+        get: function() {
+            return this.pass.uniforms.progress.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(r.prototype, "target", {
+        get: function() {
+            return this.pass.uniforms.target.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(r.prototype, "opacity", {
+        get: function() {
+            return this.pass.uniforms.opacity.value
+        },
+        set: function(t) {
+            this.pass.uniforms.opacity.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), t.EffectWipePass = r, __extends(s, a = n), Object.defineProperty(s.prototype, "shiftR", {
+        get: function() {
+            return this.pass.uniforms.shiftR.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(s.prototype, "shiftG", {
+        get: function() {
+            return this.pass.uniforms.shiftG.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(s.prototype, "shiftB", {
+        get: function() {
+            return this.pass.uniforms.shiftB.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(s.prototype, "alphaTest", {
+        get: function() {
+            return this.pass.uniforms.alphaTest.value
+        },
+        set: function(t) {
+            this.pass.uniforms.alphaTest.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var a;
+
+    function s() {
+        return a.call(this, I.RGBShiftShader) || this
+    }
+    t.EffectRGBShiftPass = s, __extends(h, u = n), Object.defineProperty(h.prototype, "hue", {
+        get: function() {
+            return this.pass.uniforms.hue.value
+        },
+        set: function(t) {
+            this.pass.uniforms.hue.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var u;
+
+    function h() {
+        return u.call(this, I.HueShiftShader) || this
+    }
+    t.EffectHueShiftPass = h, __extends(c, l = n), Object.defineProperty(c.prototype, "blend", {
+        get: function() {
+            return this.pass.uniforms.blend.value
+        },
+        set: function(t) {
+            this.pass.uniforms.blend.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var l;
+
+    function c() {
+        return l.call(this, I.NegaposiShader) || this
+    }
+    t.EffectNegaposiPass = c, __extends(d, f = n);
+    var f;
+
+    function d() {
+        return f.call(this, I.MonochromeShader) || this
+    }
+    t.EffectMonochromePass = d, __extends(_, p = n), Object.defineProperty(_.prototype, "rx", {
+        get: function() {
+            return this.pass.uniforms.rx.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "ry", {
+        get: function() {
+            return this.pass.uniforms.ry.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "h", {
+        get: function() {
+            return this.pass.uniforms.h.value
+        },
+        set: function(t) {
+            this.pass.uniforms.h.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "v", {
+        get: function() {
+            return this.pass.uniforms.v.value
+        },
+        set: function(t) {
+            this.pass.uniforms.v.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "ratio", {
+        get: function() {
+            return this.pass.uniforms.ratio.value
+        },
+        set: function(t) {
+            this.pass.uniforms.ratio.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(_.prototype, "alphaTest", {
+        get: function() {
+            return this.pass.uniforms.alphaTest.value
+        },
+        set: function(t) {
+            this.pass.uniforms.alphaTest.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var p;
+
+    function _() {
+        return p.call(this, I.ParticleSpreadShader) || this
+    }
+    t.EffectParticleSpreadPass = _, __extends(m, v = n), Object.defineProperty(m.prototype, "resolution", {
+        get: function() {
+            return this.pass.uniforms.resolution.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(m.prototype, "pixelSize", {
+        get: function() {
+            return this.pass.uniforms.pixelSize.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(m.prototype, "normalSize", {
+        get: function() {
+            return this.pass.uniforms.normalSize.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(m.prototype, "normalRate", {
+        get: function() {
+            return this.pass.uniforms.normalRate.value
+        },
+        set: function(t) {
+            this.pass.uniforms.normalRate.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(m.prototype, "noiseColor", {
+        get: function() {
+            return this.pass.uniforms.noiseColor.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(m.prototype, "noiseSize", {
+        get: function() {
+            return this.pass.uniforms.noiseSize.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(m.prototype, "noiseRate", {
+        get: function() {
+            return this.pass.uniforms.noiseRate.value
+        },
+        set: function(t) {
+            this.pass.uniforms.noiseRate.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var v;
+
+    function m() {
+        return v.call(this, I.MosaicShader) || this
+    }
+    t.EffectMosaicPass = m, __extends(y, g = n), Object.defineProperty(y.prototype, "amtX", {
+        get: function() {
+            return this.pass.uniforms.amtX.value
+        },
+        set: function(t) {
+            this.pass.uniforms.amtX.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "amtY", {
+        get: function() {
+            return this.pass.uniforms.amtY.value
+        },
+        set: function(t) {
+            this.pass.uniforms.amtY.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "divX", {
+        get: function() {
+            return this.pass.uniforms.divX.value
+        },
+        set: function(t) {
+            this.pass.uniforms.divX.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "divY", {
+        get: function() {
+            return this.pass.uniforms.divY.value
+        },
+        set: function(t) {
+            this.pass.uniforms.divY.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "offX", {
+        get: function() {
+            return this.pass.uniforms.offX.value
+        },
+        set: function(t) {
+            this.pass.uniforms.offX.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "offY", {
+        get: function() {
+            return this.pass.uniforms.offY.value
+        },
+        set: function(t) {
+            this.pass.uniforms.offY.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "color", {
+        get: function() {
+            return this.pass.uniforms.color.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "opacity", {
+        get: function() {
+            return this.pass.uniforms.opacity.value
+        },
+        set: function(t) {
+            this.pass.uniforms.opacity.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(y.prototype, "alphaTest", {
+        get: function() {
+            return this.pass.uniforms.alphaTest.value
+        },
+        set: function(t) {
+            this.pass.uniforms.alphaTest.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var g;
+
+    function y() {
+        return g.call(this, I.SliceShader) || this
+    }
+    t.EffectSlicePass = y, __extends(x, b = n), Object.defineProperty(x.prototype, "size", {
+        get: function() {
+            return this.pass.uniforms.size.value
+        },
+        set: function(t) {
+            this.pass.uniforms.size.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "space", {
+        get: function() {
+            return this.pass.uniforms.space.value
+        },
+        set: function(t) {
+            this.pass.uniforms.space.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "baseColor", {
+        get: function() {
+            return this.pass.uniforms.baseColor.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(x.prototype, "resolution", {
+        get: function() {
+            return this.pass.uniforms.resolution.value
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var b;
+
+    function x() {
+        return b.call(this, I.DotShader) || this
+    }
+    t.EffectDotPass = x, __extends(S, w = n), Object.defineProperty(S.prototype, "threshold", {
+        get: function() {
+            return this.pass.uniforms.threshold.value
+        },
+        set: function(t) {
+            this.pass.uniforms.threshold.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(S.prototype, "k", {
+        get: function() {
+            return this.pass.uniforms.k.value
+        },
+        set: function(t) {
+            this.pass.uniforms.k.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(S.prototype, "seedX", {
+        get: function() {
+            return this.pass.uniforms.seedX.value
+        },
+        set: function(t) {
+            this.pass.uniforms.seedX.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(S.prototype, "seedY", {
+        get: function() {
+            return this.pass.uniforms.seedY.value
+        },
+        set: function(t) {
+            this.pass.uniforms.seedY.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(S.prototype, "opacity", {
+        get: function() {
+            return this.pass.uniforms.opacity.value
+        },
+        set: function(t) {
+            this.pass.uniforms.opacity.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(S.prototype, "alphaTest", {
+        get: function() {
+            return this.pass.uniforms.alphaTest.value
+        },
+        set: function(t) {
+            this.pass.uniforms.alphaTest.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var w;
+
+    function S() {
+        return w.call(this, I.GlitchShader) || this
+    }
+    t.EffectGlitchPass = S, __extends(M, E = n), Object.defineProperty(M.prototype, "uvoff", {
+        get: function() {
+            return this.pass.uniforms.uvoff.value
+        },
+        set: function(t) {
+            this.pass.uniforms.uvoff.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var E;
+
+    function M() {
+        return E.call(this, I.StretchShader) || this
+    }
+    t.EffectStretchPass = M, __extends(R, T = n), Object.defineProperty(R.prototype, "threshold", {
+        get: function() {
+            return this.pass.uniforms.threshold.value
+        },
+        set: function(t) {
+            this.pass.uniforms.threshold.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(R.prototype, "colW", {
+        get: function() {
+            return this.pass.uniforms.colW.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(R.prototype, "colB", {
+        get: function() {
+            return this.pass.uniforms.colB.value
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(R.prototype, "blend", {
+        get: function() {
+            return this.pass.uniforms.blend.value
+        },
+        set: function(t) {
+            this.pass.uniforms.blend.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var T;
+
+    function R() {
+        return T.call(this, I.BinarizationShader) || this
+    }
+    t.EffectBinarizationPass = R, __extends(P, C = n), Object.defineProperty(P.prototype, "h", {
+        get: function() {
+            return this.pass.uniforms.h.value
+        },
+        set: function(t) {
+            this.pass.uniforms.h.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(P.prototype, "v", {
+        get: function() {
+            return this.pass.uniforms.v.value
+        },
+        set: function(t) {
+            this.pass.uniforms.v.value = t
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var C;
+
+    function P() {
+        return C.call(this, I.BlurShader) || this
+    }
+
+    function O(t, e, i) {
+        this._passes = [], this._length = 0, this._comp = new THREE.EffectComposer(t), this._pass = new THREE.RenderPass(e, i), this._updatePassList()
+    }
+    t.EffectBlurPass = P, O.prototype.add = function(t) {
+        this._passes.push(t), this._length++
+    }, O.prototype._updatePassList = function() {
+        var t = [];
+        t.push(this._pass);
+        for (var e = 0; e < this._length; e++) {
+            var i = this._passes[e];
+            i && i.enabled && (i.pass.renderToScreen = !1, t.push(i.pass))
+        }
+        t[t.length - 1].renderToScreen = !0, this._comp.passes = t
+    }, O.prototype.update = function() {
+        this._updatePassList(), this._comp.render()
+    }, O.prototype.resize = function(t, e) {
+        t = 0 < (t = void 0 === t ? -1 : t) ? t : i.stw, e = 0 < (e = void 0 === e ? -1 : e) ? e : i.sth;
+        this._comp.renderer.setSize(t, e), this._comp.setSize(t, e), this._comp.render()
+    }, t.EffectManager = O, k.getShaderMaterial = function(t, e) {
+        var i = {};
+        for (a in t.uniforms)
+            for (var n in i[a] = {}, t.uniforms[a]) {
+                var o = t.uniforms[a][n];
+                o && o.clone && (o = o.clone()), i[a][n] = o
+            }
+        var r = {
+            uniforms: i,
+            vertexShader: t.vertexShader,
+            fragmentShader: t.fragmentShader
+        };
+        if (e)
+            for (var a in e) r[a] = e[a];
+        return new THREE.ShaderMaterial(r)
+    }, k.defaultVertexShader = "\n            varying vec2 vUv;\n\n            void main ()\n            {\n                vUv = uv;\n                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n            }\n        ", k.defaultFragmentShader = "\n            uniform sampler2D tDiffuse;\n            varying vec2 vUv;\n\n            void main ()\n            {\n                gl_FragColor = texture2D(tDiffuse, vUv);\n            }\n        ", k.WipeShader = {
+        uniforms: {
+            tDiffuse: {
+                type: "t",
+                value: null
+            },
+            target: {
+                type: "v3",
+                value: new THREE.Vector3(1, 1, 1)
+            },
+            progress: {
+                type: "v3",
+                value: new THREE.Vector3(0, 0, 0)
+            },
+            color: {
+                type: "v3",
+                value: new THREE.Vector3(1, 1, 0)
+            },
+            opacity: {
+                value: 1
+            }
+        },
+        vertexShader: "\n                varying vec2 vUv;\n        \n                uniform vec3 target;\n                uniform vec3 progress;\n        \n                void main ()\n                {\n                    vUv = uv;\n        \n                    vec3 pos = position;\n                    pos = position + (target - position) * progress;\n        \n                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);\n                }\n            ",
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n        \n                uniform vec3 color;\n                uniform float opacity;\n        \n                void main ()\n                {\n                    // gl_FragColor = vec4(color, opacity);\n                    \n                    gl_FragColor = texture2D(tDiffuse, vUv);\n                    // if (gl_FragColor.a < 0.9) discard;\n                }\n            "
+    }, k.RGBShiftShader = {
+        uniforms: {
+            tDiffuse: {
+                type: "t",
+                value: null
+            },
+            shiftR: {
+                type: "v2",
+                value: new THREE.Vector2(0, 0)
+            },
+            shiftG: {
+                type: "v2",
+                value: new THREE.Vector2(0, 0)
+            },
+            shiftB: {
+                type: "v2",
+                value: new THREE.Vector2(0, 0)
+            },
+            alphaTest: {
+                value: 0
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n                \n                uniform vec2 shiftR;\n                uniform vec2 shiftG;\n                uniform vec2 shiftB;\n                uniform float alphaTest;\n                \n                void main ()\n                {\n                    float r = texture2D(tDiffuse, vUv + shiftR).x;\n                    float g = texture2D(tDiffuse, vUv + shiftG).y;\n                    float b = texture2D(tDiffuse, vUv + shiftB).z;\n                    float a = 1.0;\n\n                    if (0.0 < alphaTest)\n                    {\n                        a = (texture2D(tDiffuse, vUv + shiftR).w + texture2D(tDiffuse, vUv + shiftG).w + texture2D(tDiffuse, vUv + shiftB).w) / 3.0;\n                        if (a < alphaTest) discard;\n                    }\n\n                    vec4 tex = vec4(r,g,b,a);\n                    gl_FragColor = tex;\n                }\n            "
+    }, k.HueShiftShader = {
+        uniforms: {
+            tDiffuse: {
+                type: "t",
+                value: null
+            },
+            hue: {
+                value: 0
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n\n                uniform float hue;\n                \n                vec3 hueShift(vec3 color, float hue)\n                {\n                    const vec3 k = vec3(0.57735, 0.57735, 0.57735);\n                    float cosAngle = cos(hue);\n                    return vec3(color * cosAngle + cross(k, color) * sin(hue) + k * dot(k, color) * (1.0 - cosAngle));\n                }\n                \n                void main ()\n                {\n                    vec4 v4  = texture2D(tDiffuse, vUv);\n                    vec3 col = hueShift(v4.xyz, hue);\n                    \n                    vec4 tex = vec4(col, v4.w);\n                    gl_FragColor = tex;\n\n                    // gl_FragColor = texture2D(tDiffuse, vUv);\n                }\n            "
+    }, k.NegaposiShader = {
+        uniforms: {
+            tDiffuse: {
+                type: "t",
+                value: null
+            },
+            blend: {
+                value: 0
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n\n                uniform float blend;\n                \n                vec3 negaPosi (vec3 color, float blend)\n                {\n                    return color + (1.0 - 2.0 * color) * (1.0 - blend);\n                }\n                void main ()\n                {\n                    vec4 v4 = texture2D(tDiffuse, vUv);\n                    gl_FragColor = vec4(negaPosi(v4.xyz, blend), v4.w);\n                }\n            "
+    }, k.MonochromeShader = {
+        uniforms: {
+            tDiffuse: {
+                type: "t",
+                value: null
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n\n                void main ()\n                {\n                    vec4 v4 = texture2D(tDiffuse, vUv);\n                    float gray = dot(v4.xyz, vec3(0.299, 0.587, 0.114));\n                    gl_FragColor = vec4(vec3(gray), v4.w);\n                }\n            "
+    }, k.ParticleSpreadShader = {
+        uniforms: {
+            tDiffuse: {
+                value: null
+            },
+            h: {
+                value: 0
+            },
+            v: {
+                value: 0
+            },
+            rx: {
+                type: "v2",
+                value: new THREE.Vector2(120, 120)
+            },
+            ry: {
+                type: "v2",
+                value: new THREE.Vector2(120, 120)
+            },
+            ratio: {
+                value: 1
+            },
+            alphaTest: {
+                value: 0
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n        \n                uniform float h;\n                uniform float v;\n                uniform float ratio;\n                uniform float alphaTest;\n                \n                uniform vec2 rx;\n                uniform vec2 ry;\n                \n        \n                float rand (vec2 co)\n                {\n                    float a = fract(dot(co, vec2(2.067390879775102, 12.451168662908249))) - 0.5;\n                    float s = a * (6.182785114200511 + a * a * (-38.026512460676566 + a * a * 53.392573080032137));\n                    float t = fract(s * 43758.5453);\n                    return t;\n                }\n        \n                void main ()\n                {\n                    vec4 v4 = texture2D(tDiffuse, \n                        vec2(\n                            vUv.x + (rand(vec2(floor(vUv.x * rx.x / ratio) * 12.345, floor(vUv.y * rx.y / ratio) * 12.345)) - 0.5) * 2.0 * h, \n                            vUv.y + (rand(vec2(floor(vUv.x * ry.x / ratio) * 23.211, floor(vUv.y * ry.y / ratio) * 23.211)) - 0.5) * 2.0 * v\n                        ));\n        \n                    gl_FragColor = v4;\n        \n                    // noise\n                    // if (rand(vec2(floor(vUv.x * rx.x / ratio) * 12.345 * h, floor(vUv.y * rx.y / ratio) * 12.345 * v)) < 0.01) gl_FragColor.xyz *= 0.7;\n        \n                    if (gl_FragColor.w < alphaTest) discard;\n                }\n            "
+    }, k.MosaicShader = {
+        uniforms: {
+            tDiffuse: {
+                value: null
+            },
+            resolution: {
+                type: "v2",
+                value: new THREE.Vector2(1280, 720)
+            },
+            pixelSize: {
+                type: "v2",
+                value: new THREE.Vector2(1, 1)
+            },
+            normalRate: {
+                value: 0
+            },
+            normalSize: {
+                type: "v2",
+                value: new THREE.Vector2(1, 1)
+            },
+            noiseRate: {
+                value: 0
+            },
+            noiseSize: {
+                type: "v2",
+                value: new THREE.Vector2(1, 1)
+            },
+            noiseColor: {
+                type: "v3",
+                value: new THREE.Vector3(0, 0, 0)
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying highp vec2 vUv;\n        \n                uniform vec2 resolution;\n                uniform vec2 pixelSize;\n                \n                uniform float noiseRate;\n                uniform vec2 noiseSize;\n                uniform vec3 noiseColor;\n                \n                uniform float normalRate;\n                uniform vec2 normalSize;\n        \n                float rand (vec2 co)\n                {\n                    float a = fract(dot(co, vec2(2.067390879775102, 12.451168662908249))) - 0.5;\n                    float s = a * (6.182785114200511 + a * a * (-38.026512460676566 + a * a * 53.392573080032137));\n                    float t = fract(s * 43758.5453);\n                    return t;\n                }\n        \n                void main ()\n                {\n                    vec2 dxy = pixelSize / resolution;\n                    vec2 coord = dxy * floor(vUv / dxy);\n        \n                    float r = rand(floor(vUv / (noiseSize / resolution)) + 0.123);\n                    if (r < noiseRate) {\n                        gl_FragColor = vec4(noiseColor, 1.0);\n                    } else {\n                        float r2 = rand(floor(vUv / (normalSize / resolution)) + 0.111);\n                        if (r2 < normalRate) {\n                            gl_FragColor = texture2D(tDiffuse, vUv);\n                        } else {\n                            gl_FragColor = texture2D(tDiffuse, coord);\n                        }\n                    }\n                }\n            "
+    }, k.SliceShader = {
+        uniforms: {
+            tDiffuse: {
+                value: null
+            },
+            amtX: {
+                value: 0
+            },
+            divX: {
+                value: 30
+            },
+            offX: {
+                value: 0
+            },
+            amtY: {
+                value: 0
+            },
+            divY: {
+                value: 30
+            },
+            offY: {
+                value: 0
+            },
+            opacity: {
+                value: 1
+            },
+            alphaTest: {
+                value: 0
+            },
+            color: {
+                type: "v3",
+                value: new THREE.Vector3(-1, -1, -1)
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n                \n                uniform float amtX;\n                uniform float divX;\n                uniform float offX;\n                uniform float amtY;\n                uniform float divY;\n                uniform float offY;\n        \n                uniform float opacity;\n                uniform float alphaTest;\n        \n                uniform vec3 color;\n        \n        \n                float rand (vec2 co)\n                {\n                    float a = fract(dot(co, vec2(2.067390879775102, 12.451168662908249))) - 0.5;\n                    float s = a * (6.182785114200511 + a * a * (-38.026512460676566 + a * a * 53.392573080032137));\n                    float t = fract(s * 43758.5453);\n                    return t;\n                }\n        \n                void main ()\n                {\n                    vec4 tex = texture2D(tDiffuse, \n                        vec2(\n                            vUv.x + rand(vec2(0, floor(vUv.y * divX) + offX)) * amtX - amtX * 0.5, \n                            vUv.y + rand(vec2(floor(vUv.x * divY) + offY, 0)) * amtY - amtY * 0.5\n                        ));\n        \n                    if (0.0 <= color.x)\n                        gl_FragColor = vec4(color, tex.w * opacity);\n                    else\n                        gl_FragColor = tex;\n                    \n                    gl_FragColor.a *= opacity;\n                    if (gl_FragColor.a < alphaTest) discard;\n                }\n            "
+    }, k.DotShader = {
+        uniforms: {
+            tDiffuse: {
+                value: null
+            },
+            space: {
+                value: 16
+            },
+            size: {
+                value: 10
+            },
+            resolution: {
+                type: "v2",
+                value: new THREE.Vector2(1280, 720)
+            },
+            baseColor: {
+                type: "v3",
+                value: new THREE.Vector3(0, 0, 0)
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n                \n                uniform float space;\n                uniform float size;\n                uniform vec2 resolution;\n                uniform vec3 baseColor;\n                \n                void main ()\n                {\n                    vec2 c = vec2(resolution/space);\n                    vec2 p = floor(vUv*c)/c;\n                    vec4 color = texture2D(tDiffuse, p);\n                    \n                    vec2 pos = mod(gl_FragCoord.xy, vec2(space)) - vec2(space/2.0);\n                    gl_FragColor = mix(color, vec4(baseColor, gl_FragColor.w), smoothstep(size, size, dot(pos, pos)));\n                }\n            "
+    }, k.GlitchShader = {
+        uniforms: {
+            tDiffuse: {
+                value: null
+            },
+            threshold: {
+                value: .8
+            },
+            k: {
+                value: 64
+            },
+            seedX: {
+                value: 0
+            },
+            seedY: {
+                value: 0
+            },
+            opacity: {
+                value: 1
+            },
+            alphaTest: {
+                value: 0
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n        \n                uniform float threshold;\n                uniform float k;\n        \n                uniform float opacity;\n                uniform float alphaTest;\n                \n                uniform float seedX;\n                uniform float seedY;\n        \n        \n                float rand (vec2 co)\n                {\n                    float a = fract(dot(co, vec2(2.067390879775102, 12.451168662908249))) - 0.5;\n                    float s = a * (6.182785114200511 + a * a * (-38.026512460676566 + a * a * 53.392573080032137));\n                    float t = fract(s * 43758.5453);\n                    return t;\n                }\n                void main ()\n                {\n                    gl_FragColor = texture2D(tDiffuse, vUv);\n        \n                    // 0 < alpha の部分のみ対象\n                    if (0.0 <= gl_FragColor.w)\n                    {\n                        // if (rand(floor(gl_FragCoord.xy / 40.0)) < 0.8) {\n                        // gl_FragColor = texture2D(tDiffuse, vUv * rand(vec2(floor(gl_FragCoord.x / 30.0), floor(gl_FragCoord.z / 25.0))));\n        \n                        if (rand(floor(vUv.xy * k + seedX + seedY)) < threshold) {\n                            float r1 = rand(vec2(floor(vUv.x * k / 13.0 + seedX), floor(vUv.y * k / 5.0 + seedY)));\n                            float r2 = rand(vec2(floor(vUv.x * k /  9.0 + seedX * 1.23), floor(vUv.y * k / 6.0 + seedY * 1.11)));\n\n                            // float r1 = rand(vec2(floor(vUv.x * 5.0 + seedX), floor(vUv.y * 13.0 + seedY)));\n                            // float r2 = rand(vec2(floor(vUv.x * 7.0 + seedX * 1.23), floor(vUv.y * 11.0 + seedY * 1.11)));\n                            // gl_FragColor = texture2D(tDiffuse, vUv * r);\n        \n                            r1 = (r1 * 2.0) - 1.0;\n                            r2 = (r2 * 2.0) - 1.0;\n                            gl_FragColor = texture2D(tDiffuse, vUv + vec2(r1, r2));\n        \n                        } else {\n                            gl_FragColor = texture2D(tDiffuse, vUv);\n                        }\n                    }\n                    if (gl_FragColor.w < alphaTest) gl_FragColor.w = 0.0; // discard;\n                    gl_FragColor.w *= opacity;\n                }\n            "
+    }, k.StretchShader = {
+        uniforms: {
+            tDiffuse: {
+                value: null
+            },
+            uvoff: {
+                type: "v2",
+                value: new THREE.Vector2(0, 0)
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n        \n                uniform vec2 uvoff;\n        \n                void main ()\n                {\n                    vec2 u = vUv;\n                    vec2 uvabs = abs(uvoff);\n        \n                    if (0.0 <= uvoff.x && u.x <= uvabs.x)\n                        u.x = uvabs.x;\n                    else if (uvoff.x < 0.0 && 1.0 - uvabs.x <= u.x)\n                        u.x = 1.0 - uvabs.x;\n\n                    if (0.0 <= uvoff.y && u.y <= uvabs.y)\n                        u.y = uvabs.y;\n                    else if (uvoff.y < 0.0 && 1.0 - uvabs.y <= u.y)\n                        u.y = 1.0 - uvabs.y;\n                    \n                    gl_FragColor = texture2D(tDiffuse, u);\n                }\n            "
+    }, k.BinarizationShader = {
+        uniforms: {
+            tDiffuse: {
+                value: null
+            },
+            threshold: {
+                value: .53333
+            },
+            blend: {
+                value: 0
+            },
+            colB: {
+                type: "v3",
+                value: new THREE.Vector3(0, 0, 0)
+            },
+            colW: {
+                type: "v3",
+                value: new THREE.Vector3(1, 1, 1)
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                #define R_LUMINANCE 0.298912\n                #define G_LUMINANCE 0.586611\n                #define B_LUMINANCE 0.114478\n                \n                uniform sampler2D tDiffuse;\n                varying vec2 vUv;\n        \n                uniform float threshold;\n                uniform float blend;\n                uniform vec3 colB;\n                uniform vec3 colW;\n        \n                void main() {\n                    vec4 color = texture2D(tDiffuse, vUv);\n                    float v = color.x * R_LUMINANCE + color.y * G_LUMINANCE + color.z * B_LUMINANCE;\n                    \n                    // vec3 v3 = mix(colW, colB, step(v, threshold));\n                    vec3 v3;\n                    if (v >= threshold)\n                        v3 = colW;\n                    else\n                        v3 = colB;\n                    \n                    gl_FragColor = vec4(v3, 1.0) * (1.0 - blend) + texture2D( tDiffuse, vUv ) * blend;\n                }\n            "
+    }, k.BlurShader = {
+        uniforms: {
+            tDiffuse: {
+                value: null
+            },
+            h: {
+                value: 1 / 512
+            },
+            v: {
+                value: 1 / 512
+            }
+        },
+        vertexShader: k.defaultVertexShader,
+        fragmentShader: "\n                uniform sampler2D tDiffuse;\n                uniform float h;\n                uniform float v;\n        \n                varying vec2 vUv;\n        \n                void main() {\n        \n                    vec4 sum = vec4( 0.0 );\n        \n                    sum += texture2D( tDiffuse, vec2( vUv.x - 4.0 * h, vUv.y - 4.0 * v ) ) * 0.051;\n                    sum += texture2D( tDiffuse, vec2( vUv.x - 3.0 * h, vUv.y - 3.0 * v ) ) * 0.0918;\n                    sum += texture2D( tDiffuse, vec2( vUv.x - 2.0 * h, vUv.y - 2.0 * v ) ) * 0.12245;\n                    sum += texture2D( tDiffuse, vec2( vUv.x - 1.0 * h, vUv.y - 1.0 * v ) ) * 0.1531;\n                    sum += texture2D( tDiffuse, vec2( vUv.x, vUv.y ) ) * 0.1633;\n                    sum += texture2D( tDiffuse, vec2( vUv.x + 1.0 * h, vUv.y + 1.0 * v ) ) * 0.1531;\n                    sum += texture2D( tDiffuse, vec2( vUv.x + 2.0 * h, vUv.y + 2.0 * v ) ) * 0.12245;\n                    sum += texture2D( tDiffuse, vec2( vUv.x + 3.0 * h, vUv.y + 3.0 * v ) ) * 0.0918;\n                    sum += texture2D( tDiffuse, vec2( vUv.x + 4.0 * h, vUv.y + 4.0 * v ) ) * 0.051;\n        \n                    gl_FragColor = sum;\n                }\n            "
+    };
+    var I = k;
+
+    function k() {}
+    t.Shaders = I
+})(three = three || {}), (t => {
+    var S = aidnlib.Assets,
+        E = aidnlib.Ref,
+        f = aidnlib.Rand,
+        h = color.ColorUtil;
+
+    function e() {}
+    e._initCanvas = function(t, e) {
+        void 0 === t && (t = 512), void 0 === e && (e = -1), this._can || (this._can = document.createElement("canvas"), this._ctx = this._can.getContext("2d", {
+            willReadFrequently: !0
+        })), 0 < e ? (this._can.width = t, this._can.height = e) : this._can.width = this._can.height = t, this._ctx.globalCompositeOperation = "source-over", this._ctx.clearRect(0, 0, this._can.width, this._can.height)
+    }, e._showCanvas = function() {
+        document.getElementById("canvasForTexture") || (this._initCanvas(), document.body.appendChild(this._can), this._can.id = "canvasForTexture", this._can.style.position = "fixed", this._can.style.top = "0", this._can.style.left = "0", this._can.style.backgroundColor = "#00000055", this._can.style.zIndex = "1000")
+    }, e.getText = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.tx,
+            e = void 0 === e ? "あ" : e,
+            i = t.font,
+            i = void 0 === i ? "sans-serif" : i,
+            n = t.fontWeight,
+            n = void 0 === n ? 0 : n,
+            o = t.fontSize,
+            o = void 0 === o ? -1 : o,
+            r = t.bgCol,
+            r = void 0 === r ? -1 : r,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var a = ["text", e, i, r].join("_");
+            if (S.get(a)) return S.get(a)
+        }
+        var s = E.isMobile ? this.SIZE_TEXT_MOBILE : this.SIZE_TEXT,
+            n = (this._initCanvas(s), o <= 0 && (o = Math.floor(.93 * s), o *= 1 / Math.max(1, .95 * e.length)), 0 < n ? n + " " : ""),
+            u = this._ctx,
+            r = (this._can.style.fontWeight = "normal", 0 <= r && (u.fillStyle = h.colToHex(r), u.fillRect(0, 0, s, s)), u.textAlign = "center", u.fillStyle = "#ffffff", u.font = n + o + "px " + i, u.fillText(e, s / 2, s / 2 + .37 * o), new THREE.Texture(u.getImageData(0, 0, s, s)));
+        return r.needsUpdate = !0, t && S.add(a, r), r
+    }, e.getTextAdv = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.tx,
+            i = void 0 === e ? "あ" : e,
+            e = t.font,
+            n = void 0 === e ? "sans-serif" : e,
+            e = t.fontWeight,
+            e = void 0 === e ? 0 : e,
+            o = t.spacing,
+            r = void 0 === o ? 0 : o,
+            o = t.fixFontSize,
+            a = void 0 === o ? -1 : o,
+            o = t.margin,
+            s = void 0 === o ? 0 : o,
+            o = t.textureSize,
+            o = void 0 === o ? -1 : o,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var u = ["textadv", i, n, s].join("_");
+            if (S.get(u)) return S.get(u)
+        }
+        var h = 0 < o ? o : E.isMobile ? this.SIZE_TEXT_MOBILE : this.SIZE_TEXT,
+            l = (this._initCanvas(h), Math.floor(.93 * (h - 2 * s))),
+            c = (l *= 1 / Math.max(1, i.length), 0 < a && (l = a), 0 < e ? e + " " : ""),
+            f = this._ctx,
+            d = (f.textAlign = "left", f.textBaseline = "middle", !(f.fillStyle = "#ffffff")),
+            p = 0,
+            _ = .05;
+        switch (n) {
+            case "Hachi Maru Pop":
+                _ = .065;
+                break;
+            case "Dela Gothic One":
+                _ = -.03;
+                break;
+            case "Reggae One":
+                _ = -.01
+        }
+        for (;;) {
+            for (var v = .01 * r * l, m = (f.font = c + l + "px " + n, i.length), g = 0, y = 0, b = 0; b < m; b++) {
+                var x = i.charAt(b),
+                    w = f.measureText(x),
+                    y = Math.max(1.2 * (w.actualBoundingBoxAscent + w.actualBoundingBoxDescent), y);
+                d && f.fillText(x, g + p, h / 2 - l * _), g += w.width + v
+            }
+            if (g -= v, d) break;
+            g < h - 2 * s && y < h - 2 * s && l < 600 && a < 0 ? l += 3 : (l -= 3, p = (h - g) / 2, d = !0)
+        }
+        o = f.getImageData(0, 0, h, h), e = new THREE.Texture(o);
+        return e.needsUpdate = !0, t && S.add(u, e), e
+    }, e.getLineForCylinder = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.thickRate,
+            e = void 0 === e ? .1 : e,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var i = ["tx", "linecy", e].join("_");
+            if (S.get(i)) return S.get(i)
+        }
+        var n = this.SIZE,
+            o = (this._initCanvas(n), this._ctx),
+            e = n * e,
+            o = (o.beginPath(), o.fillStyle = "#fff", o.fillRect(0, 0, n, e), o.fillRect(0, n - e, n, e), new THREE.Texture(this._ctx.getImageData(0, 0, n, n)));
+        return o.needsUpdate = !0, t && S.add(i, o), o
+    }, e.getStar = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.vertex,
+            e = void 0 === e ? 5 : e,
+            i = t.outer,
+            i = void 0 === i ? 1 : i,
+            n = t.inner,
+            n = void 0 === n ? .5 : n,
+            o = t.start,
+            o = void 0 === o ? 0 : o,
+            r = t.end,
+            r = void 0 === r ? 1 : r,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var a = ["tx", "star", e, i, n, o, r].join("_");
+            if (S.get(a)) return S.get(a)
+        }
+        var s = this.SIZE,
+            l = (this._initCanvas(s), this._ctx),
+            u = .5 * s;
+
+        function h(t, e, i, n, o) {
+            var r, a, s = Math.PI / i,
+                u = Math.PI / 2 * 3;
+            l.beginPath(), l.moveTo(t, e - n);
+            for (var h = 0; h < i; h++) r = t - Math.cos(u) * n, a = e + Math.sin(u) * n, l.lineTo(r, a), u += s, r = t - Math.cos(u) * o, a = e + Math.sin(u) * o, l.lineTo(r, a), u += s;
+            l.lineTo(t, e - n), l.closePath(), l.fillStyle = "#fff", l.fill()
+        }
+        h(u, u, e, u * i * r, u * n * r), l.globalCompositeOperation = "destination-out", h(u, u, e, u * i * o, u * n * o), l.globalCompositeOperation = "source-over";
+        r = new THREE.Texture(this._ctx.getImageData(0, 0, s, s));
+        return r.needsUpdate = !0, t && S.add(a, r), r
+    }, e.getDiamond = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.start,
+            e = void 0 === e ? 0 : e,
+            i = t.end,
+            i = void 0 === i ? 1 : i,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var n = ["tx", "diamond", e, i].join("_");
+            if (S.get(n)) return S.get(n)
+        }
+        var o = this.SIZE,
+            r = (this._initCanvas(o), this._ctx),
+            a = .5 * o;
+
+        function s(t, e, i, n) {
+            r.save(), r.beginPath(), r.moveTo(t, e - n / 2), r.quadraticCurveTo(t + i / 2 * .2, e - n / 2 * .2, t + i / 2, e), r.quadraticCurveTo(t + i / 2 * .2, e + n / 2 * .2, t, e + n / 2), r.quadraticCurveTo(t - i / 2 * .2, e + n / 2 * .2, t - i / 2, e), r.quadraticCurveTo(t - i / 2 * .2, e - n / 2 * .2, t, e - n / 2), r.closePath(), r.restore(), r.fillStyle = "#fff", r.fill()
+        }
+        s(a, a, o * i, o * i), r.globalCompositeOperation = "destination-out", s(a, a, o * e, o * e), r.globalCompositeOperation = "source-over";
+        i = new THREE.Texture(this._ctx.getImageData(0, 0, o, o));
+        return i.needsUpdate = !0, t && S.add(n, i), i
+    }, e.getRoundSquare = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.start,
+            e = void 0 === e ? 0 : e,
+            i = t.end,
+            i = void 0 === i ? 1 : i,
+            n = t.radiusRate,
+            n = void 0 === n ? .25 : n,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var o = ["tx", "roundsq", e, i].join("_");
+            if (S.get(o)) return S.get(o)
+        }
+        var r = this.SIZE,
+            a = (this._initCanvas(r), this._ctx);
+
+        function s(t, e, i, n, o) {
+            a.beginPath(), a.fillStyle = "#fff", a.moveTo(t + o, e), a.lineTo(t + i - o, e), a.quadraticCurveTo(t + i, e, t + i, e + o), a.lineTo(t + i, e + n - o), a.quadraticCurveTo(t + i, e + n, t + i - o, e + n), a.lineTo(t + o, e + n), a.quadraticCurveTo(t, e + n, t, e + n - o), a.lineTo(t, e + o), a.quadraticCurveTo(t, e, t + o, e), a.closePath(), a.fill()
+        }
+        s(0, 0, r * i, r * i, i = r * n), a.globalCompositeOperation = "destination-out";
+        n = r * (1 - e) * .5, i = Math.min(r * e * .5, i), 0 < e && s(n, n, r * e, r * e, i), a.globalCompositeOperation = "source-over", n = new THREE.Texture(this._ctx.getImageData(0, 0, r, r));
+        return n.needsUpdate = !0, t && S.add(o, n), n
+    }, e.getCircle = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.thickRate,
+            e = void 0 === e ? .1 : e,
+            i = t.start,
+            i = void 0 === i ? 0 : i,
+            n = t.end,
+            n = void 0 === n ? 1 : n,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var o = ["tx", "circle", e, i, n].join("_");
+            if (S.get(o)) return S.get(o)
+        }
+        var r = this.SIZE,
+            a = (this._initCanvas(r), this._ctx),
+            s = .5 * r,
+            e = e * s,
+            u = s - .5 * e,
+            e = (a.beginPath(), a.strokeStyle = "#fff", a.lineWidth = e, a.arc(s, s, u, i * Math.PI * 2, n * Math.PI * 2), a.stroke(), new THREE.Texture(this._ctx.getImageData(0, 0, r, r)));
+        return e.needsUpdate = !0, t && S.add(o, e), e
+    }, e.getCircleFill = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.scale,
+            e = void 0 === e ? 1 : e,
+            i = t.start,
+            i = void 0 === i ? 0 : i,
+            n = t.end,
+            n = void 0 === n ? 1 : n,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var o = ["tx", "circlefill", e, i, n].join("_");
+            if (S.get(o)) return S.get(o)
+        }
+        var r = this.SIZE,
+            a = (this._initCanvas(r), this._ctx),
+            s = .5 * r,
+            u = s * e;
+
+        function h(t) {
+            a.beginPath(), a.fillStyle = "#fff", a.arc(s, s, u * t, 0, 2 * Math.PI), a.fill()
+        }
+        h(n), a.globalCompositeOperation = "destination-out", h(i), a.globalCompositeOperation = "source-over";
+        e = new THREE.Texture(this._ctx.getImageData(0, 0, r, r));
+        return e.needsUpdate = !0, t && S.add(o, e), e
+    }, e.getPolygon = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.vertex,
+            i = void 0 === e ? 3 : e,
+            e = t.thickRate,
+            e = void 0 === e ? .1 : e,
+            n = t.start,
+            o = void 0 === n ? 0 : n,
+            n = t.end,
+            r = void 0 === n ? 1 : n,
+            n = t.cache,
+            t = void 0 === n || n;
+        if (t) {
+            var a = ["tx", "polycon", i, e, o, r].join("_");
+            if (S.get(a)) return S.get(a)
+        }
+        for (var n = this.SIZE, s = (this._initCanvas(n), i = Math.round(i), this._ctx), u = .5 * n, e = e * u, h = 2 * Math.PI / i, l = u - e / (2 * Math.sin(h / 2)), h = (s.beginPath(), s.strokeStyle = "#fff", s.lineWidth = e, s.lineJoin = "miter", 0 == o && 1 == r), c = aidn.math.toRad(360 / i), f = 1 / i, d = Math.cos(0) * l + u, p = Math.sin(0) * l + u, _ = 1; _ <= i && o != r; _++) {
+            var v = Math.cos(c * _) * l + u,
+                m = Math.sin(c * _) * l + u;
+            if (o < f) {
+                if (0 <= o && s.moveTo((v - d) * (g = o / f) + d, (m - p) * g + p), !(f <= r)) {
+                    var g = r / f;
+                    s.lineTo((v - d) * g + d, (m - p) * g + p);
+                    break
+                }
+                s.lineTo(v, m)
+            }
+            d = v, p = m, o -= f, r -= f
+        }
+        h && s.closePath(), s.stroke();
+        e = new THREE.Texture(this._ctx.getImageData(0, 0, n, n));
+        return e.needsUpdate = !0, t && S.add(a, e), e
+    }, e.getPolygonFill = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.vertex,
+            s = void 0 === e ? 3 : e,
+            e = t.scale,
+            u = void 0 === e ? 1 : e,
+            e = t.start,
+            e = void 0 === e ? 0 : e,
+            i = t.end,
+            i = void 0 === i ? 1 : i,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var n = ["tx", "polygonfill", s, u, e, i].join("_");
+            if (S.get(n)) return S.get(n)
+        }
+        var o = this.SIZE,
+            h = (this._initCanvas(o), s = Math.round(s), this._ctx),
+            l = .5 * o;
+
+        function r(t) {
+            var e = l * (t = void 0 === t ? 1 : t) * u,
+                i = (h.beginPath(), h.fillStyle = "#fff", aidn.math.toRad(360 / s)),
+                t = Math.cos(0) * e + l,
+                n = Math.sin(0) * e + l;
+            h.moveTo(t, n);
+            for (var o = 1; o < s; o++) {
+                var r = Math.cos(i * o) * e + l,
+                    a = Math.sin(i * o) * e + l;
+                h.lineTo(r, a)
+            }
+            h.fill()
+        }
+        r(i), h.globalCompositeOperation = "destination-out", r(e), h.globalCompositeOperation = "source-over";
+        i = new THREE.Texture(this._ctx.getImageData(0, 0, o, o));
+        return i.needsUpdate = !0, t && S.add(n, i), i
+    }, e.getSquareFill = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.scale,
+            e = void 0 === e ? 1 : e,
+            i = t.type,
+            i = void 0 === i ? 0 : i,
+            n = t.start,
+            n = void 0 === n ? 0 : n,
+            o = t.end,
+            o = void 0 === o ? 1 : o,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var r = ["tx", "squarefill", e, i, n, o].join("_");
+            if (S.get(r)) return S.get(r)
+        }
+        var a = this.SIZE;
+
+        function s(t, e, i) {
+            var t = h * (t = void 0 === t ? 1 : t),
+                n = .5 * (a - t);
+            u.fillRect(n + t * (e = void 0 === e ? 0 : e), n, t * ((i = void 0 === i ? 1 : i) - e), t)
+        }
+        this._initCanvas(a);
+        var u = this._ctx,
+            h = (u.beginPath(), u.fillStyle = "#fff", a * e),
+            e = (1 === i ? s(1, n, o) : (s(o), u.globalCompositeOperation = "destination-out", s(n)), u.globalCompositeOperation = "source-over", n == o && this._ctx.clearRect(0, 0, a, a), new THREE.Texture(this._ctx.getImageData(0, 0, a, a)));
+        return e.needsUpdate = !0, t && S.add(r, e), e
+    }, e.getPlus = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.thickRate,
+            e = void 0 === e ? .25 : e,
+            i = t.start,
+            i = void 0 === i ? 0 : i,
+            n = t.end,
+            n = void 0 === n ? 1 : n,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var o = ["tx", "plus", e, i, n].join("_");
+            if (S.get(o)) return S.get(o)
+        }
+        var r, a = this.SIZE,
+            s = (this._initCanvas(a), this._ctx),
+            e = e * a,
+            s = (s.beginPath(), s.fillStyle = "#fff", i < .5 && s.fillRect(a * (2 * i), .5 * (a - e), a * Math.min(2 * (n - i), 1), e), .5 < n && (r = Math.max(i - .5, 0), s.fillRect(.5 * (a - e), 2 * Math.max(i - .5, 0) * a, e, a * (n - .5 - r) * 2)), new THREE.Texture(this._ctx.getImageData(0, 0, a, a)));
+        return s.needsUpdate = !0, t && S.add(o, s), s
+    }, e.getStripe = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.num,
+            i = void 0 === e ? 5 : e,
+            e = t.thickRate,
+            e = void 0 === e ? .5 : e,
+            n = t.start,
+            o = void 0 === n ? 0 : n,
+            n = t.end,
+            r = void 0 === n ? 1 : n,
+            n = t.cache,
+            t = void 0 === n || n;
+        if (t) {
+            var a = ["tx", "stripe", i, e, o, r].join("_");
+            if (S.get(a)) return S.get(a)
+        }
+        var s = this.SIZE,
+            u = (this._initCanvas(s), s / i),
+            h = u * e,
+            l = this._ctx;
+        l.beginPath(), l.fillStyle = "#fff";
+        for (var c = 0; c < i; c++) l.fillRect(s * o, c * u, s * (r - o), h);
+        n = new THREE.Texture(this._ctx.getImageData(0, 0, s, s));
+        return n.needsUpdate = !0, t && S.add(a, n), n
+    }, e.getWave = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.vertex,
+            i = void 0 === e ? 2 : e,
+            e = t.thickRate,
+            e = void 0 === e ? .1 : e,
+            n = t.start,
+            n = void 0 === n ? 0 : n,
+            o = t.end,
+            o = void 0 === o ? 1 : o,
+            r = t.hrate,
+            a = void 0 === r ? 1 : r,
+            r = t.seed,
+            r = void 0 === r ? 0 : r,
+            t = t.cache,
+            t = void 0 === t || t;
+        if (t) {
+            var s = ["tx", "wave", i, e, n, o, a, r].join("_");
+            if (S.get(s)) return S.get(s)
+        }
+        var u = this.SIZE,
+            h = (this._initCanvas(u), i = Math.round(i), f.seed = r + 12345, this._ctx),
+            r = e * u;
+        if (h.beginPath(), h.strokeStyle = "#fff", h.lineWidth = r, 2 == i) h.moveTo(n * u, u / 2), h.lineTo(o * u, u / 2), h.stroke();
+        else {
+            for (var l = [], c = 0; c < i; c++) l[c] = {
+                x: u / i * (c + 1),
+                y: u / 2 + f.random() * u * .5 * a * (c % 2 == 0 ? 1 : -1)
+            };
+            h.moveTo(r, u / 2);
+            for (c = 0; c < i - 1; c++) h.quadraticCurveTo(l[c].x, l[c].y, (l[c + 1].x + l[c].x) / 2, (l[c + 1].y + l[c].y) / 2);
+            h.stroke(), h.globalCompositeOperation = "source-in", h.beginPath(), h.fillStyle = "#fff", h.fillRect(n * u, 0, (o - n) * u, u), h.fill(), h.globalCompositeOperation = "source-over"
+        }
+        e = new THREE.Texture(this._ctx.getImageData(0, 0, u, u));
+        return e.needsUpdate = !0, t && S.add(s, e), e
+    }, e.SIZE_TEXT = 512, e.SIZE_TEXT_MOBILE = 256, e.SIZE = 256, t.TextureUtil = e
+})(three = three || {}), (s => {
+    var u = aidnlib.Ref,
+        r = aidnlib.Rand,
+        a = aidnlib.MathUtil,
+        t = three.ThreeBase,
+        i = three.PrimPlane,
+        L = three.PrimLine,
+        h = three.ThreeUtil,
+        o = three.TextureUtil,
+        U = three.EffectManager,
+        B = three.EffectRGBShiftPass,
+        H = three.EffectHueShiftPass,
+        z = three.EffectSlicePass,
+        F = three.EffectMosaicPass,
+        N = three.EffectStretchPass,
+        l = (e.getWidth = function() {
+            return this.isExporting ? this.videoWidth : u.stw
+        }, e.getHeight = function() {
+            return this.isExporting ? this.videoHeight : u.sth
+        }, e.isExporting = !1, e.videoWidth = 1280, e.videoHeight = 720, e);
+
+    function e() {}
+    __extends(c, n = t);
+    var n, t = c;
+
+    function c(t) {
+        return n.call(this, new THREE.Object3D, t) || this
+    }
+    d.prototype.hide = function() {}, d.prototype.beat = function(t, e) {}, d.prototype.update = function() {}, d.prototype.resize = function() {};
+    var f = d;
+
+    function d() {}
+    __extends(v, p = t), Object.defineProperty(v.prototype, "id", {
+        get: function() {
+            return this._id
+        },
+        enumerable: !1,
+        configurable: !0
+    }), v.prototype.show = function(t) {}, v.prototype.hide = function() {}, v.prototype.beat = function() {}, v.prototype.update = function() {
+        return !this._isEnd || (this.visible = !1)
+    };
+    var p, _ = v;
+
+    function v() {
+        var t = p.call(this, l.scene) || this;
+        return t._id = 0, t._isEnd = !1, t
+    }
+    __extends(g, m = _), g.prototype.show = function() {
+        this.visible = !0, this._isEnd = !1, this._isTate = l.getWidth() < l.getHeight(), gsap.killTweensOf(this), this._line.color = s.Util.getRandomColor();
+        for (var t = h.get3dArea(2, l.camera), e = this._line.vertices, i = s.randInt(2, 4), n = (this._isTate ? t.maxX - t.minX : t.maxY - t.minY) / (i - 1), o = 0; o < e.length; o++) {
+            var r = e[o];
+            r.x = this._isTate ? t.minX + o * n : s.rand(-2, 2), r.y = this._isTate ? s.rand(-2, 2) : t.maxY - o * n, r.z = 0, i <= o && (r.x = e[o - 1].x, r.y = e[o - 1].y, r.z = e[o - 1].z)
+        }
+        this._line.updateVertices(), this._line.scale = 1, this._isTate ? this._line.scaleX = 1.25 : this._line.scaleY = 1.25, this.x = this._isTate ? 0 : t.maxX + 2, this.y = this._isTate ? t.minY - 2 : 0, this.z = 3, this._line.x = this._line.y = this._line.z = 0
+    }, g.prototype.hide = function() {
+        var t = this;
+        gsap.killTweensOf(this._line), gsap.to(this._line, {
+            scale: 0,
+            duration: .3,
+            onComplete: function() {
+                t.visible = !1
+            }
+        })
+    }, g.prototype.beat = function() {
+        var t = this._isTate ? 0 : this.x - s.rand(2, 4),
+            e = this._isTate ? this.y + s.rand(2, 4) : 0,
+            t = (gsap.killTweensOf(this), gsap.to(this, {
+                x: t,
+                y: e,
+                duration: .3,
+                ease: Power2.easeOut
+            }), h.get3dArea(this.z, l.camera));
+        (this._isTate ? t.maxY + 2 < this.y : this.x < t.minX - 2) && (this._isEnd = !0)
+    }, g.prototype.update = function() {
+        return this._line.y += u.delta, m.prototype.update.call(this)
+    };
+    var m, Y = g;
+
+    function g() {
+        for (var t = m.call(this) || this, e = (t._isTate = !1, t._id = w.LINE, []), i = 0; i < 4; i++) e[i] = new THREE.Vector3;
+        return t._line = new L(e, t._target, 16777215), t
+    }
+    __extends(b, y = _), Object.defineProperty(b.prototype, "start", {
+        get: function() {
+            return this._start
+        },
+        set: function(t) {
+            this._start = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(b.prototype, "end", {
+        get: function() {
+            return this._end
+        },
+        set: function(t) {
+            this._end = t
+        },
+        enumerable: !1,
+        configurable: !0
+    }), b.prototype.show = function(t) {
+        var e = this,
+            i = (this.visible = !0, this._plane.visible = !0, this._isEnd = !1, this._plane.color = s.Util.getRandomColor(), this._plane.scale = s.rand(3, 6), this._plane.rotationZ = s.toRad(s.rand(0, 360)), s.rand(4, 5)),
+            n = h.get3dArea(i, l.camera),
+            o = (this.x = s.rand(n.minX, n.maxX), this.y = s.rand(n.minY, n.maxY), this.z = i, this._start = 0, this._end = 0, this.rotationX = this.rotationY = this.rotationZ = 0, this._type = a.pickupRandom([{
+                value: this.TYPE_CIRCLE,
+                priority: 3
+            }, {
+                value: this.TYPE_POLYGON,
+                priority: 5
+            }, {
+                value: this.TYPE_STRYPE,
+                priority: 3
+            }, {
+                value: this.TYPE_PLUS,
+                priority: 2
+            }]), !1),
+            r = !1;
+        switch (this._moveValue = s.rand(.5, 4.5), this._type) {
+            case this.TYPE_CIRCLE:
+                this._thickRate = s.rand(.1, .2), o = Math.random() < .8, r = Math.random() < .8;
+                break;
+            case this.TYPE_POLYGON:
+                this._polyVertex = s.randInt(3, 6), this._thickRate = s.rand(.1, .2), o = Math.random() < .8, r = Math.random() < .8;
+                break;
+            case this.TYPE_STRYPE:
+                this._stripeNum = s.randInt(5, 9), this._thickRate = s.rand(.4, .5), this._plane.scaleX *= s.rand(.8, 2.2), o = !1, r = Math.random() < .8;
+                break;
+            case this.TYPE_PLUS:
+                this._thickRate = s.rand(.05, .15), o = Math.random() < .8, r = Math.random() < .8
+        }
+        Math.random() < .55 ? (n = {
+            end: 1,
+            duration: .3,
+            ease: Power2.easeOut,
+            onComplete: function() {
+                return e._complete()
+            }
+        }, o && (n.rotationZ = s.rand(-1, 1) * s.toRad(60)), r && (n.rotationX = .5 * s.rand(-1, 1), n.rotationY = .5 * s.rand(-1, 1)), gsap.to(this, n)) : (i = {
+            end: 1,
+            duration: .3,
+            ease: Power2.easeOut
+        }, n = {
+            start: 1,
+            duration: .35,
+            ease: Power2.easeIn,
+            onComplete: function() {
+                return e._complete()
+            }
+        }, o && (i.rotationZ = s.rand(-1, 1) * s.toRad(60)), r && (i.rotationX = .5 * s.rand(-1, 1), i.rotationY = .5 * s.rand(-1, 1)), gsap.to(this, i), gsap.to(this, n))
+    }, b.prototype.hide = function() {
+        var t = this;
+        gsap.killTweensOf(this._plane), gsap.to(this._plane, {
+            scale: 0,
+            duration: .3,
+            onComplete: function() {
+                t.visible = !1
+            }
+        })
+    }, b.prototype._complete = function() {
+        var t = this;
+        gsap.delayedCall(.05, function() {
+            t._isEnd = !0
+        })
+    }, b.prototype.update = function() {
+        var t;
+        switch (l.getWidth() < l.getHeight() ? this.y += u.delta * this._moveValue : this.x -= u.delta * this._moveValue, this._type) {
+            case this.TYPE_CIRCLE:
+                t = o.getCircle({
+                    thickRate: this._thickRate,
+                    start: this._start,
+                    end: this._end,
+                    cache: !1
+                });
+                break;
+            case this.TYPE_POLYGON:
+                t = o.getPolygon({
+                    thickRate: this._thickRate,
+                    vertex: this._polyVertex,
+                    start: this._start,
+                    end: this._end,
+                    cache: !1
+                });
+                break;
+            case this.TYPE_STRYPE:
+                t = o.getStripe({
+                    thickRate: this._thickRate,
+                    num: this._stripeNum,
+                    start: this._start,
+                    end: this._end,
+                    cache: !1
+                });
+                break;
+            case this.TYPE_PLUS:
+                t = o.getPlus({
+                    thickRate: this._thickRate,
+                    start: this._start,
+                    end: this._end,
+                    cache: !1
+                })
+        }
+        return this._plane.updateTexture(t, !1, !0), y.prototype.update.call(this)
+    };
+    var y, V = b;
+
+    function b() {
+        var t = y.call(this) || this,
+            e = (t._start = 0, t._end = 0, t._type = 0, t.TYPE_CIRCLE = 0, t.TYPE_POLYGON = 1, t.TYPE_STRYPE = 2, t.TYPE_PLUS = 3, t._moveValue = 0, t._id = w.PLANE, new THREE.MeshBasicMaterial({
+                transparent: !0,
+                alphaTest: .2,
+                side: THREE.DoubleSide
+            }));
+        return t._plane = new i(t._target, e), t
+    }
+    __extends(S, x = f), S.prototype.show = function(n, t) {
+        var o = this,
+            t = (void 0 === n && (n = w.PLANE), void 0 === t ? {} : t),
+            e = t.delay,
+            t = t.note,
+            r = void 0 === t ? -1 : t,
+            t = Math.max((void 0 === e ? 0 : e) - .15, 0);
+        this._delayTw = gsap.delayedCall(t, function() {
+            var t;
+            if (o._que[n] || (o._que[n] = []), 0 < o._que[n].length) t = o._que[n].pop();
+            else switch (n) {
+                case w.PLANE:
+                    t = new V;
+                    break;
+                case w.LINE:
+                    t = new Y
+            }
+            for (var e = 0, i = o._grs.length; e < i; e++) o._grs[e].beat();
+            t.show(r), o._grs.push(t)
+        })
+    }, S.prototype.hide = function() {
+        this._delayTw && this._delayTw.kill();
+        for (var t = 0, e = this._grs.length; t < e; t++) {
+            var i = this._grs.pop();
+            i.hide(), this._que[i.id].push(i)
+        }
+    }, S.prototype.update = function() {
+        for (var t, e = 0, i = this._grs.length; e < i; e++) this._grs[e].update() || (t = this._grs.splice(e, 1)[0], this._que[t.id].push(t), e--, i--)
+    }, S.prototype.beat = function(t, e) {
+        if (t % 2 != 1)
+            for (var i = 0, n = this._grs.length; i < n; i++) this._grs[i].beat()
+    };
+    var x, w, $ = S;
+
+    function S() {
+        var t = null !== x && x.apply(this, arguments) || this;
+        return t._que = [], t._grs = [], t
+    }(_ = w = w || {})[_.PLANE = 0] = "PLANE", _[_.LINE = 1] = "LINE", _[_.WIRE = 2] = "WIRE", __extends(T, E = i), Object.defineProperty(T.prototype, "material", {
+        get: function() {
+            return this._material
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(T.prototype, "text", {
+        get: function() {
+            return this._text
+        },
+        enumerable: !1,
+        configurable: !0
+    }), T.prototype.init = function(t, e) {
+        var e = void 0 === e ? {} : e,
+            i = e.color,
+            i = void 0 === i ? 0 : i,
+            n = e.font,
+            n = void 0 === n ? "Jua" : n,
+            e = e.cache,
+            e = void 0 === e || e,
+            t = (this._text = t, o.getText({
+                tx: t,
+                font: n,
+                cache: e
+            }));
+        this._material.color.set(i), this.updateTexture(t, !1, 0 == e)
+    }, T.prototype.show = function() {
+        var t = this;
+        this.visible = !0;
+        for (var e = 0, i = this.vertices.length; e < i; e++) {
+            var n = this.vertices[e];
+            gsap.fromTo(n, {
+                x: n.originalPosition.x * s.rand(1.3, 2.2),
+                y: n.originalPosition.y * s.rand(1.3, 2.2),
+                z: n.originalPosition.z * s.rand(1.3, 2.2)
+            }, {
+                x: n.originalPosition.x,
+                y: n.originalPosition.y,
+                z: n.originalPosition.z,
+                duration: .4 + s.rand(0, 1),
+                ease: Elastic.easeOut.config(1.5, .4),
+                onUpdate: function() {
+                    return t.updateVertices()
+                }
+            })
+        }
+    };
+    var E, M = T;
+
+    function T(t) {
+        var e = this,
+            i = new THREE.MeshBasicMaterial({
+                transparent: !0,
+                alphaTest: .2,
+                side: THREE.DoubleSide
+            });
+        return (e = E.call(this, t, i) || this)._text = "", e.visible = !1, e
+    }
+    __extends(C, R = t), C.prototype.show = function(t, e, i) {
+        void 0 === i && (i = 0), gsap.killTweensOf(this), this.visible = !0, this._isTate = l.getWidth() < l.getHeight(), this._txPlane.init(t, {
+            color: s.Util.getRandomColor(),
+            font: s.Util.getRandomFont()
+        }), this._txPlane.show(), this._txPlane.x = this._txPlane.y = 0, this._txPlane.rotationZ = s.rand(-1, 1) * s.toRad(30), this._txPlane.rotationY = s.rand(-1, 1) * s.toRad(20), this._isTate && "…" == t && (this._txPlane.rotationZ += s.toRad(90));
+        var n = 0,
+            o = 0,
+            r = 0 == i ? 13 : s.rand(12.9, 13),
+            a = h.get3dArea(r, l.camera);
+        this.scale = s.rand(.9, 1.8) * [1, 1.6][t.length - 1], 0 == i ? (n = (t = h.from2Dto3D({
+            x: e.x + e.w / 2,
+            y: e.y + e.h / 2,
+            z: r,
+            camera: l.camera
+        })).x, o = t.y, this._isTate ? o -= .2 : n += .2, this.scale *= 1.35, this._txPlane.color = s.Constant.COLOR_DRAW_VIEW, this._beatCt = -3) : (i = this.scale, o = this._isTate ? (n = s.rand(a.minX + .5 * i, a.maxX - .5 * i), a.minY + .25 * i) : (n = a.maxX - .25 * i, s.rand(a.minY + .5 * i, a.maxY - .5 * i)), this._beatCt = 0), this.x = n, this.y = o, this.z = r, this._isTate ? this._cpos = o : this._cpos = n
+    }, C.prototype.hide = function() {
+        var t = this;
+        gsap.killTweensOf(this), gsap.to(this, {
+            scale: 0,
+            duration: .3,
+            onComplete: function() {
+                t.visible = !1
+            }
+        })
+    }, C.prototype.beat = function() {
+        var t, e;
+        this._beatCt++ < 0 || (gsap.killTweensOf(this), t = {
+            duration: .3,
+            ease: Back.easeOut
+        }, e = this._isTate ? this._cpos + 1 + s.rand(0, .1) : this._cpos - 1 - s.rand(0, .1), this._cpos = e, this._isTate ? t.y = e : t.x = e, Math.random() < .25 && (e = h.get3dArea(this.z, l.camera), this._isTate ? t.x = s.rand(Math.max(.8 * e.minX, this.x - 1), Math.min(.8 * e.maxX, this.x + 1)) : t.y = s.rand(Math.max(.8 * e.minY, this.y - 1), Math.min(.8 * e.maxY, this.y + 1))), Math.random() < .2 && (t.rotationZ = s.rand(-1, 1) * s.toRad(20)), gsap.to(this, t))
+    }, C.prototype.update = function() {
+        this._isTate ? this._txPlane.y += +u.delta : this._txPlane.x -= +u.delta;
+        var t = h.get3dArea(this.z, l.camera),
+            e = this.scale,
+            e = this._isTate ? t.maxY < this.y - e : this.x + e < t.minX;
+        return !e || (this.visible = !1)
+    };
+    var R, G = C;
+
+    function C() {
+        var t = R.call(this, l.scene) || this;
+        return t._cpos = 0, t._isTate = !0, t._beatCt = 0, t._txPlane = new M(t._target), t
+    }
+    __extends(O, P = f), O.prototype.show = function(n, o, t) {
+        var r = this,
+            t = void 0 === t ? {} : t,
+            e = t.type,
+            a = void 0 === e ? 0 : e,
+            e = t.delay,
+            t = Math.max((void 0 === e ? 0 : e) - .15, 0);
+        this._delayTw = gsap.delayedCall(t, function() {
+            for (var t = 0 < r._que.length ? r._que.pop() : new G, e = 0, i = r._txs.length; e < i; e++) r._txs[e].beat();
+            t.show(n, o, a), r._txs.push(t)
+        })
+    }, O.prototype.hide = function() {
+        this._delayTw && this._delayTw.kill();
+        for (var t = 0, e = this._txs.length; t < e; t++) {
+            var i = this._txs.pop();
+            i.hide(), this._que.push(i)
+        }
+    }, O.prototype.update = function() {
+        for (var t, e = 0, i = this._txs.length; e < i; e++) this._txs[e].update() || (t = this._txs.splice(e, 1)[0], this._que.push(t), e--, i--)
+    }, O.prototype.beat = function(t, e) {
+        if (t % 2 != 1)
+            for (var i = 0, n = this._txs.length; i < n; i++) this._txs[i].beat()
+    };
+    var P, X = O;
+
+    function O() {
+        var t = null !== P && P.apply(this, arguments) || this;
+        return t._que = [], t._txs = [], t
+    }
+    I.prototype.show = function() {
+        for (var t = this, e = 0; e < this._total; e++) {
+            var i = this._txs[e];
+            i.visible = !0, i.z = l.camera.position.z, gsap.to(i, {
+                z: 10,
+                duration: 1.6,
+                delay: .12 * e,
+                ease: Elastic.easeOut.config(1.3, .5)
+            })
+        }
+        s.Context.main.addUpdate(this, function() {
+            return t._update()
+        })
+    }, I.prototype.hide = function(t) {
+        var e = this;
+        void 0 === t && (t = !1);
+        for (var i = 0; i < this._total; i++) {
+            var n, o = this._txs[i];
+            t ? o.visible = !1 : (n = l.camera.position.z, gsap.killTweensOf(o), gsap.to(o, {
+                z: n,
+                duration: .6,
+                delay: .08 * i,
+                ease: Back.easeIn,
+                onComplete: i == this._total - 1 ? function() {
+                    return e._hideComplete()
+                } : null
+            }))
+        }
+    }, I.prototype._hideComplete = function() {
+        s.Context.main.removeUpdate(this);
+        for (var t = 0; t < this._total; t++) this._txs[t].visible = !1
+    }, I.prototype._update = function() {
+        if (this._interval -= u.delta, this._interval < 0) {
+            this._interval = s.rand(1, 3), l.effect.start(A.RGBShift);
+            var t = [A.Slice, A.Mosaic, A.Stretch][s.randInt(0, 2)];
+            l.effect.start(t);
+            for (var e = 0; e < this._total; e++)(i = this._txs[e]).init(i.text, {
+                color: s.Util.getRandomColorTitle(),
+                font: s.Util.getRandomFont(),
+                cache: !1
+            })
+        }
+        r.seed = 12345;
+        for (e = 0; e < this._total; e++) {
+            for (var i = this._txs[e], n = 0; n < 4; n++) {
+                var o = i.vertices[n];
+                o.x = .09 * Math.sin(u.time * r.rand(.6, 2.6)) + o.originalPosition.x, o.y = .09 * Math.sin(u.time * r.rand(.6, 2.6)) + o.originalPosition.y
+            }
+            i.updateVertices()
+        }
+    }, I.prototype.resize = function() {
+        var t = this._txs.length,
+            e = h.get3dArea(10, l.camera);
+        if (u.sth < u.stw)
+            for (var i = (e.maxX - e.minX) / t, n = 0; n < t; n++) {
+                var o = e.minX + i * (.5 + n);
+                (a = this._txs[n]).x = o, a.y = 0, a.scale = .8 * i
+            } else
+                for (var r = (e.maxY - e.minY) / t, n = 0; n < t; n++) {
+                    var a, s = e.maxY - r * (.5 + n);
+                    (a = this._txs[n]).x = 0, a.y = s, a.scale = .8 * r
+                }
+    };
+    var q = I;
+
+    function I() {
+        this._txs = [], this._interval = 1;
+        for (var t = s.Constant.TITLE, e = this._total = t.length, i = 0; i < e; i++) {
+            var n = t.charAt(i),
+                o = new M(l.scene);
+            o.init(n, {
+                color: s.Util.getRandomColorTitle(),
+                font: s.Util.getRandomFont()
+            }), this._txs[i] = o
+        }
+        this.resize()
+    }
+    __extends(j, k = U), j.prototype.start = function(t, e) {
+        var i, n = this,
+            e = void 0 === e ? {} : e,
+            o = e.count,
+            o = void 0 === o ? 5 : o,
+            r = e.interval,
+            r = void 0 === r ? .08 : r,
+            e = e.mode,
+            a = void 0 === e ? 0 : e;
+        switch (t = void 0 === t ? 0 : t) {
+            case A.RGBShift:
+                i = function() {
+                    return n._updateRGBShift(a)
+                };
+                break;
+            case A.HueShift:
+                i = function() {
+                    return n._updateHueShift(a)
+                };
+                break;
+            case A.Slice:
+                i = function() {
+                    return n._updateSlice(a)
+                };
+                break;
+            case A.Mosaic:
+                i = function() {
+                    return n._updateMosaic(a)
+                };
+                break;
+            case A.Stretch:
+                i = function() {
+                    return n._updateStretch(a)
+                }
+        }
+        this.__startInterval(t, o, r, i)
+    }, j.prototype.changeRenderer = function(t) {
+        this._comp.renderer = t
+    }, j.prototype.__startInterval = function(t, e, i, n) {
+        this._passes[t].enabled = !0, clearInterval(this._intervalIds[t]), this._intarvalCts[t] = e, this._intervalIds[t] = setInterval(n, 1e3 * i), n()
+    }, j.prototype.__updateCount = function(t) {
+        var e = --this._intarvalCts[t] < 0;
+        return e && (this._passes[t].enabled = !1, clearInterval(this._intervalIds[t])), e
+    }, j.prototype._updateRGBShift = function(t) {
+        if (!this.__updateCount(A.RGBShift))
+            for (var e = this._effeRGBShift, i = [e.shiftR, e.shiftG, e.shiftB], n = 0; n < i.length; n++) i[n].x = .1 * s.rand(-1, 1), i[n].y = .1 * s.rand(-1, 1)
+    }, j.prototype._updateHueShift = function(t) {
+        this.__updateCount(A.HueShift) || (this._effeHueShift.hue = s.toRad(s.rand(0, 360)))
+    }, j.prototype._updateSlice = function(t) {
+        var e;
+        this.__updateCount(A.Slice) || ((e = this._effeSlice).amtX = e.amtY = 0, e.divX = 12, e.divY = 12, l.getWidth() < l.getHeight() ? e.amtX = .6 * s.rand(-1, 1) : e.amtY = .6 * s.rand(-1, 1))
+    }, j.prototype._updateMosaic = function(t) {
+        var e;
+        this.__updateCount(A.Mosaic) || ((e = this._effeMosaic).resolution.x = l.getWidth(), e.resolution.y = l.getHeight(), Math.random() < .5 ? (e.pixelSize.x = l.getWidth() / s.randInt(1, 5), e.pixelSize.y = l.getHeight() / 20) : (e.pixelSize.x = l.getWidth() / 20, e.pixelSize.y = l.getHeight() / s.randInt(1, 5)), e.normalRate = s.rand(.2, .8), e.normalSize.x = l.getWidth() / s.randInt(10, 20), e.normalSize.y = l.getHeight() / s.randInt(10, 20))
+    }, j.prototype._updateStretch = function(t) {
+        this.__updateCount(A.Stretch) || (Math.random() < .5 ? this._effeStretch.uvoff.x = s.rand(-.6, .6) : this._effeStretch.uvoff.y = s.rand(-.6, .6))
+    };
+    var k, A, W = j;
+
+    function j(t, e, i) {
+        t = k.call(this, t, e, i) || this;
+        return t._intervalIds = [], t._intarvalCts = [], t._effeRGBShift = new B, t.add(t._effeRGBShift), t._effeHueShift = new H, t.add(t._effeHueShift), t._effeSlice = new z, t.add(t._effeSlice), t._effeMosaic = new F, t.add(t._effeMosaic), t._effeStretch = new N, t.add(t._effeStretch), t
+    }
+
+    function D() {}(_ = A = A || {})[_.RGBShift = 0] = "RGBShift", _[_.HueShift = 1] = "HueShift", _[_.Slice = 2] = "Slice", _[_.Mosaic = 3] = "Mosaic", _[_.Stretch = 4] = "Stretch", D.prototype.initialize = function(t) {
+        void 0 === t && (t = "view");
+        var e = new THREE.Scene,
+            i = (e.background = new THREE.Color(16448250), new THREE.PerspectiveCamera(45, u.stw / u.sth, 1, 100)),
+            t = (i.position.z = 20, i.position.y = 0, i.lookAt(0, 0, 0), e.add(i), document.getElementById(t)),
+            n = this._renderer = new THREE.WebGLRenderer({
+                antialias: !0,
+                preserveDrawingBuffer: !0
+            }),
+            t = (n.setPixelRatio(Math.min(window.devicePixelRatio, 2)), n.setSize(u.stw, u.sth), t.appendChild(n.domElement), this._scene = l.scene = e, this._camera = l.camera = i, this._rendererExp = new THREE.WebGLRenderer({
+                antialias: !0,
+                preserveDrawingBuffer: !0,
+                canvas: document.getElementById("canvas_exp")
+            }));
+        return t.setPixelRatio(1), t.setSize(u.stw, u.sth), this._effect = l.effect = new W(n, e, i), this._txtMng = new X, this._graMng = new $, this._titleMng = new q, this._titleMng.show(), this
+    }, D.prototype.show = function(t) {
+        switch (t) {
+            case s.SceneId.LOADING:
+                this._titleMng.hide();
+                break;
+            case s.SceneId.MAIN:
+        }
+    }, D.prototype.hideTitle = function() {
+        this._titleMng.hide(!0)
+    }, D.prototype.changeModeDefault = function() {
+        l.isExporting = !1, this._effect.changeRenderer(this._renderer), this.resize()
+    }, D.prototype.changeModeExport = function(t) {
+        var t = void 0 === t ? {} : t,
+            e = t.width,
+            e = void 0 === e ? 1280 : e,
+            t = t.height,
+            t = void 0 === t ? 720 : t;
+        l.isExporting = !0, l.videoWidth = e, l.videoHeight = t, this._effect.changeRenderer(this._rendererExp), this.resize()
+    }, D.prototype.drawHiragana = function(t, e, i) {
+        var i = void 0 === i ? {} : i,
+            n = i.type,
+            o = i.delay,
+            o = void 0 === o ? 0 : o,
+            i = i.index,
+            i = void 0 === i ? -1 : i;
+        this._txtMng.show(t, e, {
+            type: void 0 === n ? 0 : n,
+            delay: o
+        }), Math.random() < .22 && (t = s.randInt(1, 4), Math.random() < .55 && l.effect.start(A.RGBShift, {
+            count: t
+        }), Math.random() < .55 && l.effect.start(A.HueShift, {
+            count: t
+        }), 0 <= (e = [A.Slice, A.Mosaic, A.Stretch, -1][s.randInt(0, 3)])) && l.effect.start(e, {
+            count: t
+        }), (i + 1) % 5 == 0 && this._graMng.show(w.LINE, {
+            delay: o
+        })
+    }, D.prototype.drawGraphic = function(t, e) {
+        e = (void 0 === e ? {} : e).delay;
+        this._graMng.show(w.PLANE, {
+            delay: void 0 === e ? 0 : e,
+            note: t
+        })
+    }, D.prototype.stop = function() {
+        this._txtMng.hide(), this._graMng.hide()
+    }, D.prototype.beat = function(t, e) {
+        this._txtMng.beat(t, e), this._graMng.beat(t, e)
+    }, D.prototype.update = function() {
+        this._txtMng.update(), this._graMng.update(), this._camera.position.x = .5 * Math.sin(1.11 * u.time), this._camera.position.y = .5 * Math.sin(.81 * u.time), this._camera.lookAt(0, 0, 0), this._effect.update()
+    }, D.prototype.resize = function() {
+        var t = l.getWidth(),
+            e = l.getHeight();
+        this._txtMng.resize(), this._graMng.resize(), this._titleMng.resize(), this._camera.fov = 43 * (t < e ? Math.pow(e / t, .3) : Math.pow(e / t, .5)), this._camera.aspect = t / e, this._camera.updateProjectionMatrix(), this._effect.resize(t, e)
+    }, s.ThreeManager = D
+})(app = app || {}), (t => {
+    function e() {
+        this._maxLen = 1, this._dictionary = [], this._dictionary = this._dictionary.concat(o.list);
+        for (var t = this._dictionary.length, e = 0, i = 0; i < t; i++) {
+            var n = this._dictionary[i].length - 1;
+            e < n && (e = n)
+        }
+        this._maxLen = e
+    }
+    e.prototype.exec = function(t) {
+        var e = (t = this._simplify(t)).length;
+        if (e <= 0) return null;
+        this._maxLen < e && (e = (t = t.slice(0, this._maxLen)).length);
+        for (var i = this._dictionary, n = i.length, o = [], r = 0; r < n; ++r) i[r].length - 1 == e && o.push({
+            d: i[r],
+            s: 0
+        });
+        for (var a = o, s = 0; s < 20; s++) {
+            for (o = a, r = 0; r < e && 0 != o.length; ++r) o = this._extract(t[r], o, s);
+            if (0 != o.length) break
+        }
+        if (0 == o.length) return null;
+        o.sort(function(t, e) {
+            return t.s < e.s ? -1 : 1
+        });
+        for (var u = [], r = 0; r < 3 && o[r]; ++r) u.push(o[r].d[0]);
+        return u
+    }, e.prototype._simplify = function(t) {
+        for (var e = [], i = t.length, n = 0; n < i; n++) {
+            var o = t[n],
+                r = o.length - 1,
+                a = [];
+            if (0 < r) {
+                for (var s = o[0], u = o[1], h = (a.push([s[0], s[1]]), 0), l = Math.atan2(u[1] - s[1], u[0] - s[0]), c = 1;; c++) {
+                    if (s = o[c], u = o[c + 1], !(c < r)) {
+                        a.push([s[0], s[1]]);
+                        break
+                    }
+                    var f, d = Math.atan2(u[1] - s[1], u[0] - s[0]);
+                    h += Math.abs(l - d), l = d, .8 <= h && ((f = (d = a[a.length - 1])[0] - s[0]) * f + (f = d[1] - s[1]) * f <= 900 || a.push([s[h = 0], s[1]]))
+                }
+                e.push(a)
+            }
+        }
+        return e
+    }, e.prototype._extract = function(t, e, i) {
+        for (var n = [], o = t.length, r = e.length, a = t[0][0], s = t[0][1], u = t[o - 1][0], h = t[o - 1][1], l = 3600 * (1 + .3 * (i = void 0 === i ? 0 : i)), c = 3 + .5 * i, f = 0; f < r; f++)
+            for (var d = e[f], p = d.d, _ = p.length - 1, v = 0; v < _; v++) {
+                var m = p[v + 1],
+                    g = m.length;
+                if (!(c < Math.abs(o - g))) {
+                    var y = m[0],
+                        b = (x = y[0] - a) * x + (y = y[1] - s) * y;
+                    if (!(l < b)) {
+                        var g = m[g - 1],
+                            x = (x = g[0] - u) * x + (y = g[1] - h) * y;
+                        if (!(l < x)) {
+                            g = this._calc(t, m, i);
+                            if (!(g < 0)) {
+                                y = this._calc(m, t, i);
+                                if (!(y < 0)) {
+                                    d.s += b + x + g + y, n.push(d);
+                                    break
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        return n
+    }, e.prototype._calc = function(t, e, i) {
+        for (var n = 0, o = t.length, r = e.length, a = [], s = 3600 * (1 + .3 * (i = void 0 === i ? 0 : i)), u = 8100 * (1 + .3 * i), h = Math.PI / 2 + .1 * i, l = 1; l < o; l++) {
+            var c = t[l - 1],
+                f = t[l];
+            a[l - 1] = Math.atan2(f[1] - c[1], f[0] - c[0])
+        }
+        for (var d = [], l = 1; l < r; l++) {
+            c = e[l - 1], f = e[l];
+            d[l - 1] = Math.atan2(f[1] - c[1], f[0] - c[0])
+        }
+        for (var p = 0, l = 0; l < o; l++) {
+            for (var c = t[l], _ = p; _ < r; _++) {
+                var v = e[_],
+                    m = c[0] - v[0],
+                    g = c[1] - v[1],
+                    y = m * m + g * g;
+                if (_ < r - 1) {
+                    if (y < s && Math.abs(a[l] - d[_]) < h) {
+                        p = _, n += y;
+                        break
+                    }
+                    var b = e[_ + 1][0] - v[0],
+                        v = e[_ + 1][1] - v[1],
+                        x = (b * m + v * g) / (b * b + v * v);
+                    if (0 <= x && x <= 1 && (y = (b = b * x - m) * b + (v = v * x - g) * v) < u && Math.abs(a[l] - d[_]) < h) {
+                        p = _, n += y;
+                        break
+                    }
+                } else if (y < s) {
+                    p = _, n += y;
+                    break
+                }
+            }
+            if (r <= _) return -1
+        }
+        return n
+    }, t.Recognition = e, i.list = [
+        ["あ", [
+                [72, 110],
+                [117, 102],
+                [191, 89]
+            ],
+            [
+                [127, 38],
+                [130, 226],
+                [132, 231]
+            ],
+            [
+                [182, 119],
+                [107, 226],
+                [75, 234],
+                [72, 196],
+                [148, 138],
+                [213, 143],
+                [227, 188],
+                [164, 256],
+                [162, 256]
+            ]
+        ],
+        ["い", [
+                [54, 100],
+                [69, 161],
+                [106, 221],
+                [118, 194]
+            ],
+            [
+                [195, 95],
+                [228, 140],
+                [249, 184],
+                [249, 184]
+            ]
+        ],
+        ["う", [
+                [127, 45],
+                [173, 56],
+                [188, 61]
+            ],
+            [
+                [99, 136],
+                [129, 114],
+                [179, 118],
+                [188, 175],
+                [142, 249]
+            ]
+        ],
+        ["え", [
+                [126, 42],
+                [167, 69]
+            ],
+            [
+                [83, 133],
+                [129, 115],
+                [167, 105],
+                [75, 244],
+                [106, 219],
+                [132, 202],
+                [164, 240],
+                [237, 232],
+                [237, 232]
+            ]
+        ],
+        ["お", [
+                [51, 115],
+                [159, 98],
+                [160, 100]
+            ],
+            [
+                [100, 39],
+                [108, 70],
+                [100, 239],
+                [68, 228],
+                [114, 154],
+                [210, 148],
+                [228, 182],
+                [185, 248],
+                [185, 248]
+            ],
+            [
+                [195, 65],
+                [230, 91],
+                [238, 99]
+            ]
+        ],
+        ["か", [
+                [40, 141],
+                [103, 119],
+                [156, 120],
+                [164, 155],
+                [122, 242],
+                [98, 221],
+                [98, 221]
+            ],
+            [
+                [118, 58],
+                [96, 127],
+                [56, 223]
+            ],
+            [
+                [179, 84],
+                [223, 127],
+                [255, 180]
+            ]
+        ],
+        ["き", [
+                [86, 109],
+                [194, 81]
+            ],
+            [
+                [111, 156],
+                [162, 145],
+                [226, 128]
+            ],
+            [
+                [117, 48],
+                [138, 83],
+                [194, 179],
+                [196, 181]
+            ],
+            [
+                [86, 206],
+                [107, 243],
+                [181, 252],
+                [182, 252]
+            ]
+        ],
+        ["く", [
+            [169, 53],
+            [139, 107],
+            [106, 164],
+            [178, 250]
+        ]],
+        ["け", [
+                [80, 65],
+                [69, 121],
+                [74, 227],
+                [89, 191],
+                [91, 186]
+            ],
+            [
+                [138, 121],
+                [203, 113],
+                [239, 109]
+            ],
+            [
+                [191, 41],
+                [198, 72],
+                [160, 266],
+                [160, 266]
+            ]
+        ],
+        ["こ", [
+                [96, 75],
+                [149, 79],
+                [189, 84],
+                [169, 104]
+            ],
+            [
+                [76, 192],
+                [109, 218],
+                [199, 222],
+                [201, 222]
+            ]
+        ],
+        ["さ", [
+                [88, 118],
+                [148, 101],
+                [196, 85]
+            ],
+            [
+                [113, 51],
+                [131, 80],
+                [195, 175],
+                [195, 175]
+            ],
+            [
+                [86, 200],
+                [106, 236],
+                [195, 249]
+            ]
+        ],
+        ["し", [
+            [107, 58],
+            [104, 111],
+            [113, 230],
+            [176, 242],
+            [225, 209],
+            [225, 209]
+        ]],
+        ["す", [
+                [56, 109],
+                [123, 101],
+                [241, 84]
+            ],
+            [
+                [153, 36],
+                [159, 95],
+                [153, 192],
+                [122, 189],
+                [106, 160],
+                [130, 133],
+                [163, 162],
+                [134, 228],
+                [79, 259],
+                [79, 259]
+            ]
+        ],
+        ["せ", [
+                [40, 160],
+                [96, 147],
+                [229, 118],
+                [228, 121]
+            ],
+            [
+                [104, 72],
+                [103, 118],
+                [120, 222],
+                [197, 234],
+                [211, 231]
+            ],
+            [
+                [182, 57],
+                [183, 88],
+                [164, 193]
+            ]
+        ],
+        ["そ", [
+            [92, 71],
+            [167, 53],
+            [77, 176],
+            [111, 166],
+            [197, 137],
+            [162, 174],
+            [147, 208],
+            [166, 234],
+            [206, 241],
+            [207, 242]
+        ]],
+        ["た", [
+                [75, 111],
+                [137, 93],
+                [179, 86]
+            ],
+            [
+                [130, 42],
+                [109, 103],
+                [62, 245],
+                [62, 245]
+            ],
+            [
+                [158, 151],
+                [207, 143],
+                [223, 144]
+            ],
+            [
+                [136, 219],
+                [177, 236],
+                [238, 225]
+            ]
+        ],
+        ["ち", [
+                [74, 107],
+                [118, 96],
+                [178, 88]
+            ],
+            [
+                [131, 44],
+                [116, 101],
+                [94, 193],
+                [134, 167],
+                [205, 161],
+                [214, 193],
+                [131, 251],
+                [131, 251]
+            ]
+        ],
+        ["つ", [
+            [46, 145],
+            [75, 130],
+            [211, 112],
+            [244, 151],
+            [183, 218],
+            [152, 231]
+        ]],
+        ["て", [
+            [51, 113],
+            [203, 60],
+            [172, 91],
+            [138, 193],
+            [182, 242],
+            [213, 247],
+            [214, 246]
+        ]],
+        ["と", [
+                [86, 58],
+                [116, 119],
+                [127, 144]
+            ],
+            [
+                [205, 84],
+                [169, 104],
+                [92, 191],
+                [107, 220],
+                [226, 217],
+                [233, 215]
+            ]
+        ],
+        ["な", [
+                [55, 98],
+                [110, 90],
+                [157, 83],
+                [157, 84]
+            ],
+            [
+                [120, 44],
+                [97, 106],
+                [70, 176]
+            ],
+            [
+                [169, 134],
+                [161, 222],
+                [134, 246],
+                [107, 222],
+                [134, 203],
+                [217, 237],
+                [217, 237]
+            ],
+            [
+                [214, 96],
+                [240, 127],
+                [247, 137]
+            ]
+        ],
+        ["に", [
+                [77, 65],
+                [67, 134],
+                [69, 236],
+                [88, 220]
+            ],
+            [
+                [150, 98],
+                [185, 85],
+                [221, 82]
+            ],
+            [
+                [127, 202],
+                [165, 209],
+                [237, 208],
+                [236, 209]
+            ]
+        ],
+        ["ぬ", [
+                [75, 75],
+                [81, 116],
+                [124, 225]
+            ],
+            [
+                [143, 55],
+                [136, 109],
+                [83, 220],
+                [55, 200],
+                [73, 156],
+                [199, 97],
+                [227, 124],
+                [211, 192],
+                [172, 219],
+                [149, 191],
+                [176, 170],
+                [243, 222],
+                [242, 223]
+            ]
+        ],
+        ["ね", [
+                [100, 44],
+                [99, 100],
+                [105, 248],
+                [107, 240]
+            ],
+            [
+                [63, 123],
+                [96, 108],
+                [94, 146],
+                [56, 215],
+                [185, 105],
+                [214, 115],
+                [216, 197],
+                [195, 228],
+                [166, 217],
+                [172, 187],
+                [256, 231],
+                [260, 235]
+            ]
+        ],
+        ["の", [
+            [143, 79],
+            [137, 122],
+            [87, 210],
+            [57, 192],
+            [70, 125],
+            [159, 74],
+            [230, 117],
+            [205, 201],
+            [167, 236],
+            [167, 236]
+        ]],
+        ["は", [
+                [72, 64],
+                [63, 121],
+                [68, 239],
+                [83, 214]
+            ],
+            [
+                [141, 113],
+                [235, 94],
+                [237, 94]
+            ],
+            [
+                [186, 52],
+                [192, 94],
+                [181, 220],
+                [150, 233],
+                [127, 210],
+                [158, 189],
+                [248, 226],
+                [248, 226]
+            ]
+        ],
+        ["ひ", [
+            [55, 106],
+            [109, 76],
+            [101, 111],
+            [86, 214],
+            [111, 233],
+            [162, 206],
+            [200, 91],
+            [227, 144],
+            [239, 168]
+        ]],
+        ["ふ", [
+                [126, 58],
+                [164, 87],
+                [147, 103]
+            ],
+            [
+                [116, 145],
+                [149, 173],
+                [161, 210],
+                [140, 232],
+                [107, 231],
+                [99, 227]
+            ],
+            [
+                [47, 192],
+                [59, 237],
+                [65, 247]
+            ],
+            [
+                [225, 161],
+                [249, 208],
+                [251, 212]
+            ]
+        ],
+        ["へ", [
+            [50, 160],
+            [77, 128],
+            [109, 107],
+            [157, 128],
+            [249, 194],
+            [250, 191]
+        ]],
+        ["ほ", [
+                [76, 49],
+                [65, 86],
+                [66, 232],
+                [84, 205],
+                [87, 200]
+            ],
+            [
+                [149, 73],
+                [182, 64],
+                [237, 62],
+                [237, 62]
+            ],
+            [
+                [137, 147],
+                [185, 140],
+                [235, 132],
+                [236, 132]
+            ],
+            [
+                [188, 75],
+                [192, 112],
+                [179, 224],
+                [149, 231],
+                [132, 203],
+                [160, 188],
+                [255, 246],
+                [255, 246]
+            ]
+        ],
+        ["ま", [
+                [81, 98],
+                [200, 76],
+                [201, 77]
+            ],
+            [
+                [88, 151],
+                [149, 152],
+                [200, 144]
+            ],
+            [
+                [139, 41],
+                [143, 84],
+                [129, 235],
+                [95, 240],
+                [85, 206],
+                [118, 196],
+                [212, 242],
+                [213, 242]
+            ]
+        ],
+        ["み", [
+                [97, 79],
+                [130, 72],
+                [170, 64],
+                [160, 99],
+                [73, 225],
+                [55, 198],
+                [78, 172],
+                [255, 207],
+                [256, 208]
+            ],
+            [
+                [211, 116],
+                [201, 174],
+                [157, 235]
+            ]
+        ],
+        ["む", [
+                [72, 108],
+                [111, 98],
+                [176, 85]
+            ],
+            [
+                [111, 41],
+                [116, 88],
+                [104, 247],
+                [71, 236],
+                [76, 175],
+                [105, 188],
+                [130, 229],
+                [179, 234],
+                [211, 223],
+                [219, 164],
+                [217, 137]
+            ],
+            [
+                [208, 59],
+                [245, 96],
+                [251, 103]
+            ]
+        ],
+        ["め", [
+                [93, 79],
+                [102, 133],
+                [141, 212],
+                [142, 210]
+            ],
+            [
+                [158, 50],
+                [158, 87],
+                [91, 213],
+                [61, 194],
+                [78, 137],
+                [185, 100],
+                [221, 130],
+                [210, 200],
+                [171, 244],
+                [171, 244]
+            ]
+        ],
+        ["も", [
+                [133, 50],
+                [124, 94],
+                [134, 246],
+                [174, 249],
+                [200, 221],
+                [203, 171],
+                [202, 167]
+            ],
+            [
+                [78, 110],
+                [111, 101],
+                [170, 92]
+            ],
+            [
+                [81, 166],
+                [142, 164],
+                [170, 162]
+            ]
+        ],
+        ["や", [
+                [83, 69],
+                [102, 128],
+                [152, 247],
+                [153, 248]
+            ],
+            [
+                [55, 154],
+                [88, 135],
+                [230, 101],
+                [237, 138],
+                [169, 166],
+                [169, 166]
+            ],
+            [
+                [144, 51],
+                [175, 80],
+                [179, 85]
+            ]
+        ],
+        ["ゆ", [
+                [63, 69],
+                [62, 140],
+                [60, 218],
+                [98, 126],
+                [177, 85],
+                [209, 93],
+                [227, 158],
+                [196, 192],
+                [149, 192],
+                [119, 174],
+                [119, 173]
+            ],
+            [
+                [156, 49],
+                [170, 76],
+                [126, 248],
+                [126, 248]
+            ]
+        ],
+        ["よ", [
+                [152, 111],
+                [201, 103],
+                [216, 101]
+            ],
+            [
+                [137, 45],
+                [144, 78],
+                [127, 230],
+                [96, 231],
+                [75, 203],
+                [90, 176],
+                [177, 210],
+                [218, 253],
+                [218, 253]
+            ]
+        ],
+        ["ら", [
+                [113, 34],
+                [149, 63],
+                [140, 81]
+            ],
+            [
+                [100, 106],
+                [92, 154],
+                [82, 198],
+                [119, 178],
+                [215, 171],
+                [211, 211],
+                [128, 246],
+                [133, 245]
+            ]
+        ],
+        ["り", [
+                [109, 48],
+                [102, 93],
+                [103, 156],
+                [127, 111],
+                [128, 110]
+            ],
+            [
+                [182, 61],
+                [194, 102],
+                [156, 238],
+                [143, 250]
+            ]
+        ],
+        ["る", [
+            [101, 78],
+            [160, 63],
+            [158, 93],
+            [78, 195],
+            [106, 176],
+            [210, 153],
+            [225, 187],
+            [182, 239],
+            [150, 243],
+            [127, 223],
+            [159, 208],
+            [188, 231],
+            [188, 231]
+        ]],
+        ["れ", [
+                [113, 45],
+                [116, 79],
+                [116, 254]
+            ],
+            [
+                [60, 129],
+                [93, 106],
+                [127, 91],
+                [58, 221],
+                [86, 200],
+                [197, 104],
+                [208, 141],
+                [209, 211],
+                [247, 194],
+                [264, 176]
+            ]
+        ],
+        ["ろ", [
+            [88, 76],
+            [123, 65],
+            [172, 52],
+            [157, 80],
+            [70, 185],
+            [113, 168],
+            [203, 155],
+            [216, 185],
+            [162, 235],
+            [129, 243],
+            [129, 244]
+        ]],
+        ["わ", [
+                [101, 44],
+                [100, 108],
+                [102, 248],
+                [102, 248]
+            ],
+            [
+                [61, 126],
+                [98, 109],
+                [101, 141],
+                [56, 210],
+                [80, 184],
+                [195, 132],
+                [236, 152],
+                [223, 203],
+                [173, 244]
+            ]
+        ],
+        ["を", [
+                [82, 94],
+                [130, 91],
+                [199, 81]
+            ],
+            [
+                [141, 36],
+                [125, 82],
+                [86, 160],
+                [132, 144],
+                [151, 178],
+                [150, 202]
+            ],
+            [
+                [207, 128],
+                [163, 148],
+                [101, 209],
+                [108, 239],
+                [196, 239],
+                [200, 238]
+            ]
+        ],
+        ["ん", [
+            [158, 54],
+            [58, 230],
+            [77, 202],
+            [130, 154],
+            [145, 189],
+            [161, 228],
+            [206, 219],
+            [252, 142],
+            [255, 140]
+        ]],
+        ["が", [
+                [48, 135],
+                [114, 118],
+                [153, 123],
+                [135, 199],
+                [115, 229],
+                [100, 212]
+            ],
+            [
+                [119, 58],
+                [96, 127],
+                [56, 237]
+            ],
+            [
+                [180, 92],
+                [210, 121],
+                [245, 177],
+                [245, 177]
+            ],
+            [
+                [211, 70],
+                [239, 96],
+                [244, 102]
+            ],
+            [
+                [234, 51],
+                [263, 77]
+            ]
+        ],
+        ["ぎ", [
+                [90, 114],
+                [174, 86],
+                [182, 84]
+            ],
+            [
+                [109, 152],
+                [162, 143],
+                [216, 127]
+            ],
+            [
+                [118, 38],
+                [133, 79],
+                [189, 183],
+                [189, 184]
+            ],
+            [
+                [87, 205],
+                [118, 240],
+                [178, 249]
+            ],
+            [
+                [201, 58],
+                [243, 95],
+                [245, 96]
+            ],
+            [
+                [234, 39],
+                [259, 69],
+                [261, 70]
+            ]
+        ],
+        ["ぐ", [
+                [165, 43],
+                [136, 87],
+                [95, 146],
+                [155, 250],
+                [157, 248]
+            ],
+            [
+                [200, 69],
+                [222, 107],
+                [224, 111]
+            ],
+            [
+                [226, 65],
+                [248, 89],
+                [249, 89]
+            ]
+        ],
+        ["げ", [
+                [76, 61],
+                [66, 125],
+                [68, 230],
+                [81, 199],
+                [82, 198]
+            ],
+            [
+                [131, 121],
+                [188, 113],
+                [251, 105]
+            ],
+            [
+                [187, 40],
+                [194, 98],
+                [152, 264],
+                [152, 265]
+            ],
+            [
+                [221, 44],
+                [251, 76],
+                [257, 84]
+            ],
+            [
+                [244, 27],
+                [273, 53],
+                [278, 59]
+            ]
+        ],
+        ["ご", [
+                [88, 75],
+                [134, 77],
+                [185, 87],
+                [156, 105],
+                [153, 107]
+            ],
+            [
+                [76, 202],
+                [125, 224],
+                [201, 228]
+            ],
+            [
+                [203, 48],
+                [230, 80],
+                [232, 83]
+            ],
+            [
+                [228, 31],
+                [265, 64]
+            ]
+        ],
+        ["ざ", [
+                [88, 128],
+                [127, 116],
+                [205, 91],
+                [205, 91]
+            ],
+            [
+                [122, 46],
+                [146, 91],
+                [191, 172]
+            ],
+            [
+                [83, 199],
+                [104, 237],
+                [183, 257]
+            ],
+            [
+                [197, 48],
+                [222, 77],
+                [225, 81]
+            ],
+            [
+                [232, 41],
+                [258, 69],
+                [261, 72]
+            ]
+        ],
+        ["じ", [
+                [111, 60],
+                [105, 97],
+                [119, 233],
+                [148, 249],
+                [210, 213],
+                [210, 210]
+            ],
+            [
+                [182, 63],
+                [209, 90],
+                [211, 93]
+            ],
+            [
+                [214, 45],
+                [246, 76],
+                [255, 85]
+            ]
+        ],
+        ["ず", [
+                [54, 110],
+                [106, 100],
+                [232, 88]
+            ],
+            [
+                [147, 46],
+                [156, 86],
+                [152, 202],
+                [121, 191],
+                [106, 160],
+                [132, 140],
+                [151, 180],
+                [117, 238],
+                [83, 257],
+                [85, 255]
+            ],
+            [
+                [193, 34],
+                [219, 59],
+                [227, 67]
+            ],
+            [
+                [222, 15],
+                [257, 59],
+                [257, 59]
+            ]
+        ],
+        ["ぜ", [
+                [44, 158],
+                [234, 121],
+                [249, 122]
+            ],
+            [
+                [106, 77],
+                [106, 122],
+                [131, 222],
+                [218, 226],
+                [218, 225]
+            ],
+            [
+                [184, 51],
+                [183, 114],
+                [166, 197]
+            ],
+            [
+                [209, 50],
+                [237, 81],
+                [244, 88]
+            ],
+            [
+                [237, 32],
+                [267, 71]
+            ]
+        ],
+        ["ぞ", [
+                [89, 67],
+                [127, 56],
+                [166, 50],
+                [72, 168],
+                [112, 152],
+                [198, 128],
+                [166, 154],
+                [135, 209],
+                [165, 238],
+                [198, 248]
+            ],
+            [
+                [204, 65],
+                [232, 93],
+                [239, 100]
+            ],
+            [
+                [231, 50],
+                [260, 78],
+                [264, 82]
+            ]
+        ],
+        ["だ", [
+                [65, 107],
+                [115, 100],
+                [189, 90]
+            ],
+            [
+                [132, 50],
+                [120, 91],
+                [65, 244],
+                [65, 244]
+            ],
+            [
+                [142, 154],
+                [195, 147],
+                [219, 149]
+            ],
+            [
+                [140, 209],
+                [222, 232],
+                [246, 229]
+            ],
+            [
+                [208, 73],
+                [237, 101],
+                [243, 108]
+            ],
+            [
+                [239, 53],
+                [270, 86]
+            ]
+        ],
+        ["ぢ", [
+                [69, 103],
+                [182, 88],
+                [185, 88]
+            ],
+            [
+                [127, 31],
+                [118, 61],
+                [87, 190],
+                [181, 152],
+                [223, 168],
+                [220, 198],
+                [131, 243],
+                [134, 244]
+            ],
+            [
+                [208, 74],
+                [236, 109],
+                [241, 115]
+            ],
+            [
+                [231, 56],
+                [267, 99],
+                [267, 99]
+            ]
+        ],
+        ["づ", [
+                [52, 147],
+                [103, 126],
+                [229, 121],
+                [241, 150],
+                [180, 213],
+                [149, 225],
+                [149, 225]
+            ],
+            [
+                [217, 59],
+                [247, 92],
+                [252, 96]
+            ],
+            [
+                [242, 38],
+                [269, 71],
+                [276, 83]
+            ]
+        ],
+        ["で", [
+                [64, 112],
+                [108, 98],
+                [199, 76],
+                [167, 114],
+                [140, 192],
+                [202, 246],
+                [204, 247]
+            ],
+            [
+                [213, 84],
+                [244, 128]
+            ],
+            [
+                [240, 64],
+                [274, 114]
+            ]
+        ],
+        ["ど", [
+                [85, 57],
+                [110, 115],
+                [121, 140]
+            ],
+            [
+                [208, 84],
+                [170, 104],
+                [76, 191],
+                [81, 221],
+                [204, 238],
+                [209, 237]
+            ],
+            [
+                [211, 51],
+                [234, 77],
+                [248, 94]
+            ],
+            [
+                [241, 31],
+                [272, 69]
+            ]
+        ],
+        ["ば", [
+                [71, 69],
+                [65, 119],
+                [73, 243],
+                [88, 212],
+                [91, 208]
+            ],
+            [
+                [138, 119],
+                [238, 108],
+                [241, 109]
+            ],
+            [
+                [189, 50],
+                [193, 92],
+                [178, 217],
+                [151, 232],
+                [129, 211],
+                [154, 190],
+                [236, 235],
+                [242, 240]
+            ],
+            [
+                [216, 48],
+                [239, 76],
+                [242, 76]
+            ],
+            [
+                [238, 25],
+                [274, 66]
+            ]
+        ],
+        ["び", [
+                [53, 98],
+                [119, 70],
+                [102, 103],
+                [80, 215],
+                [108, 232],
+                [154, 213],
+                [186, 80],
+                [212, 129],
+                [230, 164]
+            ],
+            [
+                [211, 49],
+                [242, 84],
+                [244, 85]
+            ],
+            [
+                [241, 31],
+                [272, 65]
+            ]
+        ],
+        ["ぶ", [
+                [125, 50],
+                [157, 71],
+                [150, 95]
+            ],
+            [
+                [110, 135],
+                [151, 164],
+                [166, 200],
+                [156, 229],
+                [121, 234],
+                [112, 224]
+            ],
+            [
+                [46, 188],
+                [58, 234],
+                [61, 240]
+            ],
+            [
+                [217, 156],
+                [233, 182],
+                [255, 221],
+                [255, 221]
+            ],
+            [
+                [207, 61],
+                [232, 93],
+                [235, 97]
+            ],
+            [
+                [233, 48],
+                [266, 82],
+                [269, 86]
+            ]
+        ],
+        ["べ", [
+                [50, 159],
+                [89, 125],
+                [117, 108],
+                [248, 210],
+                [248, 210]
+            ],
+            [
+                [188, 60],
+                [219, 86],
+                [227, 93]
+            ],
+            [
+                [220, 39],
+                [256, 72]
+            ]
+        ],
+        ["ぼ", [
+                [69, 71],
+                [65, 101],
+                [69, 237],
+                [84, 210],
+                [88, 204]
+            ],
+            [
+                [139, 76],
+                [170, 69],
+                [217, 65],
+                [217, 69]
+            ],
+            [
+                [135, 141],
+                [194, 133],
+                [235, 128],
+                [236, 128]
+            ],
+            [
+                [182, 72],
+                [193, 116],
+                [188, 220],
+                [159, 231],
+                [134, 212],
+                [165, 191],
+                [246, 254]
+            ],
+            [
+                [217, 46],
+                [254, 93]
+            ],
+            [
+                [243, 38],
+                [274, 75]
+            ]
+        ],
+        ["ぱ", [
+                [70, 66],
+                [62, 116],
+                [63, 218],
+                [87, 210]
+            ],
+            [
+                [148, 115],
+                [206, 106],
+                [230, 104]
+            ],
+            [
+                [194, 55],
+                [199, 112],
+                [179, 222],
+                [144, 228],
+                [126, 200],
+                [170, 196],
+                [238, 229],
+                [238, 229]
+            ],
+            [
+                [251, 74],
+                [225, 57],
+                [256, 37],
+                [268, 66],
+                [248, 82]
+            ]
+        ],
+        ["ぴ", [
+                [53, 101],
+                [88, 83],
+                [116, 68],
+                [84, 133],
+                [79, 222],
+                [108, 241],
+                [152, 217],
+                [186, 86],
+                [221, 137],
+                [235, 162]
+            ],
+            [
+                [244, 96],
+                [223, 68],
+                [258, 56],
+                [266, 88],
+                [250, 100]
+            ]
+        ],
+        ["ぷ", [
+                [121, 51],
+                [155, 69],
+                [144, 88]
+            ],
+            [
+                [115, 146],
+                [145, 167],
+                [162, 211],
+                [129, 230],
+                [108, 222]
+            ],
+            [
+                [44, 191],
+                [63, 231],
+                [66, 236]
+            ],
+            [
+                [215, 145],
+                [250, 212]
+            ],
+            [
+                [226, 101],
+                [201, 84],
+                [225, 59],
+                [252, 74],
+                [236, 105],
+                [229, 107]
+            ]
+        ],
+        ["ぺ", [
+                [49, 152],
+                [68, 127],
+                [121, 95],
+                [243, 198]
+            ],
+            [
+                [224, 102],
+                [198, 83],
+                [222, 59],
+                [249, 79],
+                [229, 101]
+            ]
+        ],
+        ["ぽ", [
+                [72, 63],
+                [67, 106],
+                [71, 245],
+                [85, 225]
+            ],
+            [
+                [129, 73],
+                [178, 67],
+                [217, 65]
+            ],
+            [
+                [135, 140],
+                [190, 136],
+                [238, 128],
+                [236, 127]
+            ],
+            [
+                [183, 78],
+                [189, 207],
+                [172, 235],
+                [140, 221],
+                [151, 193],
+                [249, 236],
+                [251, 238]
+            ],
+            [
+                [247, 90],
+                [223, 69],
+                [253, 51],
+                [260, 82],
+                [246, 92]
+            ]
+        ],
+        ["きゃ", [
+                [60, 126],
+                [109, 111],
+                [122, 111]
+            ],
+            [
+                [70, 145],
+                [111, 132],
+                [125, 127]
+            ],
+            [
+                [76, 88],
+                [84, 119],
+                [110, 171],
+                [110, 172]
+            ],
+            [
+                [48, 180],
+                [85, 205],
+                [118, 203]
+            ],
+            [
+                [204, 128],
+                [226, 188],
+                [232, 202]
+            ],
+            [
+                [195, 166],
+                [235, 151],
+                [265, 153],
+                [252, 184],
+                [251, 181]
+            ],
+            [
+                [232, 126],
+                [241, 142]
+            ]
+        ],
+        ["きゅ", [
+                [56, 121],
+                [93, 111],
+                [123, 107],
+                [120, 109]
+            ],
+            [
+                [75, 148],
+                [112, 141],
+                [130, 136]
+            ],
+            [
+                [75, 88],
+                [93, 136],
+                [107, 167],
+                [107, 167]
+            ],
+            [
+                [66, 177],
+                [98, 201],
+                [128, 200],
+                [130, 202]
+            ],
+            [
+                [189, 137],
+                [189, 186],
+                [221, 154],
+                [256, 163],
+                [235, 190],
+                [216, 183]
+            ],
+            [
+                [234, 135],
+                [238, 183],
+                [225, 223]
+            ]
+        ],
+        ["きょ", [
+                [52, 123],
+                [103, 112],
+                [125, 108]
+            ],
+            [
+                [66, 153],
+                [112, 141],
+                [132, 135]
+            ],
+            [
+                [78, 85],
+                [93, 129],
+                [115, 169],
+                [117, 168]
+            ],
+            [
+                [58, 189],
+                [78, 213],
+                [129, 211]
+            ],
+            [
+                [232, 157],
+                [261, 149],
+                [261, 149]
+            ],
+            [
+                [230, 126],
+                [228, 160],
+                [225, 203],
+                [194, 199],
+                [235, 194],
+                [259, 212]
+            ]
+        ],
+        ["しゃ", [
+                [72, 92],
+                [70, 123],
+                [72, 192],
+                [106, 203],
+                [138, 191],
+                [140, 189]
+            ],
+            [
+                [211, 134],
+                [228, 183],
+                [236, 204]
+            ],
+            [
+                [197, 176],
+                [235, 155],
+                [266, 158],
+                [248, 184],
+                [248, 184]
+            ],
+            [
+                [233, 131],
+                [245, 147]
+            ]
+        ],
+        ["しゅ", [
+                [70, 97],
+                [68, 129],
+                [84, 209],
+                [141, 199],
+                [149, 192]
+            ],
+            [
+                [199, 132],
+                [197, 178],
+                [222, 152],
+                [254, 149],
+                [251, 180],
+                [223, 173]
+            ],
+            [
+                [233, 126],
+                [243, 167],
+                [233, 217],
+                [232, 217]
+            ]
+        ],
+        ["しょ", [
+                [68, 93],
+                [61, 134],
+                [71, 199],
+                [105, 206],
+                [136, 195],
+                [136, 194]
+            ],
+            [
+                [232, 155],
+                [255, 148]
+            ],
+            [
+                [229, 125],
+                [228, 158],
+                [223, 203],
+                [196, 186],
+                [236, 190],
+                [258, 206]
+            ]
+        ],
+        ["ちゃ", [
+                [35, 129],
+                [68, 118],
+                [117, 107],
+                [119, 107]
+            ],
+            [
+                [74, 82],
+                [71, 173],
+                [108, 156],
+                [138, 170],
+                [125, 199],
+                [80, 215],
+                [80, 215]
+            ],
+            [
+                [204, 139],
+                [223, 191],
+                [229, 205]
+            ],
+            [
+                [195, 174],
+                [234, 156],
+                [264, 155],
+                [246, 183],
+                [242, 183]
+            ],
+            [
+                [233, 127],
+                [245, 145]
+            ]
+        ],
+        ["ちゅ", [
+                [37, 117],
+                [71, 115],
+                [116, 106],
+                [119, 106]
+            ],
+            [
+                [79, 74],
+                [70, 113],
+                [61, 178],
+                [101, 154],
+                [134, 155],
+                [129, 192],
+                [90, 208],
+                [89, 208]
+            ],
+            [
+                [198, 128],
+                [197, 175],
+                [229, 150],
+                [261, 160],
+                [236, 186],
+                [224, 185]
+            ],
+            [
+                [232, 125],
+                [244, 168],
+                [229, 211]
+            ]
+        ],
+        ["ちょ", [
+                [35, 124],
+                [112, 110]
+            ],
+            [
+                [74, 87],
+                [64, 120],
+                [56, 174],
+                [88, 156],
+                [130, 161],
+                [131, 197],
+                [86, 213],
+                [80, 214]
+            ],
+            [
+                [231, 153],
+                [270, 150]
+            ],
+            [
+                [230, 119],
+                [229, 162],
+                [225, 208],
+                [197, 193],
+                [230, 194],
+                [262, 218]
+            ]
+        ],
+        ["にゃ", [
+                [53, 97],
+                [46, 137],
+                [59, 220]
+            ],
+            [
+                [96, 119],
+                [135, 112],
+                [147, 111]
+            ],
+            [
+                [83, 189],
+                [143, 188]
+            ],
+            [
+                [202, 131],
+                [232, 206],
+                [231, 203]
+            ],
+            [
+                [198, 173],
+                [235, 153],
+                [268, 151],
+                [248, 180],
+                [244, 180]
+            ],
+            [
+                [233, 124],
+                [249, 146]
+            ]
+        ],
+        ["にゅ", [
+                [53, 99],
+                [46, 140],
+                [50, 210],
+                [48, 207]
+            ],
+            [
+                [98, 113],
+                [134, 106],
+                [150, 105]
+            ],
+            [
+                [88, 175],
+                [134, 181],
+                [148, 181]
+            ],
+            [
+                [191, 135],
+                [195, 165],
+                [224, 150],
+                [258, 151],
+                [249, 183],
+                [219, 177],
+                [220, 176]
+            ],
+            [
+                [230, 117],
+                [245, 156],
+                [231, 215],
+                [231, 215]
+            ]
+        ],
+        ["にょ", [
+                [52, 96],
+                [43, 206],
+                [44, 213]
+            ],
+            [
+                [88, 117],
+                [129, 109],
+                [142, 112]
+            ],
+            [
+                [80, 180],
+                [124, 185],
+                [156, 183]
+            ],
+            [
+                [228, 152],
+                [269, 151]
+            ],
+            [
+                [223, 119],
+                [226, 152],
+                [217, 213],
+                [190, 197],
+                [221, 186],
+                [264, 210],
+                [265, 210]
+            ]
+        ],
+        ["ひゃ", [
+                [23, 128],
+                [73, 105],
+                [59, 143],
+                [57, 201],
+                [91, 193],
+                [115, 135],
+                [142, 157],
+                [148, 163]
+            ],
+            [
+                [204, 137],
+                [223, 176],
+                [237, 209],
+                [236, 206]
+            ],
+            [
+                [187, 171],
+                [225, 152],
+                [267, 152],
+                [251, 180],
+                [243, 179]
+            ],
+            [
+                [230, 123],
+                [242, 143]
+            ]
+        ],
+        ["ひゅ", [
+                [25, 130],
+                [61, 106],
+                [54, 142],
+                [53, 197],
+                [84, 199],
+                [119, 121],
+                [146, 158],
+                [153, 162]
+            ],
+            [
+                [195, 151],
+                [196, 192],
+                [215, 159],
+                [256, 151],
+                [254, 188],
+                [222, 189],
+                [217, 182]
+            ],
+            [
+                [231, 113],
+                [246, 139],
+                [229, 221]
+            ]
+        ],
+        ["ひょ", [
+                [29, 123],
+                [61, 100],
+                [61, 133],
+                [58, 199],
+                [95, 190],
+                [115, 102],
+                [134, 141],
+                [151, 162]
+            ],
+            [
+                [213, 152],
+                [245, 154],
+                [256, 154]
+            ],
+            [
+                [213, 129],
+                [218, 162],
+                [217, 214],
+                [192, 197],
+                [224, 189],
+                [259, 213],
+                [259, 214]
+            ]
+        ],
+        ["みゃ", [
+                [57, 114],
+                [91, 101],
+                [99, 130],
+                [57, 199],
+                [30, 182],
+                [63, 165],
+                [155, 177],
+                [165, 179]
+            ],
+            [
+                [130, 131],
+                [113, 181],
+                [99, 207]
+            ],
+            [
+                [208, 129],
+                [228, 183],
+                [238, 205]
+            ],
+            [
+                [196, 172],
+                [222, 156],
+                [264, 150],
+                [245, 180],
+                [243, 181]
+            ],
+            [
+                [233, 123],
+                [249, 145]
+            ]
+        ],
+        ["みゅ", [
+                [53, 117],
+                [92, 104],
+                [87, 144],
+                [49, 199],
+                [59, 169],
+                [159, 180],
+                [161, 181]
+            ],
+            [
+                [129, 131],
+                [118, 180],
+                [101, 208]
+            ],
+            [
+                [199, 145],
+                [192, 179],
+                [220, 157],
+                [253, 150],
+                [257, 186],
+                [226, 187],
+                [221, 179]
+            ],
+            [
+                [228, 119],
+                [240, 151],
+                [224, 216],
+                [224, 217]
+            ]
+        ],
+        ["みょ", [
+                [51, 110],
+                [81, 99],
+                [88, 139],
+                [53, 197],
+                [31, 175],
+                [98, 162],
+                [162, 174],
+                [162, 172]
+            ],
+            [
+                [134, 136],
+                [117, 188],
+                [105, 208]
+            ],
+            [
+                [233, 154],
+                [265, 150],
+                [266, 150]
+            ],
+            [
+                [233, 130],
+                [229, 178],
+                [224, 211],
+                [195, 201],
+                [231, 196],
+                [265, 220],
+                [264, 218]
+            ]
+        ],
+        ["りゃ", [
+                [69, 82],
+                [67, 120],
+                [69, 173],
+                [69, 173]
+            ],
+            [
+                [107, 97],
+                [97, 206],
+                [87, 223]
+            ],
+            [
+                [209, 134],
+                [227, 188],
+                [236, 205]
+            ],
+            [
+                [195, 170],
+                [232, 151],
+                [264, 155],
+                [246, 180],
+                [240, 182]
+            ],
+            [
+                [232, 124],
+                [239, 146]
+            ]
+        ],
+        ["りゅ", [
+                [63, 90],
+                [66, 140],
+                [68, 151]
+            ],
+            [
+                [105, 90],
+                [104, 185],
+                [84, 219],
+                [83, 219]
+            ],
+            [
+                [197, 142],
+                [196, 182],
+                [221, 156],
+                [256, 148],
+                [264, 177],
+                [234, 190],
+                [218, 182]
+            ],
+            [
+                [234, 123],
+                [246, 172],
+                [229, 223]
+            ]
+        ],
+        ["りょ", [
+                [68, 83],
+                [66, 132],
+                [67, 153]
+            ],
+            [
+                [105, 88],
+                [111, 141],
+                [87, 216],
+                [85, 214]
+            ],
+            [
+                [228, 149],
+                [262, 146]
+            ],
+            [
+                [229, 123],
+                [231, 156],
+                [224, 206],
+                [197, 192],
+                [235, 189],
+                [262, 208],
+                [262, 208]
+            ]
+        ],
+        ["ぎゃ", [
+                [37, 124],
+                [107, 108],
+                [110, 108]
+            ],
+            [
+                [58, 152],
+                [101, 142],
+                [124, 136]
+            ],
+            [
+                [69, 86],
+                [96, 144],
+                [111, 174],
+                [111, 174]
+            ],
+            [
+                [52, 184],
+                [85, 215],
+                [117, 210],
+                [117, 210]
+            ],
+            [
+                [118, 87],
+                [136, 112],
+                [139, 116]
+            ],
+            [
+                [135, 77],
+                [156, 102]
+            ],
+            [
+                [202, 132],
+                [225, 189],
+                [235, 219],
+                [233, 212]
+            ],
+            [
+                [186, 171],
+                [230, 150],
+                [265, 151],
+                [243, 180],
+                [241, 182]
+            ],
+            [
+                [228, 127],
+                [240, 148]
+            ]
+        ],
+        ["ぎゅ", [
+                [50, 124],
+                [99, 107],
+                [118, 106]
+            ],
+            [
+                [64, 151],
+                [108, 139],
+                [123, 133]
+            ],
+            [
+                [70, 83],
+                [113, 169],
+                [113, 169]
+            ],
+            [
+                [53, 188],
+                [87, 209],
+                [119, 205],
+                [119, 203]
+            ],
+            [
+                [117, 83],
+                [136, 107],
+                [139, 114]
+            ],
+            [
+                [135, 78],
+                [154, 100]
+            ],
+            [
+                [187, 138],
+                [193, 178],
+                [220, 154],
+                [252, 147],
+                [259, 177],
+                [232, 191],
+                [213, 179]
+            ],
+            [
+                [229, 121],
+                [241, 159],
+                [227, 224]
+            ]
+        ],
+        ["ぎょ", [
+                [48, 121],
+                [97, 109],
+                [114, 108]
+            ],
+            [
+                [64, 149],
+                [113, 138],
+                [129, 133]
+            ],
+            [
+                [77, 89],
+                [103, 150],
+                [113, 169]
+            ],
+            [
+                [55, 186],
+                [81, 214],
+                [119, 213],
+                [121, 211]
+            ],
+            [
+                [123, 85],
+                [138, 113],
+                [140, 113]
+            ],
+            [
+                [138, 79],
+                [158, 103]
+            ],
+            [
+                [225, 150],
+                [261, 145],
+                [259, 144]
+            ],
+            [
+                [220, 127],
+                [224, 171],
+                [221, 216],
+                [194, 199],
+                [238, 192],
+                [264, 209],
+                [264, 209]
+            ]
+        ],
+        ["じゃ", [
+                [65, 90],
+                [65, 139],
+                [77, 201],
+                [138, 196],
+                [146, 188]
+            ],
+            [
+                [108, 91],
+                [123, 115]
+            ],
+            [
+                [125, 87],
+                [145, 106]
+            ],
+            [
+                [200, 131],
+                [231, 205],
+                [234, 202]
+            ],
+            [
+                [193, 176],
+                [220, 152],
+                [265, 145],
+                [251, 183],
+                [242, 184]
+            ],
+            [
+                [229, 127],
+                [241, 143]
+            ]
+        ],
+        ["じゅ", [
+                [63, 86],
+                [61, 134],
+                [68, 202],
+                [101, 212],
+                [141, 186],
+                [140, 184]
+            ],
+            [
+                [105, 88],
+                [117, 115]
+            ],
+            [
+                [120, 83],
+                [139, 104]
+            ],
+            [
+                [192, 137],
+                [195, 182],
+                [220, 151],
+                [258, 147],
+                [250, 184],
+                [220, 187],
+                [217, 184]
+            ],
+            [
+                [227, 115],
+                [244, 151],
+                [224, 223]
+            ]
+        ],
+        ["じょ", [
+                [63, 86],
+                [61, 136],
+                [80, 203],
+                [123, 201],
+                [143, 186]
+            ],
+            [
+                [110, 92],
+                [124, 119],
+                [125, 118]
+            ],
+            [
+                [127, 84],
+                [147, 111]
+            ],
+            [
+                [222, 151],
+                [262, 146],
+                [261, 145]
+            ],
+            [
+                [222, 127],
+                [224, 160],
+                [219, 217],
+                [193, 198],
+                [233, 190],
+                [264, 209]
+            ]
+        ],
+        ["ぢゃ", [
+                [31, 130],
+                [88, 118],
+                [114, 115]
+            ],
+            [
+                [75, 80],
+                [65, 133],
+                [55, 177],
+                [119, 149],
+                [135, 185],
+                [94, 213],
+                [91, 209]
+            ],
+            [
+                [121, 91],
+                [137, 122],
+                [139, 126]
+            ],
+            [
+                [143, 86],
+                [161, 110]
+            ],
+            [
+                [209, 144],
+                [229, 197],
+                [234, 207]
+            ],
+            [
+                [194, 181],
+                [235, 156],
+                [269, 149],
+                [255, 185],
+                [246, 183]
+            ],
+            [
+                [234, 126],
+                [246, 147]
+            ]
+        ],
+        ["ぢゅ", [
+                [40, 123],
+                [95, 115],
+                [110, 113]
+            ],
+            [
+                [76, 83],
+                [69, 123],
+                [60, 180],
+                [113, 155],
+                [122, 189],
+                [86, 210],
+                [85, 206]
+            ],
+            [
+                [125, 91],
+                [141, 121],
+                [141, 122]
+            ],
+            [
+                [146, 88],
+                [164, 115],
+                [164, 115]
+            ],
+            [
+                [190, 143],
+                [194, 189],
+                [220, 150],
+                [249, 139],
+                [260, 179],
+                [225, 191],
+                [217, 188]
+            ],
+            [
+                [225, 115],
+                [241, 157],
+                [231, 212]
+            ]
+        ],
+        ["ぢょ", [
+                [30, 129],
+                [108, 114]
+            ],
+            [
+                [74, 88],
+                [65, 135],
+                [60, 177],
+                [89, 162],
+                [126, 160],
+                [124, 191],
+                [85, 215],
+                [85, 210]
+            ],
+            [
+                [121, 89],
+                [137, 121],
+                [141, 124]
+            ],
+            [
+                [143, 89],
+                [158, 116],
+                [159, 119]
+            ],
+            [
+                [221, 153],
+                [257, 148]
+            ],
+            [
+                [223, 127],
+                [226, 172],
+                [220, 214],
+                [194, 192],
+                [223, 177],
+                [267, 210]
+            ]
+        ],
+        ["びゃ", [
+                [28, 124],
+                [61, 104],
+                [59, 148],
+                [55, 198],
+                [90, 194],
+                [119, 112],
+                [136, 144],
+                [149, 162]
+            ],
+            [
+                [132, 79],
+                [148, 109],
+                [150, 108]
+            ],
+            [
+                [152, 78],
+                [167, 103]
+            ],
+            [
+                [205, 138],
+                [234, 209],
+                [235, 207]
+            ],
+            [
+                [192, 178],
+                [219, 154],
+                [264, 151],
+                [239, 185],
+                [233, 182]
+            ],
+            [
+                [230, 121],
+                [237, 148]
+            ]
+        ],
+        ["びゅ", [
+                [20, 119],
+                [61, 104],
+                [54, 159],
+                [50, 197],
+                [92, 190],
+                [115, 108],
+                [134, 140],
+                [149, 161]
+            ],
+            [
+                [131, 80],
+                [145, 107],
+                [146, 107]
+            ],
+            [
+                [151, 78],
+                [167, 100]
+            ],
+            [
+                [189, 142],
+                [191, 178],
+                [226, 148],
+                [264, 149],
+                [249, 184],
+                [221, 178]
+            ],
+            [
+                [230, 108],
+                [243, 169],
+                [232, 220]
+            ]
+        ],
+        ["びょ", [
+                [36, 118],
+                [66, 102],
+                [58, 141],
+                [51, 186],
+                [86, 200],
+                [115, 165],
+                [119, 112],
+                [138, 150],
+                [148, 162]
+            ],
+            [
+                [134, 86],
+                [147, 115]
+            ],
+            [
+                [155, 78],
+                [171, 103]
+            ],
+            [
+                [229, 156],
+                [264, 152],
+                [266, 150]
+            ],
+            [
+                [226, 127],
+                [230, 177],
+                [224, 212],
+                [197, 197],
+                [244, 192],
+                [271, 208]
+            ]
+        ],
+        ["ぴゃ", [
+                [28, 118],
+                [63, 104],
+                [55, 148],
+                [51, 194],
+                [91, 187],
+                [115, 120],
+                [144, 153],
+                [149, 159]
+            ],
+            [
+                [155, 112],
+                [158, 82],
+                [168, 113],
+                [157, 121]
+            ],
+            [
+                [205, 140],
+                [230, 198],
+                [235, 207]
+            ],
+            [
+                [189, 177],
+                [214, 156],
+                [273, 146],
+                [260, 177],
+                [248, 174]
+            ],
+            [
+                [234, 118],
+                [246, 144]
+            ]
+        ],
+        ["ぴゅ", [
+                [32, 126],
+                [61, 106],
+                [52, 148],
+                [53, 197],
+                [89, 191],
+                [117, 130],
+                [114, 92],
+                [139, 159],
+                [140, 157]
+            ],
+            [
+                [159, 109],
+                [138, 85],
+                [171, 84],
+                [156, 115],
+                [149, 116]
+            ],
+            [
+                [196, 144],
+                [195, 182],
+                [213, 154],
+                [248, 140],
+                [262, 175],
+                [231, 182],
+                [219, 177]
+            ],
+            [
+                [227, 110],
+                [242, 138],
+                [217, 237],
+                [217, 237]
+            ]
+        ],
+        ["ぴょ", [
+                [29, 117],
+                [69, 95],
+                [46, 143],
+                [40, 184],
+                [67, 201],
+                [100, 184],
+                [113, 101],
+                [130, 141],
+                [146, 172],
+                [148, 172]
+            ],
+            [
+                [158, 108],
+                [144, 80],
+                [175, 82],
+                [164, 116],
+                [156, 118]
+            ],
+            [
+                [229, 155],
+                [266, 147]
+            ],
+            [
+                [226, 121],
+                [229, 170],
+                [224, 207],
+                [195, 189],
+                [241, 195],
+                [274, 218]
+            ]
+        ],
+        ["ふぁ", [
+                [73, 93],
+                [101, 117],
+                [104, 124]
+            ],
+            [
+                [68, 138],
+                [93, 166],
+                [77, 198],
+                [60, 194]
+            ],
+            [
+                [39, 163],
+                [42, 203],
+                [46, 214]
+            ],
+            [
+                [136, 145],
+                [151, 189],
+                [153, 188]
+            ],
+            [
+                [198, 150],
+                [229, 149],
+                [250, 147]
+            ],
+            [
+                [219, 124],
+                [217, 165],
+                [224, 214],
+                [224, 214]
+            ],
+            [
+                [231, 162],
+                [217, 197],
+                [187, 204],
+                [201, 174],
+                [255, 168],
+                [254, 209],
+                [243, 218]
+            ]
+        ],
+        ["ふぃ", [
+                [74, 94],
+                [98, 117],
+                [99, 118]
+            ],
+            [
+                [70, 131],
+                [99, 162],
+                [81, 190],
+                [62, 190]
+            ],
+            [
+                [37, 164],
+                [39, 195],
+                [44, 199]
+            ],
+            [
+                [126, 149],
+                [146, 195],
+                [147, 196]
+            ],
+            [
+                [206, 141],
+                [204, 172],
+                [214, 199]
+            ],
+            [
+                [249, 133],
+                [270, 191]
+            ]
+        ],
+        ["ふぇ", [
+                [69, 92],
+                [94, 116],
+                [99, 121]
+            ],
+            [
+                [66, 140],
+                [100, 166],
+                [86, 198],
+                [61, 197]
+            ],
+            [
+                [35, 167],
+                [44, 202],
+                [50, 207]
+            ],
+            [
+                [132, 151],
+                [151, 199]
+            ],
+            [
+                [217, 122],
+                [234, 135]
+            ],
+            [
+                [197, 158],
+                [230, 152],
+                [213, 189],
+                [242, 205],
+                [272, 202],
+                [273, 201]
+            ]
+        ],
+        ["ふぉ", [
+                [74, 91],
+                [101, 108],
+                [107, 119]
+            ],
+            [
+                [69, 137],
+                [94, 157],
+                [90, 195],
+                [69, 198]
+            ],
+            [
+                [32, 168],
+                [40, 206],
+                [47, 213]
+            ],
+            [
+                [130, 153],
+                [143, 191]
+            ],
+            [
+                [195, 158],
+                [231, 154],
+                [239, 153]
+            ],
+            [
+                [207, 128],
+                [211, 165],
+                [208, 214],
+                [201, 183],
+                [248, 175],
+                [235, 206],
+                [238, 203]
+            ],
+            [
+                [249, 127],
+                [265, 153]
+            ]
+        ],
+        ["しぇ", [
+                [61, 83],
+                [61, 138],
+                [76, 193],
+                [111, 196],
+                [144, 182],
+                [145, 182]
+            ],
+            [
+                [220, 115],
+                [237, 133]
+            ],
+            [
+                [201, 157],
+                [232, 151],
+                [211, 186],
+                [237, 204],
+                [269, 206],
+                [270, 206]
+            ]
+        ],
+        ["ちぇ", [
+                [38, 119],
+                [88, 109],
+                [106, 106]
+            ],
+            [
+                [64, 86],
+                [63, 134],
+                [60, 185],
+                [124, 157],
+                [123, 200],
+                [101, 213]
+            ],
+            [
+                [215, 118],
+                [234, 135]
+            ],
+            [
+                [195, 155],
+                [226, 152],
+                [216, 182],
+                [198, 218],
+                [223, 189],
+                [245, 210],
+                [274, 204]
+            ]
+        ],
+        ["じぇ", [
+                [67, 89],
+                [66, 138],
+                [82, 198],
+                [121, 198],
+                [151, 181],
+                [151, 178]
+            ],
+            [
+                [107, 99],
+                [128, 128],
+                [130, 130]
+            ],
+            [
+                [133, 91],
+                [145, 109]
+            ],
+            [
+                [219, 119],
+                [234, 142]
+            ],
+            [
+                [202, 162],
+                [236, 151],
+                [214, 195],
+                [244, 212],
+                [268, 205]
+            ]
+        ]
+    ];
+    var o = i;
+
+    function i() {}
+})(app = app || {}), (a => {
+    var s = aidnlib.Ref,
+        c = aidnlib.Assets,
+        t = aidnlib.JsonBase64LoadCommand,
+        e = aidnlib.SequentialCommand,
+        i = aidnlib.CommandBase,
+        n = aidnlib.CommandEvent,
+        f = aidnaudio.AudioManager,
+        L = recorder.RecorderManager,
+        U = color.ColorUtil,
+        u = (o.sceneId = -1, o.domain = "", o.cache = "", o.isExporting = !1, o);
+
+    function o() {}
+    a.Context = u, r.URL = document.querySelector('meta[property="og:url"]').getAttribute("content"), r.TITLE = document.title, r.HASH = "#" + document.title, r.RESOLUTIONS = {
+        "16x9": {
+            width: 1280,
+            height: 720
+        },
+        "9x16": {
+            width: 720,
+            height: 1280
+        },
+        "1x1": {
+            width: 960,
+            height: 960
+        }
+    }, r.FILENAME = "tetohira", r.BPM = 130, r.BEAT = 16, r.PATH_BGM = "data/bgm.mp3", r.KEY_BGM = "bgm", r.MAX_HIRAGANAS = 50, r.DRAW_FIX_TIME_PC = 800, r.DRAW_FIX_TIME_SP = 700, r.COLOR_DRAW = 16281219, r.COLOR_DRAW_VIEW = 16281219, r.VOICE_SUB_NUM = 5, r.HIRA_BASE_OFFSET = 0, r.HIRA = {
+        "あ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t - .15
+            })
+        },
+        "い": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "う": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "く": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "さ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .1
+            })
+        },
+        "す": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "せ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .1
+            })
+        },
+        "そ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "ち": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "つ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .5
+            })
+        },
+        "ぬ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "の": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .1
+            })
+        },
+        "ひ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "ふ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "み": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .1
+            })
+        },
+        "む": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "ゆ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "る": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "ん": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .6
+            })
+        },
+        "ぷ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .1
+            })
+        },
+        "ぴ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .1
+            })
+        },
+        "きゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "きゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "きょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "しゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "しゅ": {
+            off: [0, 0, 0, 0, 0, 0].map(function(t) {
+                return t - .015
+            }),
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "しょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "ちゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "ちゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .5
+            })
+        },
+        "ちょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "にゃ": {
+            off: [0, -.02, -.02, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "にゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "にょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "ひゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "ひゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "ひょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "みゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "みゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .4
+            })
+        },
+        "みょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "りゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "りゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "りょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "ぎゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "ぎゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "ぎょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "じゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "じゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "じょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "ぢゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "ぢゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "ぢょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .2
+            })
+        },
+        "びゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "びゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "びょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "ぴゃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "ぴゅ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "ぴょ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "ふぁ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "ふぃ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "ふぇ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "ふぉ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1]
+        },
+        "しぇ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "ちぇ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        },
+        "じぇ": {
+            off: [0, 0, 0, 0, 0, 0],
+            vol: [1, 1, 1, 1, 1, 1].map(function(t) {
+                return t + .3
+            })
+        }
+    }, r.VOLUME_BGM = 1.15 - .12, r.VOLUME_HIRA = .48, r.VOLUME_HIRA2 = [.65, .65, .6, .52, .42].map(function(t) {
+        return t - .12
+    }), r.VOLUME_SE = .63, r.VOLUME_SE_LIST = __spreadArray(__spreadArray(__spreadArray(__spreadArray([], [1, 1, 1, 1, 1, 1].map(function(t) {
+        return t
+    }), !0), [1, 1, 1, 1, 1, 1].map(function(t) {
+        return t - .2
+    }), !0), [1, 1, 1, 1, 1, 1].map(function(t) {
+        return t
+    }), !0), [1, 1, 1, 1, 1, 1].map(function(t) {
+        return t
+    }), !0), r.IS_LOCAL = location.href.indexOf("aidn.jp") < 0, r.DOMAIN_COM = "https://daniwell.com/tetohira/";
+    var d = r;
+
+    function r() {}
+    a.Constant = d, l.getRandomFont = function() {
+        return this.FONTS[a.randInt(0, this.FONTS.length - 1)]
+    }, l.getRandomColor = function() {
+        return this.COLORS[a.randInt(0, this.COLORS.length - 1)]
+    }, l.getRandomColorTitle = function() {
+        return this.COLORS_TITLE[a.randInt(0, this.COLORS_TITLE.length - 1)]
+    }, l.FONTS = ["Jua", "Gaegu", "Do Hyeon"], l.COLORS = [989213, 13967691], l.COLORS_TITLE = [2835025, 13967691];
+    var h = l;
+
+    function l() {}
+    a.Util = h, v.getAspect = function() {
+        return this._init(), this._obj.aspect
+    }, v.getFps = function() {
+        return this._init(), this._obj.fps
+    }, v.setAspect = function(t) {
+        this._init(), this._obj.aspect = t, aidn.util.setStorage(this._obj, this.KEY)
+    }, v.setFps = function(t) {
+        this._init(), this._obj.fps = t, aidn.util.setStorage(this._obj, this.KEY)
+    }, v.clear = function() {
+        aidn.util.setStorage(null, this.KEY)
+    }, v._init = function() {
+        var t;
+        this._inited || (this._inited = !0, 0 === aidn.util.getQuery().storage && this.clear(), t = aidn.util.getStorage(this.KEY), this._obj = t || {
+            aspect: "16x9",
+            fps: "30"
+        })
+    }, v.KEY = "tetohira";
+    var p, _ = v;
+
+    function v() {}
+
+    function m() {
+        var t = p.call(this) || this,
+            e = new B;
+        return e.addGoogleFonts(h.FONTS, j.getList(!0).join("")), e.execute(), t.add(e), t
+    }
+    __extends(m, p = e), a.InitCommand = m, __extends(b, g = e);
+    var g, y = b;
+
+    function b() {
+        var t = g.call(this, 3) || this;
+        return t.add(new aidnlib.AudioLoadCommand(d.PATH_BGM, d.KEY_BGM), 2), t.add(new E(u.domain + "data/s/se.json" + u.cache), 1), t.add(new E(u.domain + "data/s/hiragana.json" + u.cache), 4), t
+    }
+    a.InitMainCommand = y, __extends(w, x = i), w.prototype.addGoogleFonts = function(t, e) {
+        void 0 === e && (e = null), this._families = t = "string" == typeof t ? [t] : t, this._subset = e
+    }, w.prototype.addAdobeFonts = function(t) {
+        this._adobeId = t
+    }, w.prototype.execute = function() {
+        var t = this,
+            e = {
+                timeout: 3e3
+            };
+        this._families && (e.custom = {
+            families: this._families,
+            urls: ["fonts/korean.css"]
+        }), this._adobeId && (e.typekit = {
+            id: this._adobeId
+        }), e.active = function() {
+            return t._complete()
+        }, e.inactive = function() {
+            return t._complete()
+        }, e.fontactive = function() {
+            t._count++, t._count == h.FONTS.length - 1 && 0 == t._done && (t._done = !0, t._dispatchComplete())
+        }, WebFont.load(e)
+    }, w.prototype._complete = function() {
+        0 == this._done && (this._done = !0, this._dispatchComplete())
+    };
+    var x, B = w;
+
+    function w() {
+        var t = x.call(this) || this;
+        return t._count = 0, t._done = !1, t
+    }
+    __extends(M, S = t), M.prototype._complete = function(t) {
+        var e, i = {},
+            n = ((t, e) => {
+                for (var i = "", n = 0; n < t.length; n++) i += String.fromCharCode(t.charCodeAt(n) + e);
+                return i
+            })("b_r_8_sbgm-kn19`_qc42*", 2),
+            o = [111, 23, 64, 0, 78, 126, 53, 9, 26, 55, 30, 0, 3, 11],
+            r = o.length,
+            a = 16716..toString(27);
+        for (e in t) {
+            for (var s = t[e], u = s.length, h = s.split(""), l = u - 1; 0 <= l; l--) {
+                var c = (l + o[l % r]) % u,
+                    f = h[l];
+                h[l] = h[c], h[c] = f
+            }
+            for (var d = u - 1; 0 <= d; d--) h[d] = String.fromCharCode(h[d].charCodeAt(0) - d % 4);
+            s = h.join(""), i[e + "." + a] = n + "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYyLjEyLjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAA" + s, delete t[e]
+        }
+        t = null, S.prototype._complete.call(this, i)
+    };
+    var S, E = M;
+
+    function M() {
+        return null !== S && S.apply(this, arguments) || this
+    }
+    __extends(R, T = E), Object.defineProperty(R.prototype, "id", {
+        get: function() {
+            return this._id
+        },
+        enumerable: !1,
+        configurable: !0
+    });
+    var T, H = R;
+
+    function R(t) {
+        var e = this,
+            t = "string" == typeof t ? j.toNumFromStr(t) : t,
+            i = u.domain + "data/s/" + t + ".json" + u.cache;
+        return (e = T.call(this, i) || this)._id = t, e
+    }
+    C.prototype._init = function() {
+        var t, e, i, n = this;
+        window.YT || ((e = document.createElement("script")).src = "https://www.youtube.com/iframe_api", null != (t = (i = document.getElementsByTagName("script")[0]).parentNode) && t.insertBefore(e, i)), window.onYouTubeIframeAPIReady = function() {
+            n._createPlayer()
+        }, window.YT && window.YT.Player && this._createPlayer()
+    }, C.prototype._createPlayer = function() {
+        this._player = new YT.Player(this._elementId, {
+            videoId: this._videoId,
+            events: {
+                onReady: function() {
+                    return console.log("youtube ready")
+                }
+            }
+        })
+    }, C.prototype.pause = function() {
+        this._player && "function" == typeof this._player.pauseVideo && this._player.pauseVideo()
+    };
+    var z = C;
+
+    function C(t) {
+        void 0 === t && (t = "youtube_player"), this._player = null, this._elementId = t, this._videoId = $("#" + this._elementId).attr("data-id"), this._init()
+    }
+    Object.defineProperty(P.prototype, "totalSe", {
+        get: function() {
+            return this._idSes.length
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(P.prototype, "isPlaying", {
+        get: function() {
+            return !!this._audioMng && this._audioMng.isStarting
+        },
+        enumerable: !1,
+        configurable: !0
+    }), Object.defineProperty(P.prototype, "volume", {
+        get: function() {
+            return this._audioMng ? this._audioMng.volume : 0
+        },
+        set: function(t) {
+            this._audioMng && (this._audioMng.volume = t)
+        },
+        enumerable: !1,
+        configurable: !0
+    }), P.prototype.initialize = function() {
+        for (var e = this, t = new f(2 * d.BPM), i = (t.addLoop(c.get(d.KEY_BGM), {
+                total: 2 * d.BEAT,
+                start: 0
+            }, d.VOLUME_BGM), this._audioMng = t, this.__id), n = j.getList(), o = 0; o < n.length; o++) {
+            var r = d.VOLUME_HIRA,
+                a = j.toStrFromNum(o);
+            d.HIRA[a] && d.HIRA[a].vol && (r *= "number" == typeof(a = d.HIRA[a].vol) ? a : a[0]), this._ids[o] || (this._ids[o] = []), this._ids[o][0] = i;
+            var s = o + 1 + "." + 24786..toString(33);
+            t.addOneShot(c.get(s), i++, r)
+        }
+        for (var u = 0; u < 100; u++) {
+            var s = "s" + u + "." + 24786..toString(33),
+                h = c.get(s);
+            if (!h) break;
+            var l = 1;
+            0 < d.VOLUME_SE_LIST[u] && (l = d.VOLUME_SE_LIST[u]), this._idSes[u] = i, t.addOneShot(h, i++, d.VOLUME_SE * l)
+        }
+        this.__id = i, this._oneShotLoadQue.forEach(function(t) {
+            e._audioMng.addOneShot(t.audio, t.id, t.vol)
+        })
+    }, P.prototype.startRecording = function() {
+        return this._dest || (this._dest = aidn.___waContext.createMediaStreamDestination(), this._audioMng.addNode(this._dest, !0)), this._dest
+    }, P.prototype.load = function(t) {
+        var e = this;
+        1 != this._loads[t] && (this._loads[t] = !0, (t = new H(t)).addEventListener(n.COMPLETE, function(t) {
+            return e._loadComplete(t)
+        }), t.execute())
+    }, P.prototype._loadComplete = function(t) {
+        for (var e = t.currentTarget.id, i = 0; i < d.VOICE_SUB_NUM; i++) {
+            var n = "b" + (i + 1 + e * d.VOICE_SUB_NUM) + "." + 20553..toString(30);
+            if (!c.get(n)) break;
+            var o = d.VOLUME_HIRA2[i],
+                r = j.toStrFromNum(e);
+            d.HIRA[r] && d.HIRA[r].vol && (o *= "number" == typeof(r = d.HIRA[r].vol) ? r : r[i + 1]), this._audioMng ? this._audioMng.addOneShot(c.get(n), this.__id, o) : this._oneShotLoadQue.push({
+                audio: c.get(n),
+                id: this.__id,
+                vol: o
+            }), this._ids[e] || (this._ids[e] = []), this._ids[e][i + 1] = this.__id, this.__id++
+        }
+    }, P.prototype.addBeatHandler = function(t, e) {
+        this._audioMng.addBeatHandler(t, e)
+    }, P.prototype.removeBeatHandler = function(t) {
+        this._audioMng.removeBeatHandler(t)
+    }, P.prototype.start = function() {
+        return this._audioMng.start(), this._audioMng
+    }, P.prototype.stop = function() {
+        return this._audioMng.stop(), this._audioMng
+    }, P.prototype.fadeIn = function(t) {
+        void 0 === t && (t = .2), this._audioMng.isStarting && (gsap.killTweensOf(this._audioMng), gsap.to(this._audioMng, {
+            volume: 1,
+            duration: t
+        }))
+    }, P.prototype.fadeOut = function(t) {
+        var e = this;
+        void 0 === t && (t = .2), this._audioMng.isStarting && (gsap.killTweensOf(this._audioMng), gsap.to(this._audioMng, {
+            volume: 0,
+            duration: t,
+            onComplete: function() {
+                e._audioMng.stopOneShot(-1)
+            }
+        }))
+    }, P.prototype.playHiragana = function(t, e, i) {
+        void 0 === e && (e = 0), void 0 === i && (i = 0);
+        var n, o = -1;
+        return -1 == (o = "string" == typeof t ? j.toNumFromStr(t) : t) ? .3 : null != o && (n = d.HIRA_BASE_OFFSET, d.HIRA[t] && d.HIRA[t].off && (n += "number" == typeof(t = d.HIRA[t].off) ? t : t[e]), t = this._ids[o]) ? this._playOneShot(t[e % t.length], i, n) : -1
+    }, P.prototype.playSE = function(t, e) {
+        t = this._idSes[t % this._idSes.length];
+        return this._playOneShot(t, e = void 0 === e ? 0 : e, 0, !1)
+    }, P.prototype._playOneShot = function(t, e, i, n) {
+        void 0 === t && (t = 0), void 0 === e && (e = 0), void 0 === i && (i = 0), void 0 === n && (n = !0), isNaN(i) && (i = 0);
+        try {
+            return this._audioMng.playOneShot(t, e, n, i)
+        } catch (t) {
+            console.log(t)
+        }
+        return 0
+    };
+    var F = P;
+
+    function P() {
+        this._ids = [], this._idSes = [], this.__id = 0, this._loads = {}, this._oneShotLoadQue = []
+    }
+    O.prototype._init = function() {
+        var e = this;
+        this._recorderMng = new L, $("#bt_exp_stop").on("click", function(t) {
+            return e._clickExpStop(t)
+        }), $("#download .bt_close").on("click", function(t) {
+            return e._clickDownloadClose(t)
+        }), $("#bt_share_video").on("click", function(t) {
+            return e._clickShareVideo(t)
+        })
+    }, O.prototype.start = function(t) {
+        var e = this,
+            t = void 0 === t ? {} : t,
+            i = t.fps,
+            i = void 0 === i ? 30 : i,
+            t = t.duration,
+            t = void 0 === t ? 30 : t,
+            n = this._canvas = document.getElementById("canvas_exp"),
+            o = u.main.audio.startRecording();
+        this._recorderMng.init(n, o), this._recorderMng.start({
+            fps: i
+        }), this._isStarting = !0, u.main.audio.start(), u.main.audio.fadeIn(), this._time = 0, this._duration = t, $("#canvas_prog").css("width", 0), u.main.addUpdate(this, function() {
+            return e._update()
+        })
+    }, O.prototype._update = function() {
+        this._time += s.delta;
+        var t = 100 * Math.min(this._time / this._duration, 1) + "%";
+        $("#canvas_prog").css("width", t), this._duration <= this._time && this._stop()
+    }, O.prototype._stop = function() {
+        var t = this;
+        this._isStarting && (this._isStarting = !1, u.main.removeUpdate(this), $("#exporting .container").addClass("off"), $("#exporting .processing").addClass("active"), u.main.audio.fadeOut(.2), gsap.delayedCall(.2, function() {
+            t._recorderMng.stop(function() {
+                return t._recordStopComplete()
+            })
+        }))
+    }, O.prototype._recordStopComplete = function() {
+        $("#exporting .container").removeClass("off"), $("#exporting .processing").removeClass("active"), $("#download").addClass("active");
+        var t = '<video id="video" src="" playsInline controls poster="' + this._canvas.toDataURL() + '"></video>',
+            t = ($("#video_base").html(t), new window.Plyr("#video", {
+                controls: ["play-large", "play", "progress", "current-time"]
+            }), u.main.stop(), u.main.changeMode(!1), this._recorderMng.getExtension(!1)),
+            e = this._getFileName();
+        $(".ext").text(t), this._recorderMng.setObjectUrl({
+            videoId: "video",
+            linkId: "bt_download",
+            filename: e
+        }), "mp4" == t.toLowerCase() && aidn.util.enabledNavigatorFileShare() && $("#share_file").show()
+    }, O.prototype._getFileName = function() {
+        var t = new Date,
+            e = String(t.getFullYear()),
+            i = String(t.getMonth() + 1).padStart(2, "0"),
+            n = String(t.getDate()).padStart(2, "0"),
+            o = String(t.getHours()).padStart(2, "0"),
+            t = String(t.getMinutes()).padStart(2, "0");
+        return [d.FILENAME, "_", e, i, n, "_", o, t].join("")
+    }, O.prototype._shareVideo = function() {
+        var t = this._recorderMng.getBlob(),
+            e = this._recorderMng.getMimeType(),
+            i = u.main.getShareText();
+        aidn.util.navigatorFileShare({
+            text: i,
+            blob: t,
+            type: e,
+            name: "video.mp4"
+        })
+    }, O.prototype._clickExpStop = function(t) {
+        t.preventDefault(), this._stop()
+    }, O.prototype._clickDownloadClose = function(t) {
+        t.preventDefault(), $("#export, #exporting, #download").removeClass("active"), document.getElementById("video").pause()
+    }, O.prototype._clickShareVideo = function(t) {
+        t.preventDefault(), this._shareVideo()
+    };
+    var N = O;
+
+    function O() {
+        this._duration = 30, this._time = 0, this._isStarting = !1, this._init()
+    }
+    I = a.CustomMainBase, __extends(k, I), Object.defineProperty(k.prototype, "audio", {
+        get: function() {
+            return this._audio
+        },
+        enumerable: !1,
+        configurable: !0
+    }), k.prototype.initialize = function() {
+        I.prototype.initialize.call(this);
+        var t = parseInt(document.querySelector("body").getAttribute("data-dom")),
+            e = parseInt(document.querySelector("body").getAttribute("data-ver")),
+            t = (d.IS_LOCAL || 1 != t || (u.domain = d.DOMAIN_COM), 0 < e && (u.cache = "?" + e), this._ytMng = new z, this._recorder = new N, s.isMobile || new QRCode(document.getElementById("qrcode"), {
+                text: d.URL,
+                colorDark: "#ffffff",
+                colorLight: "#00000000",
+                width: 128,
+                height: 128,
+                correctLevel: QRCode.CorrectLevel.L
+            }), aidn.util.getQuery().input);
+        if (t) {
+            this._queryInputs = [];
+            for (var i = decodeURIComponent(t).split(""), n = -1, o = 0; o < i.length; o++) {
+                var r = i[o];
+                0 <= "ゃゅょぃぇぉ".indexOf(r) && 0 <= n ? this._queryInputs[n] += r : this._queryInputs[++n] = r
+            }
+        }
+    }, k.prototype._initEvents = function() {
+        var e = this;
+        I.prototype._initEvents.call(this), $("#bt_share").on("click", function(t) {
+            return e._clickShare(t)
+        }), $("#bt_reset").on("click", function(t) {
+            return e._clickReset(t)
+        }), $("#share .bt_close").on("click", function(t) {
+            return e._clickShareClose(t)
+        }), $("#share_all").on("click", function(t) {
+            return e._clickUrl(t)
+        }), $("#bt_share_post").on("click", function(t) {
+            return e._clickSharePost(t)
+        }), $("#tx_lyrics").on("change", function(t) {
+            return e._changeLyrics(t)
+        }), $("#bt_export").on("click", function(t) {
+            return e._clickExport(t)
+        }), $("#export .bt_close").on("click", function(t) {
+            return e._clickExpClose(t)
+        }), $("#bt_exp_start").on("click", function(t) {
+            return e._clickExpStart(t)
+        })
+    }, k.prototype._initProgress = function(t) {
+        I.prototype._initProgress.call(this, t)
+    }, k.prototype._initComplete = function(e) {
+        return __awaiter(this, void 0, void 0, function() {
+            return __generator(this, function(t) {
+                return this._draw = new V, this._three = (new a.ThreeManager).initialize(), this._audio = new F, I.prototype._initComplete.call(this, e), this._checkLyricsFromURL(), [2]
+            })
+        })
+    }, k.prototype._initMainProgress = function(t) {
+        t = Math.round(100 * t.progress);
+        $("#percent").text(t)
+    }, k.prototype._initMainComplete = function(t) {
+        var i = this;
+        this._show(a.SceneId.MAIN), this._audio.initialize(), this._audio.addBeatHandler(this, function(t, e) {
+            return i._changeBeat(t, e)
+        }), u.isExporting ? ($("#about, #export").addClass("active"), this._clickExpStart()) : (this._audio.volume = 0, this._audio.start(), this._audio.fadeIn())
+    }, k.prototype._show = function(t) {
+        if (!I.prototype._show.call(this, t)) return !1;
+        switch (t) {
+            case a.SceneId.LOADING:
+            case a.SceneId.TOP:
+            case a.SceneId.MAIN:
+        }
+        return this._three && this._three.show(u.sceneId), !0
+    }, k.prototype._checkLyricsFromURL = function() {
+        var t = new URL(location.href),
+            e = t.pathname.split("/").pop(),
+            e = j.decompressFromUrl(e),
+            i = "";
+        e && 0 < e.length ? i = e : (e = t.hash.replace("#", "").split("?")[0], (i = j.decompressFromUrl(e)) && "" != i || (i = decodeURIComponent(e))), console.log("_checkLyricsFromURL", i), this._hiraganas = this._getValidHiragana(i), this._updateHiraganas()
+    }, k.prototype._getValidHiragana = function(t) {
+        var e = t.split(""),
+            n = [];
+        for (var o = 0; o < e.length; o++) {
+            var r = e[o],
+                c = r.charCodeAt(0);
+            if (0xAC00 <= c && c <= 0xD7A3) n.push(r);
+            else if (null != j.toNumFromStr(r)) n.push(r);
+        }
+        return n
+    }, k.prototype.draw = function(t, e) {
+        this._queryInputs && 0 < this._queryInputs.length && (t = this._queryInputs.shift(), this._queryInputs.push(t)), console.log("draw", t, e), d.MAX_HIRAGANAS <= this._hiraganas.length && this._hiraganas.shift();
+        var i = this._audio.playHiragana(t);
+        this._three.drawHiragana(t, e, {
+            type: 0,
+            delay: i
+        }), this._hiraganas.push(t), this._audio.load(t), this._updateHiraganas(!1)
+    }, k.prototype.stop = function() {
+        var t = this;
+        this._audio && this._audio.isPlaying && (this._audio.stop(), this._ct = 0), this._three.stop(), gsap.delayedCall(.5, function() {
+            return t._three.stop()
+        })
+    }, k.prototype.changeMode = function(t) {
+        (t = void 0 === t ? !1 : t) ? this._three.changeModeExport(): this._three.changeModeDefault()
+    }, k.prototype._changeBeat = function(t, e) {
+        this._three.beat(t, e);
+        var i, t = this._hiraganas.length;
+        0 != t && (e = Math.min(t - 1, 10) / 10, i = t = 0, Math.random() < .5 + .44 * e ? (this._playHiragana(), Math.random() < .5 ? this._playHiragana(.666) : i = .13 + .17 * e) : t = .13 + .07 * e, Math.random() < .4 + .22 * e + t ? (this._playGraphic(), Math.random() < .3 + t + i && this._playGraphic(.666)) : Math.random() < .1 + t + i && this._playGraphic(.666))
+    }, k.prototype._playHiragana = function(t) {
+        void 0 === t && (t = 0);
+        var e = this._hiraganas.length,
+            i = this._ct % e,
+            n = this._hiraganas[i],
+            o = (this._ct++, a.randInt(0, d.VOICE_SUB_NUM)),
+            o = this._audio.playHiragana(n, o, t),
+            t = {
+                x: 0,
+                y: 0,
+                w: 0,
+                h: 0
+            },
+            r = Math.min(s.stw, s.sth),
+            r = (t.w = a.rand(.15 * r, .4 * r), t.h = t.w, t.w / 2);
+        return t.x = a.rand(r, s.stw - r), t.y = a.rand(r, s.sth - r), this._three.drawHiragana(n, t, {
+            type: 1,
+            delay: o,
+            index: i,
+            total: e
+        }), i
+    }, k.prototype._playGraphic = function(t) {
+        void 0 === t && (t = 0);
+        var e = a.randInt(0, this._audio.totalSe - 1),
+            t = this._audio.playSE(e, t);
+        this._three.drawGraphic(e, {
+            delay: t
+        })
+    }, k.prototype._changeLyrics = function(t) {
+        console.log("change lyrics");
+        var e = $("#tx_lyrics").val(),
+            e = this._getValidHiragana(e);
+        this._hiraganas = e, this._updateHiraganas()
+    }, k.prototype._updateHiraganas = function(t) {
+        var e = this,
+            t = (void 0 === t && (t = !0), this._hiraganas = this._hiraganas.splice(0, d.MAX_HIRAGANAS), t && this._hiraganas.forEach(function(t) {
+                e._audio.load(t)
+            }), this._hiraganas.join(""));
+        $("#tx_lyrics").val(t), 0 < this._hiraganas.length ? ($("#top_lyrics").css("visibility", "visible"), $("#top_lyrics span").text(t), $("#main #guide").stop().fadeOut(120), $("#bt_share, #bt_export, #bt_reset").removeClass("off")) : ($("#top_lyrics").css("visibility", "hidden"), $("#main #guide").stop().fadeIn(120), $("#bt_share, #bt_export, #bt_reset").addClass("off"))
+    }, k.prototype._clickStart = function(t) {
+        var e = this;
+        t.preventDefault(), u.sceneId == a.SceneId.TOP && (aidnlib.NoSleepManager.enable(), this._show(a.SceneId.LOADING), $("#percent").show(), (t = new y).addEventListener(n.COMPLETE, function(t) {
+            return e._initMainComplete(t)
+        }), t.addEventListener(n.PROGRESS, function(t) {
+            return e._initMainProgress(t)
+        }), t.execute())
+    }, k.prototype._clickAbout = function(t) {
+        I.prototype._clickAbout.call(this, t), u.sceneId == a.SceneId.MAIN && this._audio.fadeOut()
+    }, k.prototype._clickClose = function(t) {
+        I.prototype._clickClose.call(this, t), this._ytMng.pause(), u.sceneId == a.SceneId.MAIN && (this._audio.isPlaying || (this._audio.start(), aidnlib.NoSleepManager.enable()), this._audio.fadeIn())
+    }, k.prototype._clickExport = function(t) {
+        t.preventDefault(), $("#export").addClass("active"), u.main.stop(), $("#aspect").val(_.getAspect()), $("#fps").val(_.getFps()), this._ytMng.pause()
+    }, k.prototype._clickExpClose = function(t) {
+        t.preventDefault(), $("#export").removeClass("active")
+    }, k.prototype._clickExpStart = function(t) {
+        if ((t = void 0 === t ? null : t) && t.preventDefault(), u.sceneId == a.SceneId.TOP) $("#about, #export").removeClass("active"), this._three.hideTitle(), u.isExporting = !0, this._clickStart(t);
+        else {
+            $("#exporting").addClass("active");
+            var e, t = $("#aspect").val(),
+                i = $("#fps").val();
+            for (e in _.setAspect(t), _.setFps(i), d.RESOLUTIONS) $("#video_base, #canvas_base").removeClass("asp" + e);
+            $("#video_base, #canvas_base").addClass("asp" + t);
+            t = d.RESOLUTIONS[t];
+            this._three.changeModeExport({
+                width: t.width,
+                height: t.height
+            }), this._recorder.start({
+                fps: parseInt(i)
+            })
+        }
+    }, k.prototype._clickShare = function(t) {
+        t.preventDefault(), $("#share").addClass("active"), u.main.stop(), 0 == this._hiraganas.length ? $("#share_text").hide() : $("#share_text").show();
+        t = "ξ•∀•ξ「" + this._hiraganas.join("") + "」", t = this._addSpan(t, 6) + "　<span>" + d.HASH + "</span>", $("#share_text .text").html(t), t = d.URL + this._addSpan(this._getShareUrl(!0), 6);
+        $("#share_url").html(t), this._ytMng.pause()
+    }, k.prototype._clickReset = function(t) {
+        t.preventDefault(), u.main.stop(), this._hiraganas = [], this._updateHiraganas(), $("#reset").stop(!0).show().fadeIn(0).delay(50).fadeOut(1).delay(50).fadeIn(1).delay(1200).fadeOut(300, "linear")
+    }, k.prototype._clickShareClose = function(t) {
+        t.preventDefault(), $("#share").removeClass("active")
+    }, k.prototype._clickSharePost = function(t) {
+        t.preventDefault();
+        t = this._getShareText();
+        aidn.social.shareTw("", !0, t, "daniwell_aidn")
+    }, k.prototype._clickUrl = function(t) {
+        t.preventDefault(), aidn.util.selectAndCopyText("share_all"), $("#copy").stop(!0).show().fadeIn(0).delay(50).fadeOut(1).delay(50).fadeIn(1).delay(1200).fadeOut(300, "linear")
+    }, k.prototype.getShareText = function() {
+        return this._getShareText()
+    }, k.prototype._getShareText = function() {
+        var t = "\n";
+        return 0 < this._hiraganas.length && (t += "ξ•∀•ξ「" + this._hiraganas.join("") + "」　"), t = (t += d.HASH) + ("\n" + this._getShareUrl())
+    }, k.prototype._addSpan = function(t, e) {
+        void 0 === e && (e = 5);
+        for (var i = "";;) {
+            var n = t.length;
+            if (!(0 < n)) break;
+            var o = Math.max(0, n - e),
+                i = "<span>" + t.slice(o, n) + "</span>" + i;
+            t = t.slice(0, o)
+        }
+        return i
+    }, k.prototype._getShareUrl = function(t) {
+        void 0 === t && (t = !1);
+        var e = this._hiraganas.join(""),
+            i = d.URL;
+        if (0 < e.length) {
+            e = j.compressForUrl(e);
+            if (t) return e;
+            i += e
+        }
+        return t ? "" : i
+    }, k.prototype._visibility = function(t) {
+        t && this._audio.isPlaying && (this._audio.stop(), $("#about").hasClass("active") || ($("#about").addClass("active"), aidn.window.scrollOn()))
+    }, k.prototype._start = function() {
+        I.prototype._start.call(this)
+    }, k.prototype._update = function() {
+        var t = this;
+        I.prototype._update.call(this), this._three.update(), window.requestAnimationFrame(function() {
+            return t._update()
+        })
+    }, k.prototype._resize = function() {
+        I.prototype._resize.call(this), this._three.resize()
+    };
+    var I, Y = k;
+
+    function k() {
+        var t = null !== I && I.apply(this, arguments) || this;
+        return t._hiraganas = [], t._ct = 0, t._queryInputs = null, t
+    }
+    A.prototype._optimize = function() {
+        for (var t = this._list, e = t.length, i = 1e4, n = 1e4, o = 0, r = 0, a = 0; a < e; a++)
+            for (var s = (v = t[a]).length, u = 0; u < s; u++) {
+                var h = v[u];
+                h[0] < i && (i = h[0]), o < h[0] && (o = h[0]), h[1] < n && (n = h[1]), r < h[1] && (r = h[1])
+            }
+        for (var l = o - i, c = r - n, f = 240 / Math.max(l, c), d = i * f - (300 - l * f) / 2, p = n * f - (300 - c * f) / 2, _ = 0; _ < e; _++) {
+            for (var v, s = (v = t[_]).length, m = 0; m < s; m++) {
+                var g = v[m];
+                g[0] = g[0] * f - d, g[1] = g[1] * f - p
+            }
+            var y = v[0],
+                b = v[s - 1],
+                x = b[0] - y[0],
+                b = b[1] - y[1];
+            4 < Math.abs(x / b) && x < 0 && v.reverse(), 4 < Math.abs(b / x) && b < 0 && v.reverse()
+        }
+        return {
+            x: i + l / 2,
+            y: n + c / 2,
+            w: l,
+            h: c
+        }
+    }, A.prototype._update = function() {
+        var t, e;
+        this._starting || (t = this.__time, this.__time -= 1e3 * s.delta, this.__time < 0 && 0 <= t && ($("#view").css("opacity", 1), Date.now(), t = this._optimize(), e = this._rec.exec(this._list), this._ctx.clearRect(0, 0, s.stw * this._pixelRatio, s.sth * this._pixelRatio), e) && 0 < e.length && u.main.draw(e[0], t))
+    }, A.prototype._resize = function() {
+        var t = s.stw,
+            e = s.sth;
+        this._canvas.width = t * this._pixelRatio, this._canvas.height = e * this._pixelRatio, this._canvas.style.width = t + "px", this._canvas.style.height = e + "px"
+    }, A.prototype._start = function(t) {
+        this._starting || (this.__time < 0 && (this._ctx.clearRect(0, 0, s.stw * this._pixelRatio, s.sth * this._pixelRatio), this._list = []), this._starting = !0, t = aidn.event.getPos(t), this._ctx.beginPath(), this._ctx.lineWidth = 5 * this._pixelRatio, this._ctx.strokeStyle = U.colToHex(d.COLOR_DRAW), this._ctx.lineCap = "round", this._ctx.moveTo(t.x * this._pixelRatio, t.y * this._pixelRatio), this._tmp = [
+            [t.x, t.y]
+        ], $("#view").css("opacity", .5))
+    }, A.prototype._move = function(t) {
+        this._starting && (t = aidn.event.getPos(t), this._ctx.lineTo(t.x * this._pixelRatio, t.y * this._pixelRatio), this._tmp.push([t.x, t.y]), this._ctx.stroke())
+    }, A.prototype._end = function(t) {
+        if (this._starting) {
+            this.__time = s.isMobile ? d.DRAW_FIX_TIME_SP : d.DRAW_FIX_TIME_PC, this._starting = !1;
+            try {
+                var e = aidn.event.getPos(t);
+                e && (this._ctx.lineTo(e.x * this._pixelRatio, e.y * this._pixelRatio), this._tmp.push([e.x, e.y]))
+            } catch (t) {}
+            1 <= this._list.length && this._tmp.length <= 3 ? this.__time = 1 : this._list.push(this._tmp), this._ctx.stroke()
+        }
+    };
+    var V = A;
+
+    function A() {
+        var e = this,
+            t = (this.__time = -1, this._pixelRatio = 1, this._pixelRatio = Math.min(window.devicePixelRatio, 2), document.getElementById("draw")),
+            i = (t.id = "draw", t.width = s.stw * this._pixelRatio, t.height = s.sth * this._pixelRatio, t.getContext("2d")),
+            t = (this._canvas = t, this._ctx = i, this._starting = !1, s.isMobile ? "touchstart" : "mousedown"),
+            i = s.isMobile ? "touchmove" : "mousemove",
+            n = s.isMobile ? "touchend" : "mouseup";
+        $("#draw").on(t, function(t) {
+            return e._start(t)
+        }), $(window).on(i, function(t) {
+            return e._move(t)
+        }), $(window).on(n, function(t) {
+            return e._end(t)
+        }), u.main.addUpdate(this, function() {
+            return e._update()
+        }), u.main.addResize(this, function() {
+            return e._resize()
+        }), this._resize(), this._rec = new a.Recognition
+    }
+    D.toNumFromStr = function(t) {
+        if (0 <= this._subList.indexOf(t)) return -1;
+        if (typeof window !== "undefined" && window.hangulToKana) {
+            var hk = window.hangulToKana(t);
+            if (hk) t = hk;
+        }
+        for (var e = this._list.length, i = 0; i < e; i++)
+            if (this._list[i][0] == t) return i;
+        return null
+    }, D.toStrFromNum = function(t) {
+        return 0 <= t && this._list[t] ? this._list[t][0] : null
+    }, D.getList = function(t) {
+        void 0 === t && (t = !1);
+        for (var e = [], i = this._list.length, n = 0; n < i; n++) e[n] = this._list[n][0];
+        return e = t ? e.concat(this._subList) : e
+    }, D._getDecArr = function() {
+        for (var t = this.getList(!0), e = [], i = {}, n = 0; n < t.length; n++)
+            for (var o = t[n], r = 0; r < o.length; r++) {
+                var a = o.charAt(r);
+                1 != i[a] && (i[a] = 1, e.push(a))
+            }
+        return e
+    }, D._getEncList = function() {
+        for (var t = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_".split(this.PCHAR).join("").split(""), e = 0, i = t.length; e < i; e++) t.push(this.PCHAR + t[e]);
+        return t
+    }, D.compressForUrl = function(t) {
+        for (var e = this._getDecArr(), i = this._getEncList(), n = "", o = 0; o < t.length; o++) {
+            var r = t.charAt(o),
+                r = e.indexOf(r);
+            0 <= r && r < i.length && (n += i[r])
+        }
+        return n
+    }, D.decompressFromUrl = function(t) {
+        if (0 <= t.indexOf(".")) return "";
+        for (var e = this._getDecArr(), i = this._getEncList(), n = "", o = 0; o < t.length; o++) {
+            var r = t.charAt(o),
+                r = (r == this.PCHAR && (r += t.charAt(++o)), i.indexOf(r));
+            0 <= r && r < e.length && (n += e[r])
+        }
+        return n
+    }, D.init = function() {
+        for (var t = this._list.length, e = {}, i = 0, n = 0; n < t; n++) {
+            var o, r = this._list[n],
+                a = r[0];
+            2 == r.length ? (o = r[1], e[a] = [o, i], this._list[n].push(i), i += o) : (e[a] = [r[1], 2, i, {
+                x: r[3],
+                y: r[4]
+            }], 1 == r[2] && (e[a][1] = 1, e[a][2] = i + 2))
+        }
+        this._obj = e
+    }, D.getRange = function(t) {
+        t = this._obj[t];
+        return t || null
+    }, D._obj = {}, D._list = [
+        ["あ", 3],
+        ["い", 2],
+        ["う", 2],
+        ["え", 2],
+        ["お", 3],
+        ["か", 3],
+        ["き", 3],
+        ["く", 1],
+        ["け", 3],
+        ["こ", 2],
+        ["さ", 2],
+        ["し", 1],
+        ["す", 2],
+        ["せ", 3],
+        ["そ", 1],
+        ["た", 4],
+        ["ち", 2],
+        ["つ", 1],
+        ["て", 1],
+        ["と", 2],
+        ["な", 3],
+        ["に", 3],
+        ["ぬ", 2],
+        ["ね", 2],
+        ["の", 1],
+        ["は", 3],
+        ["ひ", 1],
+        ["ふ", 2],
+        ["へ", 1],
+        ["ほ", 4],
+        ["ま", 3],
+        ["み", 2],
+        ["む", 2],
+        ["め", 2],
+        ["も", 2],
+        ["や", 2],
+        ["ゆ", 1],
+        ["よ", 2],
+        ["ら", 1],
+        ["り", 1],
+        ["る", 1],
+        ["れ", 2],
+        ["ろ", 1],
+        ["わ", 2],
+        ["を", 3],
+        ["ん", 1],
+        ["が", "か", 0, 0, 0],
+        ["ぎ", "き", 0, 0, 0],
+        ["ぐ", "く", 0, 0, 0],
+        ["げ", "け", 0, 0, 0],
+        ["ご", "こ", 0, 0, 0],
+        ["ざ", "さ", 0, 0, 0],
+        ["じ", "し", 0, 0, 0],
+        ["ず", "す", 0, 0, 0],
+        ["ぜ", "せ", 0, 0, 0],
+        ["ぞ", "そ", 0, 0, 0],
+        ["だ", "た", 0, 0, 0],
+        ["ぢ", "ち", 0, 0, 0],
+        ["づ", "つ", 0, 0, 0],
+        ["で", "て", 0, 0, 0],
+        ["ど", "と", 0, 0, 0],
+        ["ば", "は", 0, 0, 0],
+        ["び", "ひ", 0, 0, 0],
+        ["ぶ", "ふ", 0, 0, 0],
+        ["べ", "へ", 0, 0, 0],
+        ["ぼ", "ほ", 0, 0, 0],
+        ["ぱ", "は", 1, 0, 0],
+        ["ぴ", "ひ", 1, 0, 0],
+        ["ぷ", "ふ", 1, 0, 0],
+        ["ぺ", "へ", 1, 0, 0],
+        ["ぽ", "ほ", 1, 0, 0],
+        ["きゃ"],
+        ["きゅ"],
+        ["きょ"],
+        ["しゃ"],
+        ["しゅ"],
+        ["しょ"],
+        ["ちゃ"],
+        ["ちゅ"],
+        ["ちょ"],
+        ["にゃ"],
+        ["にゅ"],
+        ["にょ"],
+        ["ひゃ"],
+        ["ひゅ"],
+        ["ひょ"],
+        ["みゃ"],
+        ["みゅ"],
+        ["みょ"],
+        ["りゃ"],
+        ["りゅ"],
+        ["りょ"],
+        ["ぎゃ"],
+        ["ぎゅ"],
+        ["ぎょ"],
+        ["じゃ"],
+        ["じゅ"],
+        ["じょ"],
+        ["ぢゃ"],
+        ["ぢゅ"],
+        ["ぢょ"],
+        ["びゃ"],
+        ["びゅ"],
+        ["びょ"],
+        ["ぴゃ"],
+        ["ぴゅ"],
+        ["ぴょ"],
+        ["ふぁ"],
+        ["ふぃ"],
+        ["ふぇ"],
+        ["ふぉ"],
+        ["しぇ"],
+        ["ちぇ"],
+        ["じぇ"]
+    ], D._subList = ["、", "。", "！", "？", "っ", "・", "…"], D.PCHAR = "Z";
+    var j = D;
+
+    function D() {}
+    $(function() {
+        return (new Y).initialize()
+    })
+})(app = app || {});
