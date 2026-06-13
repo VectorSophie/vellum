@@ -1652,7 +1652,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
         h = aidnlib.CommandEvent,
         e = (o.rand = aidn.math.rand, o.randInt = aidn.math.randInt, o.toRad = aidn.math.toRad, o.toDeg = aidn.math.toDeg, (e = r = o.SceneId || (o.SceneId = {}))[e.LOADING = 0] = "LOADING", e[e.TOP = 1] = "TOP", e[e.MAIN = 2] = "MAIN", __extends(i, a = t), i.prototype.initialize = function() {
             var e = this,
-                t = (0 < location.href.indexOf("aidn.jp") && 1 != aidn.util.getQuery().log && (console.log = function() {}), o.Context.main = this, (u.isMobile ? $(".pc") : $(".sp")).hide(), aidn.util.checkJapanese()),
+                t = (0 < location.href.indexOf("aidn.jp") && 1 != aidn.util.getQuery().log && (console.log = function() {}), o.Context.main = this, (u.isMobile ? $(".pc") : $(".sp")).hide(), !0),
                 i = parseInt(aidn.util.getCookie("lang")),
                 n = (0 == i ? t = !0 : 1 == i && (t = !1), this._changeLanguage(t), location.href.split("#")[0].split("?")[0]),
                 i = ($("#tw").on("click", function(t) {
@@ -1702,7 +1702,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
         }, i.prototype._clickLanguage = function(t) {
             t.preventDefault(), this._changeLanguage(!u.isJa)
         }, i.prototype._visibility = function(t) {}, i.prototype._changeLanguage = function(t) {
-            u.isJa = t, $("html").attr("lang", ""), t ? ($(":lang(ja)").show(), $(":lang(en)").hide(), $("#language .jp").addClass("active"), $("#language .en").removeClass("active"), $("html").attr("lang", "ja")) : ($(":lang(ja)").hide(), $(":lang(en)").show(), $("#language .jp").removeClass("active"), $("#language .en").addClass("active"), $("html").attr("lang", "en")), aidn.util.setCookie("lang", t ? 0 : 1, 604800)
+            u.isJa = t, $("html").attr("lang", ""), t ? ($(":lang(ja)").show(), $(":lang(en)").hide(), $("#language .jp").addClass("active"), $("#language .en").removeClass("active"), $("html").attr("lang", "ko")) : ($(":lang(ja)").hide(), $(":lang(en)").show(), $("#language .jp").removeClass("active"), $("#language .en").addClass("active"), $("html").attr("lang", "en")), aidn.util.setCookie("lang", t ? 0 : 1, 604800)
         }, i);
 
     function i() {
