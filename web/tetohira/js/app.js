@@ -8023,7 +8023,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
     }, k.prototype._initComplete = function(e) {
         return __awaiter(this, void 0, void 0, function() {
             return __generator(this, function(t) {
-                return this._draw = new V, this._three = (new a.ThreeManager).initialize(), this._audio = new F, I.prototype._initComplete.call(this, e), this._checkLyricsFromURL(), [2]
+                return this._draw = new V, this._three = (new a.ThreeManager).initialize(), this._audio = new F, this._audio.load("ん"), I.prototype._initComplete.call(this, e), this._checkLyricsFromURL(), [2]
             })
         })
     }, k.prototype._initMainProgress = function(t) {
@@ -8061,6 +8061,14 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
     }, k.prototype.draw = function(t, e) {
         this._queryInputs && 0 < this._queryInputs.length && (t = this._queryInputs.shift(), this._queryInputs.push(t)), console.log("draw", t, e), d.MAX_HIRAGANAS <= this._hiraganas.length && this._hiraganas.shift();
         var i = this._audio.playHiragana(t);
+        if (window.hangulCoda) {
+            var coda = window.hangulCoda(t);
+            if (coda) {
+                var au = this._audio;
+                au.load(coda);
+                gsap.delayedCall(.12, function() { au.playHiragana(coda); });
+            }
+        }
         this._three.drawHiragana(t, e, {
             type: 0,
             delay: i

@@ -51,9 +51,17 @@
     return row[slot] || row.a; // 'wa' on a consonant row falls back to 'a'
   }
 
+  // Nasal final consonant (ㄴ/ㅁ/ㅇ) -> Japanese ん, played as a short coda. null otherwise.
+  function hangulCoda(ch) {
+    var d = decompose(ch);
+    if (!d) return null;
+    return (d.jong === 4 || d.jong === 16 || d.jong === 21) ? "ん" : null;
+  }
+
   global.hangulToKana = hangulToKana;
+  global.hangulCoda = hangulCoda;
   global.hangulDecompose = decompose;
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { hangulToKana: hangulToKana, decompose: decompose };
+    module.exports = { hangulToKana: hangulToKana, hangulCoda: hangulCoda, decompose: decompose };
   }
 })(typeof window !== "undefined" ? window : this);
