@@ -1,0 +1,10 @@
+{
+  "id": "teto",
+  "name": "카사네 테토 / Kasane Teto",
+  "loader": "codec",
+  "base": "data/s/",
+  "subs": 5,
+  "transpose": 0,
+  "theme": { "font": "Jua", "colors": [989213, 13967691], "mascot": "ξ•∀•ξ", "effects": "default" },
+  "credits": { "vocal": "Kasane Teto", "url": "https://kasaneteto.jp/" }
+}

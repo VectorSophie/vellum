@@ -1124,7 +1124,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
             this.__shottimes[e] = i
         }
         i = (e * this._beatInterval - r) / 1e3 + n, i < 0 && (i = 0), e = this._audioOneShots[t];
-        return e && e.play(this._volumeOneShots[t] * this._volume, i, 0, o, this._isOutput), i
+        return e && e.play(this._volumeOneShots[t] * this._volume, i, o, 0, this._isOutput), i
     }, o.prototype.stopOneShot = function(t, e) {
         var i = this.beat;
         if ((t = void 0 === t ? -1 : t) < (this.__shottimes[i + 1 + (e = void 0 === e ? 0 : e)] = 0))
@@ -7837,10 +7837,41 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
     }, P.prototype.startRecording = function() {
         return this._dest || (this._dest = aidn.___waContext.createMediaStreamDestination(), this._audioMng.addNode(this._dest, !0)), this._dest
     }, P.prototype.load = function(t) {
-        var e = this;
+        var e = this,
+            bank = window.Vellum && window.Vellum.banks[window.Vellum.activeId];
+        if (bank && "standard" === bank.loader) {
+            if (1 == this._loads[t]) return;
+            this._loads[t] = !0;
+            var idx = j.toNumFromStr(t);
+            return void(null != idx && 0 <= idx && this._loadStandard(idx, bank))
+        }
         1 != this._loads[t] && (this._loads[t] = !0, (t = new H(t)).addEventListener(n.COMPLETE, function(t) {
             return e._loadComplete(t)
         }), t.execute())
+    }, P.prototype._loadStandard = function(idx, bank) {
+        var files = bank.samples && bank.samples[String(idx)];
+        if (files && files.length) {
+            var base = bank.base || "";
+            this._ids[idx] || (this._ids[idx] = []);
+            for (var i = 0; i < files.length; i++) {
+                var au = new aidn.AutoAudio(null);
+                au.load([base + files[i]]), this._audioMng ? this._audioMng.addOneShot(au, this.__id, d.VOLUME_HIRA) : this._oneShotLoadQue.push({
+                    audio: au,
+                    id: this.__id,
+                    vol: d.VOLUME_HIRA
+                }), this._ids[idx][i] = this.__id, this.__id++
+            }
+        }
+    }, P.prototype.setBank = function(m) {
+        this._audioMng && this._audioMng.stopOneShot(-1), this._loads = {}, this._ids = [], window.Vellum.activeId = m.id, window.Vellum.pitch = m.transpose || 0, "codec" === m.loader && this._registerCodecBase(), this.load("ん")
+    }, P.prototype._registerCodecBase = function() {
+        for (var o = 0, t = j.getList(); o < t.length; o++) {
+            var e = d.VOLUME_HIRA,
+                i = j.toStrFromNum(o);
+            d.HIRA[i] && d.HIRA[i].vol && (e *= "number" == typeof(i = d.HIRA[i].vol) ? i : i[0]);
+            var n = c.get(o + 1 + "." + (24786).toString(33));
+            n && this._audioMng && (this._ids[o] || (this._ids[o] = []), this._audioMng.addOneShot(n, this.__id, e), this._ids[o][0] = this.__id, this.__id++)
+        }
     }, P.prototype._loadComplete = function(t) {
         for (var e = t.currentTarget.id, i = 0; i < d.VOICE_SUB_NUM; i++) {
             var n = "b" + (i + 1 + e * d.VOICE_SUB_NUM) + "." + 20553..toString(30);
@@ -7878,14 +7909,14 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
     }, P.prototype.playHiragana = function(t, e, i) {
         void 0 === e && (e = 0), void 0 === i && (i = 0);
         var n, o = -1;
-        return -1 == (o = "string" == typeof t ? j.toNumFromStr(t) : t) ? .3 : null != o && (n = d.HIRA_BASE_OFFSET, d.HIRA[t] && d.HIRA[t].off && (n += "number" == typeof(t = d.HIRA[t].off) ? t : t[e]), t = this._ids[o]) ? this._playOneShot(t[e % t.length], i, n) : -1
+        return -1 == (o = "string" == typeof t ? j.toNumFromStr(t) : t) ? .3 : null != o && (n = d.HIRA_BASE_OFFSET, d.HIRA[t] && d.HIRA[t].off && (n += "number" == typeof(t = d.HIRA[t].off) ? t : t[e]), t = this._ids[o]) ? this._playOneShot(t[e % t.length], i, n, window.Vellum && window.Vellum.pitch || 0) : -1
     }, P.prototype.playSE = function(t, e) {
         t = this._idSes[t % this._idSes.length];
         return this._playOneShot(t, e = void 0 === e ? 0 : e, 0, !1)
-    }, P.prototype._playOneShot = function(t, e, i, n) {
-        void 0 === t && (t = 0), void 0 === e && (e = 0), void 0 === i && (i = 0), void 0 === n && (n = !0), isNaN(i) && (i = 0);
+    }, P.prototype._playOneShot = function(t, e, i, n, p) {
+        void 0 === t && (t = 0), void 0 === e && (e = 0), void 0 === i && (i = 0), void 0 === n && (n = !0), void 0 === p && (p = 0), isNaN(i) && (i = 0);
         try {
-            return this._audioMng.playOneShot(t, e, n, i)
+            return this._audioMng.playOneShot(t, e, n, i, p)
         } catch (t) {
             console.log(t)
         }
@@ -8031,7 +8062,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
         $("#percent").text(t)
     }, k.prototype._initMainComplete = function(t) {
         var i = this;
-        this._show(a.SceneId.MAIN), this._audio.initialize(), this._audio.addBeatHandler(this, function(t, e) {
+        this._show(a.SceneId.MAIN), this._audio.initialize(), this._initVoicebanks(), this._audio.addBeatHandler(this, function(t, e) {
             return i._changeBeat(t, e)
         }), u.isExporting ? ($("#about, #export").addClass("active"), this._clickExpStart()) : (this._audio.volume = 0, this._audio.start(), this._audio.fadeIn())
     }, k.prototype._show = function(t) {
@@ -8073,6 +8104,26 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
             type: 0,
             delay: i
         }), this._hiraganas.push(t), this._audio.load(t), this._updateHiraganas(!1)
+    }, k.prototype._initVoicebanks = function() {
+        var self = this;
+        window.Vellum && window.Vellum.onReady(function() {
+            var banks = window.Vellum.list();
+            if (banks.length) {
+                var $sel = $('<select id="vb_select"></select>');
+                banks.forEach(function(m) {
+                    $sel.append('<option value="' + m.id + '">' + m.name + "</option>")
+                });
+                var $wrap = $('<div class="ui vb"><p class="role">VOICE</p><p class="select_con"></p></div>');
+                $wrap.find(".select_con").append($sel), $("#about .scroll_con").prepend($wrap);
+                var saved = window.VellumConfig ? window.VellumConfig.get("voicebank", "teto") : "teto";
+                window.Vellum.banks[saved] || (saved = "teto"), $sel.val(saved), window.Vellum.activeId = "teto", window.Vellum.pitch = 0, "teto" !== saved && self._switchVoicebank(saved), $sel.on("change", function() {
+                    self._switchVoicebank($(this).val())
+                })
+            }
+        })
+    }, k.prototype._switchVoicebank = function(t) {
+        var e = window.Vellum.banks[t];
+        e && (this._audio.setBank(e), this._updateHiraganas(), window.VellumConfig && window.VellumConfig.set("voicebank", t))
     }, k.prototype.stop = function() {
         var t = this;
         this._audio && this._audio.isPlaying && (this._audio.stop(), this._ct = 0), this._three.stop(), gsap.delayedCall(.5, function() {

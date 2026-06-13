@@ -1,0 +1,45 @@
+/* Vellum UI additions (loaded after app.css) */
+
+/* Voicebank picker in the menu — match the dark #about panel aesthetic */
+#about .vb { margin-bottom: calc(17px + 1.7vmin); }
+
+#about .vb .select_con {
+  position: relative;
+  display: inline-block;
+  min-width: calc(170px + 9vmin);
+  max-width: 100%;
+  border-bottom: 2px solid #fff;
+  background: none;
+}
+
+/* custom chevron so the control doesn't look like a native OS select */
+#about .vb .select_con::after {
+  content: "";
+  position: absolute;
+  right: calc(6px + .4vmin);
+  top: 50%;
+  width: calc(6px + .35vmin);
+  height: calc(6px + .35vmin);
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+  opacity: .85;
+}
+
+#about .vb select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  color: #fff;
+  font-family: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: calc(.85rem + .8vmin);
+  letter-spacing: .02em;
+  padding: calc(4px + .4vmin) calc(22px + 1.6vmin) calc(6px + .6vmin) calc(2px + .2vmin);
+}
+
+/* native dropdown list items render on white in most browsers — keep them readable */
+#about .vb select option { color: #0f181d; background: #fff; }
