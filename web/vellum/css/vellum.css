@@ -1,0 +1,81 @@
+/* Vellum UI additions (loaded after app.css) */
+
+/* solid menu background so the guide text / 3D scene never shows through */
+#about { background: #0f181d; }
+
+/* Voicebank picker in the menu — match the dark #about panel aesthetic */
+#about .vb { margin-bottom: calc(17px + 1.7vmin); }
+
+#about .vb .select_con {
+  position: relative;
+  display: inline-block;
+  min-width: calc(170px + 9vmin);
+  max-width: 100%;
+  border-bottom: 2px solid #fff;
+  background: none;
+}
+
+/* custom chevron so the control doesn't look like a native OS select */
+#about .vb .select_con::after {
+  content: "";
+  position: absolute;
+  right: calc(6px + .4vmin);
+  top: 50%;
+  width: calc(6px + .35vmin);
+  height: calc(6px + .35vmin);
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+  opacity: .85;
+}
+
+#about .vb select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  color: #fff;
+  font-family: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: calc(.85rem + .8vmin);
+  letter-spacing: .02em;
+  padding: calc(4px + .4vmin) calc(22px + 1.6vmin) calc(6px + .6vmin) calc(2px + .2vmin);
+}
+
+/* native dropdown list items render on white in most browsers — keep them readable */
+#about .vb select option { color: #0f181d; background: #fff; }
+
+/* small, unobtrusive attribution line in the ABOUT section */
+#about .credit {
+  display: inline-block;
+  margin-top: calc(6px + .6vmin);
+  font-size: calc(.55rem + .55vmin);
+  line-height: 1.7;
+  opacity: .55;
+}
+#about .credit a { color: #fff; }
+
+/* creator: avatar + name, hover underline only on the name (not the pfp) */
+#about .creator {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+}
+#about .creator .pfp {
+  width: calc(30px + 2.2vmin);
+  height: calc(30px + 2.2vmin);
+  border-radius: 50%;
+  margin-right: calc(8px + .7vmin);
+  object-fit: cover;
+  border: 1.5px solid rgba(255, 255, 255, .45);
+  flex: 0 0 auto;
+}
+#about .creator span {
+  border-bottom: 1.5px dashed transparent;
+  padding-bottom: 1px;
+  transition: border-color .15s;
+}
+#about .creator:hover span { border-bottom-color: #fff; }

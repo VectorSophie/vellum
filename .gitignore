@@ -1,3 +1,6 @@
 *.log
 .DS_Store
 node_modules/
+scripts/banks-src/
+# generated voicebank audio (rebuild with scripts/build-banks.sh) — kept local-only
+web/vellum/banks/adachi/
