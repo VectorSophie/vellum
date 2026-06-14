@@ -9,7 +9,7 @@ enc() { node -e 'process.stdout.write(encodeURIComponent(process.argv[1]))' "$1"
 
 # Adachi Rei — CV (単独音)
 [ -f "$SRC/adachi-cv.zip" ] || curl -sL "https://archive.org/download/Adachi_Rei_Voicebank/$(enc '足立レイver3.1.2(単独音).zip')" -o "$SRC/adachi-cv.zip"
-node scripts/build-bank.js adachi "$SRC/adachi-cv.zip" "아다치 레이 / Adachi Rei" 0
+node scripts/build-bank.js adachi "$SRC/adachi-cv.zip" "아다치 레이 / Adachi Rei" 0 "Do Hyeon" "48cae4,0096c7"
 
 # --- More banks (VCV-sourced; came out quiet — revisit with loudness normalization) ---
 # Namine Ritsu — STRONG CV

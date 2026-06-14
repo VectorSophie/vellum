@@ -20,3 +20,6 @@
   font-style: normal;
   font-display: block;
 }
+@font-face{font-family:'Black Han Sans';src:url('BlackHanSans-Regular.ttf') format('truetype');font-display:block}
+@font-face{font-family:'Nanum Pen Script';src:url('NanumPenScript-Regular.ttf') format('truetype');font-display:block}
+@font-face{font-family:'Dongle';src:url('Dongle-Regular.ttf') format('truetype');font-display:block}

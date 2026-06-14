@@ -29,7 +29,9 @@ function ffprobeMs(file) {
 
 function main() {
   const id = process.argv[2], zipPath = process.argv[3], displayName = process.argv[4] || id, transpose = parseInt(process.argv[5] || "0", 10);
-  if (!id || !zipPath) { console.error("usage: build-bank.js <id> <zip> <name> <transpose>"); process.exit(1); }
+  const themeFont = process.argv[6] || "Jua";
+  const themeColors = (process.argv[7] || "").split(",").map((h) => parseInt(h.trim(), 16)).filter((n) => !isNaN(n));
+  if (!id || !zipPath) { console.error("usage: build-bank.js <id> <zip> <name> <transpose> [themeFont] [hex,hex]"); process.exit(1); }
 
   const OUT = path.resolve(__dirname, "..", "web", "vellum", "banks", id);
   const TMP = path.resolve(__dirname, "banks-src", "_tmp_" + id);
@@ -104,7 +106,7 @@ function main() {
   const manifest = {
     id, name: displayName, loader: "standard", base: "banks/" + id + "/", subs: 1, transpose,
     samples,
-    theme: { font: "Jua", colors: [989213, 13967691], mascot: "", effects: "default" },
+    theme: { font: themeFont, colors: themeColors.length ? themeColors : [989213, 13967691], mascot: "", effects: "default" },
     credits: {}
   };
   fs.writeFileSync(path.join(OUT, "manifest.json"), JSON.stringify(manifest, null, 2));

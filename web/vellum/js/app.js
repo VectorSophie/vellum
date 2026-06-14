@@ -4312,7 +4312,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
         this._txtMng.show(t, e, {
             type: void 0 === n ? 0 : n,
             delay: o
-        }), Math.random() < .22 && (t = s.randInt(1, 4), Math.random() < .55 && l.effect.start(A.RGBShift, {
+        }), Math.random() < (window.Vellum && window.Vellum.look ? window.Vellum.look.effectRate : .22) && (t = s.randInt(1, 4), Math.random() < .55 && l.effect.start(A.RGBShift, {
             count: t
         }), Math.random() < .55 && l.effect.start(A.HueShift, {
             count: t
@@ -7269,7 +7269,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
         u = (o.sceneId = -1, o.domain = "", o.cache = "", o.isExporting = !1, o);
 
     function o() {}
-    a.Context = u, r.URL = document.querySelector('meta[property="og:url"]').getAttribute("content"), r.TITLE = document.title, r.HASH = "#" + document.title, r.RESOLUTIONS = {
+    a.Context = u, r.URL = document.querySelector('meta[property="og:url"]').getAttribute("content"), r.TITLE = "벨륨", r.HASH = "#" + document.title, r.RESOLUTIONS = {
         "16x9": {
             width: 1280,
             height: 720
@@ -7658,12 +7658,14 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
 
     function r() {}
     a.Constant = d, l.getRandomFont = function() {
-        return this.FONTS[a.randInt(0, this.FONTS.length - 1)]
+        var f = window.Vellum && window.Vellum.look && window.Vellum.look.fonts || this.FONTS;
+        return f[a.randInt(0, f.length - 1)]
     }, l.getRandomColor = function() {
-        return this.COLORS[a.randInt(0, this.COLORS.length - 1)]
+        var c = window.Vellum && window.Vellum.look && window.Vellum.look.colors || this.COLORS;
+        return c[a.randInt(0, c.length - 1)]
     }, l.getRandomColorTitle = function() {
         return this.COLORS_TITLE[a.randInt(0, this.COLORS_TITLE.length - 1)]
-    }, l.FONTS = ["Jua", "Gaegu", "Do Hyeon"], l.COLORS = [989213, 13967691], l.COLORS_TITLE = [2835025, 13967691];
+    }, l.FONTS = ["Jua", "Gaegu", "Do Hyeon", "Black Han Sans", "Nanum Pen Script", "Dongle"], l.COLORS = [989213, 13967691], l.COLORS_TITLE = [2835025, 13967691];
     var h = l;
 
     function l() {}
@@ -8107,6 +8109,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
     }, k.prototype._initVoicebanks = function() {
         var self = this;
         window.Vellum && window.Vellum.onReady(function() {
+            window.Vellum.restoreLook && window.Vellum.restoreLook();
             var banks = window.Vellum.list();
             if (banks.length) {
                 var $sel = $('<select id="vb_select"></select>');
@@ -8116,14 +8119,42 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
                 var $wrap = $('<div class="ui vb"><p class="role">VOICE</p><p class="select_con"></p></div>');
                 $wrap.find(".select_con").append($sel), $("#about .scroll_con").prepend($wrap);
                 var saved = window.VellumConfig ? window.VellumConfig.get("voicebank", "teto") : "teto";
-                window.Vellum.banks[saved] || (saved = "teto"), $sel.val(saved), window.Vellum.activeId = "teto", window.Vellum.pitch = 0, "teto" !== saved && self._switchVoicebank(saved), $sel.on("change", function() {
+                window.Vellum.banks[saved] || (saved = "teto"), $sel.val(saved), window.Vellum.activeId = "teto", window.Vellum.pitch = 0;
+                "teto" !== saved ? self._switchVoicebank(saved) : window.Vellum.applyTheme && window.Vellum.applyTheme((window.Vellum.banks.teto || {}).theme);
+                $sel.on("change", function() {
                     self._switchVoicebank($(this).val())
                 })
             }
+            self._initLook()
         })
+    }, k.prototype._initLook = function() {
+        var V = window.Vellum;
+        if (V && V.FONTS_ALL) {
+            var $look = $('<div class="ui look"><p class="role">LOOK</p></div>');
+            var $f = $('<select id="look_font"><option value="믹스">믹스 (mix)</option></select>');
+            V.FONTS_ALL.forEach(function(n) { $f.append('<option value="' + n + '">' + n + "</option>") });
+            $f.val(V.look.font);
+            var $fx = $('<select id="look_fx"></select>');
+            V.EFFECTS.forEach(function(x) { $fx.append('<option value="' + x.id + '">효과 · ' + x.id + "</option>") });
+            $fx.val(V.look.effect);
+            var $pal = $('<p class="palettes"></p>');
+            V.PALETTES.forEach(function(p) {
+                var $sw = $('<span class="pal" data-id="' + p.id + '" title="' + p.id + '"></span>');
+                p.colors.forEach(function(c) { $sw.append('<i style="background:#' + ("000000" + c.toString(16)).slice(-6) + '"></i>') });
+                p.id === V.look.palette && $sw.addClass("on"), $pal.append($sw)
+            });
+            var $ta = $('<label class="themeauto"><input type="checkbox"' + (V.look.themeAuto ? " checked" : "") + "> 테마 자동</label>");
+            $look.append($('<p class="select_con"></p>').append($f)).append($('<p class="select_con"></p>').append($fx)).append($pal).append($ta);
+            $("#about .scroll_con .vb").length ? $("#about .scroll_con .vb").after($look) : $("#about .scroll_con").prepend($look);
+            var uncheck = function() { $ta.find("input").prop("checked", !1) };
+            $f.on("change", function() { V.setFont($(this).val()), uncheck() });
+            $fx.on("change", function() { V.setEffect($(this).val()) });
+            $pal.on("click", ".pal", function() { V.setPalette($(this).attr("data-id")), $pal.find(".pal").removeClass("on"), $(this).addClass("on"), uncheck() });
+            $ta.find("input").on("change", function() { V.setThemeAuto(this.checked) })
+        }
     }, k.prototype._switchVoicebank = function(t) {
         var e = window.Vellum.banks[t];
-        e && (this._audio.setBank(e), this._updateHiraganas(), window.VellumConfig && window.VellumConfig.set("voicebank", t))
+        e && (this._audio.setBank(e), window.Vellum.applyTheme && window.Vellum.applyTheme(e.theme), this._updateHiraganas(), window.VellumConfig && window.VellumConfig.set("voicebank", t))
     }, k.prototype.stop = function() {
         var t = this;
         this._audio && this._audio.isPlaying && (this._audio.stop(), this._ct = 0), this._three.stop(), gsap.delayedCall(.5, function() {
