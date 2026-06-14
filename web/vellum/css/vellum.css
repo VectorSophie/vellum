@@ -111,3 +111,24 @@
   font-size: calc(.7rem + .6vmin); cursor: pointer; opacity: .85;
 }
 #about .look .themeauto input { cursor: pointer; accent-color: #fff; }
+
+/* CAPTURE section */
+#about .cap { margin-bottom: calc(17px + 1.7vmin); }
+#about .cap .btn span { margin-left: 0; }
+#about .cap .preset_row { display: flex; align-items: center; gap: calc(8px + .6vmin); margin-top: calc(9px + .9vmin); }
+#about .cap .preset_name {
+  flex: 1; min-width: 0; background: none; border: none;
+  border-bottom: 2px solid rgba(255,255,255,.5); color: #fff;
+  font-family: "Jua","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size: calc(.8rem + .7vmin); padding: calc(3px + .3vmin) 2px; outline: none;
+}
+#about .cap .preset_name::placeholder { color: rgba(255,255,255,.4); }
+#about .cap .preset_list { display: flex; flex-direction: column; gap: calc(5px + .4vmin); margin-top: calc(9px + .9vmin); }
+#about .cap .preset_item { display: flex; align-items: center; gap: calc(9px + .7vmin); }
+#about .cap .preset_item .pname {
+  color: #fff; text-decoration: none; border-bottom: 1.5px dashed transparent;
+  font-size: calc(.78rem + .7vmin); padding-bottom: 1px;
+}
+#about .cap .preset_item .pname:hover { border-bottom-color: #fff; }
+#about .cap .preset_item .pdel { color: rgba(255,255,255,.55); text-decoration: none; font-size: calc(1rem + .9vmin); line-height: 1; }
+#about .cap .preset_item .pdel:hover { color: #fff; }

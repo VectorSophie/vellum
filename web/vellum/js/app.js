@@ -8076,11 +8076,11 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
         }
         return this._three && this._three.show(u.sceneId), !0
     }, k.prototype._checkLyricsFromURL = function() {
-        var t = new URL(location.href),
-            e = t.pathname.split("/").pop(),
-            e = j.decompressFromUrl(e),
-            i = "";
-        e && 0 < e.length ? i = e : (e = t.hash.replace("#", "").split("?")[0], (i = j.decompressFromUrl(e)) && "" != i || (i = decodeURIComponent(e))), console.log("_checkLyricsFromURL", i), this._hiraganas = this._getValidHiragana(i), this._updateHiraganas()
+        var raw = location.hash.replace("#", "").split("?")[0];
+        if (!raw || window.VellumCapture && window.VellumCapture.deserialize(raw)) return;
+        var dec = raw;
+        try { dec = decodeURIComponent(raw) } catch (e) {}
+        this._hiraganas = this._getValidHiragana(dec), this._updateHiraganas()
     }, k.prototype._getValidHiragana = function(t) {
         var e = t.split(""),
             n = [];
@@ -8125,7 +8125,9 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
                     self._switchVoicebank($(this).val())
                 })
             }
-            self._initLook()
+            self._initLook(), self._initCapture();
+            var so = window.VellumCapture && window.VellumCapture.deserialize(location.hash.replace("#", "").split("?")[0]);
+            so && self._applySong(so)
         })
     }, k.prototype._initLook = function() {
         var V = window.Vellum;
@@ -8152,6 +8154,34 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
             $pal.on("click", ".pal", function() { V.setPalette($(this).attr("data-id")), $pal.find(".pal").removeClass("on"), $(this).addClass("on"), uncheck() });
             $ta.find("input").on("change", function() { V.setThemeAuto(this.checked) })
         }
+    }, k.prototype._currentSong = function() {
+        var lk = (window.Vellum && window.Vellum.look) || {};
+        return { l: this._hiraganas.join(""), v: (window.Vellum && window.Vellum.activeId) || "teto", k: { font: lk.font, palette: lk.palette, effect: lk.effect, themeAuto: lk.themeAuto } }
+    }, k.prototype._applySong = function(song) {
+        var V = window.Vellum;
+        if (song.k && V) {
+            song.k.effect && (V.setEffect(song.k.effect), $("#look_fx").val(song.k.effect)),
+                !1 === song.k.themeAuto ? (song.k.font && (V.setFont(song.k.font), $("#look_font").val(song.k.font)), song.k.palette && (V.setPalette(song.k.palette), $("#about .look .pal").removeClass("on").filter('[data-id="' + song.k.palette + '"]').addClass("on")), $("#about .themeauto input").prop("checked", !1)) : (V.setThemeAuto(!0), $("#about .themeauto input").prop("checked", !0))
+        }
+        song.v && V && V.banks[song.v] && (this._switchVoicebank(song.v), $("#vb_select").val(song.v)), this._hiraganas = this._getValidHiragana(song.l || ""), this._updateHiraganas()
+    }, k.prototype._initCapture = function() {
+        var self = this,
+            $cap = $('<div class="ui cap"><p class="role">CAPTURE</p></div>'),
+            $copy = $('<a href="index.html" class="btn cap_link"><span>링크 복사</span></a>'),
+            $row = $('<p class="preset_row"></p>'),
+            $name = $('<input type="text" class="preset_name" placeholder="프리셋 이름" maxlength="20">'),
+            $save = $('<a href="index.html" class="btn preset_save"><span>저장</span></a>'),
+            $list = $('<p class="preset_list"></p>');
+        $cap.append($('<p></p>').append($copy)), $row.append($name).append($save), $cap.append($row).append($list), $("#about .scroll_con .look").length ? $("#about .scroll_con .look").after($cap) : $("#about .scroll_con").append($cap);
+        function toast() { $("#copy").stop(!0).show().fadeIn(0).delay(50).fadeOut(1).delay(50).fadeIn(1).delay(1200).fadeOut(300, "linear") }
+        function copyText(s) { try { navigator.clipboard.writeText(s) } catch (e) { var t = document.createElement("textarea"); t.value = s, document.body.appendChild(t), t.select(); try { document.execCommand("copy") } catch (n) {} document.body.removeChild(t) } }
+        function refresh() {
+            $list.empty(), window.VellumCapture.presetNames().forEach(function(n) {
+                var $it = $('<span class="preset_item"></span>');
+                $it.append($('<a href="index.html" class="pname"></a>').text(n)), $it.append($('<a href="index.html" class="pdel" title="삭제">×</a>')), $it.find(".pname").on("click", function(e) { e.preventDefault(); var s = window.VellumCapture.getPreset(n); s && self._applySong(s) }), $it.find(".pdel").on("click", function(e) { e.preventDefault(), window.VellumCapture.deletePreset(n), refresh() }), $list.append($it)
+            })
+        }
+        $copy.on("click", function(e) { e.preventDefault(); var t = location.origin + location.pathname + "#" + window.VellumCapture.serialize(self._currentSong()); copyText(t), toast() }), $save.on("click", function(e) { e.preventDefault(); var t = ($name.val() || "").trim(); t && (window.VellumCapture.savePreset(t, self._currentSong()), $name.val(""), refresh()) }), refresh()
     }, k.prototype._switchVoicebank = function(t) {
         var e = window.Vellum.banks[t];
         e && (this._audio.setBank(e), window.Vellum.applyTheme && window.Vellum.applyTheme(e.theme), this._updateHiraganas(), window.VellumConfig && window.VellumConfig.set("voicebank", t))
