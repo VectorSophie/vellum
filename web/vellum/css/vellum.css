@@ -132,3 +132,24 @@
 #about .cap .preset_item .pname:hover { border-bottom-color: #fff; }
 #about .cap .preset_item .pdel { color: rgba(255,255,255,.55); text-decoration: none; font-size: calc(1rem + .9vmin); line-height: 1; }
 #about .cap .preset_item .pdel:hover { color: #fff; }
+
+/* MUSIC section (mirrors LOOK selects) */
+#about .music { margin-bottom: calc(17px + 1.7vmin); }
+#about .music .select_con {
+  position: relative; display: block; max-width: calc(220px + 10vmin);
+  border-bottom: 2px solid #fff; background: none; margin-bottom: calc(9px + .9vmin);
+}
+#about .music .select_con::after {
+  content: ""; position: absolute; right: calc(6px + .4vmin); top: 50%;
+  width: calc(6px + .35vmin); height: calc(6px + .35vmin);
+  border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+  transform: translateY(-70%) rotate(45deg); pointer-events: none; opacity: .85;
+}
+#about .music select {
+  appearance: none; -webkit-appearance: none; background: none; border: none; cursor: pointer;
+  width: 100%; color: #fff; font-family: "Jua","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size: calc(.85rem + .8vmin); letter-spacing: .02em;
+  padding: calc(4px + .4vmin) calc(22px + 1.6vmin) calc(6px + .6vmin) calc(2px + .2vmin);
+}
+#about .music select option { color: #0f181d; background: #fff; }
+#about .music select:disabled { opacity: .4; cursor: default; }

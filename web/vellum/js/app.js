@@ -7816,7 +7816,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
         enumerable: !1,
         configurable: !0
     }), P.prototype.initialize = function() {
-        for (var e = this, t = new f(2 * d.BPM), i = (t.addLoop(c.get(d.KEY_BGM), {
+        for (var e = this, t = new f(2 * d.BPM), i = (e._bgmLoop = t.addLoop(c.get(d.KEY_BGM), {
                 total: 2 * d.BEAT,
                 start: 0
             }, d.VOLUME_BGM), this._audioMng = t, this.__id), n = j.getList(), o = 0; o < n.length; o++) {
@@ -7886,6 +7886,10 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
                 vol: o
             }), this._ids[e] || (this._ids[e] = []), this._ids[e][i + 1] = this.__id, this.__id++
         }
+    }, P.prototype.setBgmVolume = function(on) {
+        this._bgmLoop && (this._bgmLoop.volume = on ? d.VOLUME_BGM : 0)
+    }, P.prototype.setTempo = function(bpm) {
+        this._audioMng && (this._audioMng._beatInterval = 6e4 / (2 * bpm)) // ponytail: live-set interval; only used when bgm muted (else desyncs the recorded loop)
     }, P.prototype.addBeatHandler = function(t, e) {
         this._audioMng.addBeatHandler(t, e)
     }, P.prototype.removeBeatHandler = function(t) {
@@ -7911,7 +7915,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
     }, P.prototype.playHiragana = function(t, e, i) {
         void 0 === e && (e = 0), void 0 === i && (i = 0);
         var n, o = -1;
-        return -1 == (o = "string" == typeof t ? j.toNumFromStr(t) : t) ? .3 : null != o && (n = d.HIRA_BASE_OFFSET, d.HIRA[t] && d.HIRA[t].off && (n += "number" == typeof(t = d.HIRA[t].off) ? t : t[e]), t = this._ids[o]) ? this._playOneShot(t[e % t.length], i, n, window.Vellum && window.Vellum.pitch || 0) : -1
+        return -1 == (o = "string" == typeof t ? j.toNumFromStr(t) : t) ? .3 : null != o && (n = d.HIRA_BASE_OFFSET, d.HIRA[t] && d.HIRA[t].off && (n += "number" == typeof(t = d.HIRA[t].off) ? t : t[e]), t = this._ids[o]) ? this._playOneShot(t[e % t.length], i, n, (window.Vellum && window.Vellum.pitch || 0) + (window.Vellum && window.Vellum.notePitch || 0)) : -1
     }, P.prototype.playSE = function(t, e) {
         t = this._idSes[t % this._idSes.length];
         return this._playOneShot(t, e = void 0 === e ? 0 : e, 0, !1)
@@ -8093,13 +8097,14 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
         return n
     }, k.prototype.draw = function(t, e) {
         this._queryInputs && 0 < this._queryInputs.length && (t = this._queryInputs.shift(), this._queryInputs.push(t)), console.log("draw", t, e), d.MAX_HIRAGANAS <= this._hiraganas.length && this._hiraganas.shift();
+        window.Vellum && (window.Vellum.notePitch = window.Vellum.musicPitch ? window.Vellum.musicPitch(this._hiraganas.length) : 0);
         var i = this._audio.playHiragana(t);
         if (window.hangulCoda) {
             var coda = window.hangulCoda(t);
             if (coda) {
-                var au = this._audio;
+                var au = this._audio, np = window.Vellum ? window.Vellum.notePitch : 0;
                 au.load(coda);
-                gsap.delayedCall(.12, function() { au.playHiragana(coda); });
+                gsap.delayedCall(.12, function() { window.Vellum && (window.Vellum.notePitch = np), au.playHiragana(coda); });
             }
         }
         this._three.drawHiragana(t, e, {
@@ -8109,7 +8114,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
     }, k.prototype._initVoicebanks = function() {
         var self = this;
         window.Vellum && window.Vellum.onReady(function() {
-            window.Vellum.restoreLook && window.Vellum.restoreLook();
+            window.Vellum.restoreLook && window.Vellum.restoreLook(), window.Vellum.restoreMusic && window.Vellum.restoreMusic();
             var banks = window.Vellum.list();
             if (banks.length) {
                 var $sel = $('<select id="vb_select"></select>');
@@ -8125,7 +8130,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
                     self._switchVoicebank($(this).val())
                 })
             }
-            self._initLook(), self._initCapture();
+            self._initLook(), self._initMusic(), self._initCapture();
             var so = window.VellumCapture && window.VellumCapture.deserialize(location.hash.replace("#", "").split("?")[0]);
             so && self._applySong(so)
         })
@@ -8155,13 +8160,19 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
             $ta.find("input").on("change", function() { V.setThemeAuto(this.checked) })
         }
     }, k.prototype._currentSong = function() {
-        var lk = (window.Vellum && window.Vellum.look) || {};
-        return { l: this._hiraganas.join(""), v: (window.Vellum && window.Vellum.activeId) || "teto", k: { font: lk.font, palette: lk.palette, effect: lk.effect, themeAuto: lk.themeAuto } }
+        var lk = (window.Vellum && window.Vellum.look) || {},
+            mu = (window.Vellum && window.Vellum.music) || {};
+        return { l: this._hiraganas.join(""), v: (window.Vellum && window.Vellum.activeId) || "teto", k: { font: lk.font, palette: lk.palette, effect: lk.effect, themeAuto: lk.themeAuto }, m: { melody: mu.melody, scale: mu.scale, key: mu.key, bgm: mu.bgm, tempo: mu.tempo } }
     }, k.prototype._applySong = function(song) {
         var V = window.Vellum;
         if (song.k && V) {
             song.k.effect && (V.setEffect(song.k.effect), $("#look_fx").val(song.k.effect)),
                 !1 === song.k.themeAuto ? (song.k.font && (V.setFont(song.k.font), $("#look_font").val(song.k.font)), song.k.palette && (V.setPalette(song.k.palette), $("#about .look .pal").removeClass("on").filter('[data-id="' + song.k.palette + '"]').addClass("on")), $("#about .themeauto input").prop("checked", !1)) : (V.setThemeAuto(!0), $("#about .themeauto input").prop("checked", !0))
+        }
+        if (song.m && V) {
+            song.m.melody && (V.setMelody(song.m.melody), $("#mus_melody").val(song.m.melody)), song.m.scale && (V.setScale(song.m.scale), $("#mus_scale").val(song.m.scale)), song.m.key && (V.setKey(song.m.key), $("#mus_key").val(song.m.key));
+            "boolean" == typeof song.m.bgm && (V.setBgm(song.m.bgm), $("#mus_bgm").val(song.m.bgm ? "on" : "off")), song.m.tempo && (V.setTempo(song.m.tempo), $("#mus_tempo").val(song.m.tempo));
+            this._audio && (this._audio.setBgmVolume(V.music.bgm), this._audio.setTempo(V.music.bgm ? 130 : V.music.bpm), $("#mus_tempo").prop("disabled", V.music.bgm))
         }
         song.v && V && V.banks[song.v] && (this._switchVoicebank(song.v), $("#vb_select").val(song.v)), this._hiraganas = this._getValidHiragana(song.l || ""), this._updateHiraganas()
     }, k.prototype._initCapture = function() {
@@ -8182,6 +8193,28 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
             })
         }
         $copy.on("click", function(e) { e.preventDefault(); var t = location.origin + location.pathname + "#" + window.VellumCapture.serialize(self._currentSong()); copyText(t), toast() }), $save.on("click", function(e) { e.preventDefault(); var t = ($name.val() || "").trim(); t && (window.VellumCapture.savePreset(t, self._currentSong()), $name.val(""), refresh()) }), refresh()
+    }, k.prototype._initMusic = function() {
+        var V = window.Vellum,
+            self = this;
+        if (V && V.MODES) {
+            var $m = $('<div class="ui music"><p class="role">MUSIC</p></div>'),
+                $mel = $('<select id="mus_melody"></select>'),
+                $sc = $('<select id="mus_scale"></select>'),
+                $key = $('<select id="mus_key"></select>'),
+                $bgm = $('<select id="mus_bgm"></select>'),
+                $tmp = $('<select id="mus_tempo"></select>');
+            V.MODES.forEach(function(x) { $mel.append('<option value="' + x + '">멜로디 · ' + x + "</option>") }), $mel.val(V.music.melody);
+            Object.keys(V.SCALES).forEach(function(x) { $sc.append('<option value="' + x + '">음계 · ' + x + "</option>") }), $sc.val(V.music.scale);
+            V.KEYS.forEach(function(x) { $key.append('<option value="' + x.id + '">전조 · ' + x.id + "</option>") }), $key.val(V.music.key);
+            $bgm.append('<option value="on">반주 · 기본</option>').append('<option value="off">반주 · 없음</option>').val(V.music.bgm ? "on" : "off");
+            V.TEMPOS.forEach(function(x) { $tmp.append('<option value="' + x.id + '">빠르기 · ' + x.id + "</option>") }), $tmp.val(V.music.tempo);
+            $m.append($('<p class="select_con"></p>').append($mel)).append($('<p class="select_con"></p>').append($sc)).append($('<p class="select_con"></p>').append($key)).append($('<p class="select_con"></p>').append($bgm)).append($('<p class="select_con"></p>').append($tmp)), $("#about .scroll_con .cap").length ? $("#about .scroll_con .cap").before($m) : $("#about .scroll_con").append($m);
+            // 빠르기 only matters with 반주 off (changing tempo desyncs the recorded loop)
+            function applyAudio() { self._audio && (self._audio.setBgmVolume(V.music.bgm), self._audio.setTempo(V.music.bgm ? 130 : V.music.bpm)); $tmp.prop("disabled", V.music.bgm) }
+            $mel.on("change", function() { V.setMelody($(this).val()) }), $sc.on("change", function() { V.setScale($(this).val()) }), $key.on("change", function() { V.setKey($(this).val()) });
+            $bgm.on("change", function() { V.setBgm("on" === $(this).val()), applyAudio() }), $tmp.on("change", function() { V.setTempo($(this).val()), applyAudio() });
+            applyAudio()
+        }
     }, k.prototype._switchVoicebank = function(t) {
         var e = window.Vellum.banks[t];
         e && (this._audio.setBank(e), window.Vellum.applyTheme && window.Vellum.applyTheme(e.theme), this._updateHiraganas(), window.VellumConfig && window.VellumConfig.set("voicebank", t))
@@ -8201,7 +8234,7 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
         var e = this._hiraganas.length,
             i = this._ct % e,
             n = this._hiraganas[i],
-            o = (this._ct++, a.randInt(0, d.VOICE_SUB_NUM)),
+            o = (this._ct++, window.Vellum && (window.Vellum.notePitch = window.Vellum.musicPitch ? window.Vellum.musicPitch(i) : 0), a.randInt(0, d.VOICE_SUB_NUM)),
             o = this._audio.playHiragana(n, o, t),
             t = {
                 x: 0,
