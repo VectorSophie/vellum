@@ -9,7 +9,7 @@
  */
 const fs = require("fs");
 const path = require("path");
-const { execFileSync } = require("child_process");
+const { execFileSync, spawnSync } = require("child_process");
 const AdmZip = require("adm-zip");
 
 // kana inventory in D._list order (index 0..113)
@@ -25,6 +25,23 @@ function ffprobeMs(file) {
     const out = execFileSync("ffprobe", ["-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", file]).toString().trim();
     return (parseFloat(out) || 0) * 1000;
   } catch (e) { return 0; }
+}
+
+// RMS gain (dB) to bring a clip to TARGET_RMS, clamped so its peak stays under TARGET_PEAK.
+// EBU R128 loudnorm is unusable here: staccato samples are shorter than its 400ms gate
+// (integrated reads -inf), so we normalize by mean/peak from volumedetect instead.
+const TARGET_RMS = -16, TARGET_PEAK = -1;
+function normGainDb(file) {
+  let mean = NaN, peak = NaN;
+  const r = spawnSync("ffmpeg", ["-hide_banner", "-i", file, "-af", "volumedetect", "-f", "null", "-"], { encoding: "utf8" });
+  const s = (r.stderr || ""); // volumedetect prints stats to stderr
+  const m = s.match(/mean_volume:\s*(-?[\d.]+) dB/), p = s.match(/max_volume:\s*(-?[\d.]+) dB/);
+  if (m) mean = parseFloat(m[1]);
+  if (p) peak = parseFloat(p[1]);
+  if (isNaN(mean)) return 0;
+  let g = TARGET_RMS - mean;
+  if (!isNaN(peak) && peak + g > TARGET_PEAK) g = TARGET_PEAK - peak; // peak guard: never clip
+  return g;
 }
 
 function main() {
@@ -89,16 +106,36 @@ function main() {
       // VCV banks have long consonant/transition regions, so raw offset would be silent
       const startMs = offset + Math.max(0, preutter - 50);
       if (!(endMs > startMs)) endMs = durMs || (startMs + 700);
-      const CAP = 240; // staccato: trim long held vowels to a short "ga!"
+      const CAP = parseInt(process.env.STACCATO_MS || "200", 10); // staccato cap: tight "가!" not "가아아"; env-tunable (STACCATO_MS)
       const startS = startMs / 1000;
       const lenS = Math.max(0.1, Math.min((endMs - startMs) / 1000, CAP / 1000));
       const fadeDur = Math.min(0.09, lenS * 0.4);
       const fadeSt = Math.max(0, lenS - fadeDur);
       const outName = idx + ".mp3";
-      // -ss BEFORE -i (input seek) resets PTS so afade is relative to the clip, not absolute
+      const cutWav = path.join(TMP, idx + ".cut.wav");
+      // pass 1: slice + fade to wav. -ss BEFORE -i (input seek) resets PTS so afade is relative to the clip
       execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-ss", String(startS), "-i", tmpWav, "-t", String(lenS),
         "-af", "afade=t=out:st=" + fadeSt.toFixed(3) + ":d=" + fadeDur.toFixed(3),
-        "-ac", "1", "-ar", "44100", "-codec:a", "libmp3lame", "-q:a", "6", path.join(OUT, outName)]);
+        "-ac", "1", "-ar", "44100", cutWav]);
+      // pass 1b: bake a short ambience tail so dry CV recordings don't sound dead.
+      // Dry attack stays tight (diction); a multi-tap echo rings into a silent pad and fades.
+      // REVERB=0 disables. (The "live later" upgrade is a global Web Audio convolver via AudioManager.addNode.)
+      let toNorm = cutWav;
+      if (process.env.REVERB !== "0") {
+        const wetWav = path.join(TMP, idx + ".wet.wav");
+        const tail = 0.18, total = lenS + tail, fSt = Math.max(0, total - 0.08);
+        execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", cutWav,
+          "-af", "apad=pad_dur=" + tail + ",aecho=0.85:0.7:20|35|50|65:0.4|0.3|0.22|0.15,afade=t=out:st=" + fSt.toFixed(3) + ":d=0.08",
+          "-t", total.toFixed(3), wetWav]);
+        fs.rmSync(cutWav, { force: true });
+        toNorm = wetWav;
+      }
+      // pass 2: measure, then encode mp3 at consistent RMS (peak-guarded)
+      const gain = normGainDb(toNorm);
+      execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", toNorm,
+        "-af", "volume=" + gain.toFixed(2) + "dB",
+        "-codec:a", "libmp3lame", "-q:a", "6", path.join(OUT, outName)]);
+      fs.rmSync(toNorm, { force: true });
       samples[idx] = [outName];
     }
   }
