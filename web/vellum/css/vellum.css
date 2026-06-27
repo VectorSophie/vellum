@@ -153,3 +153,18 @@
 }
 #about .music select option { color: #0f181d; background: #fff; }
 #about .music select:disabled { opacity: .4; cursor: default; }
+
+/* 반주 파일 업로드 row */
+#about .music .bgmup { display: flex; align-items: center; gap: calc(12px + 1vmin); margin-top: calc(9px + .9vmin); }
+#about .music .bgmup .bgmfile { cursor: pointer; }
+#about .music .bgmup .bgmfile input { display: none; }
+#about .music .bgmup .bgmfile span,
+#about .music .bgmup .bgmreset {
+  color: #fff; text-decoration: none;
+  border-bottom: 1.5px dashed rgba(255, 255, 255, .55); padding-bottom: 1px;
+  font-family: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: calc(.82rem + .75vmin); letter-spacing: .02em;
+}
+#about .music .bgmup .bgmfile:hover span,
+#about .music .bgmup .bgmreset:hover { border-bottom-color: #fff; }
+#about .music .bgmup .bgmreset { opacity: .65; }

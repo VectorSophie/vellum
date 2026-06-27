@@ -8213,7 +8213,27 @@ var aidnlib, color, aidnaudio, recorder, three, app, __extends = this && this.__
             function applyAudio() { self._audio && (self._audio.setBgmVolume(V.music.bgm), self._audio.setTempo(V.music.bgm ? 130 : V.music.bpm)); $tmp.prop("disabled", V.music.bgm) }
             $mel.on("change", function() { V.setMelody($(this).val()) }), $sc.on("change", function() { V.setScale($(this).val()) }), $key.on("change", function() { V.setKey($(this).val()) });
             $bgm.on("change", function() { V.setBgm("on" === $(this).val()), applyAudio() }), $tmp.on("change", function() { V.setTempo($(this).val()), applyAudio() });
-            applyAudio()
+            applyAudio();
+            // --- 반주 업로드: swap the bgm loop's source with a user file (keeps the beat-sync params) ---
+            function swapBgm(url) {
+                var A = self._audio, mng = A && A._audioMng;
+                if (!mng || !window.aidn) return;
+                var au = new aidn.AutoAudio(null);
+                au.load([url]); // async fill; addLoop wraps au.audio now, same pattern as the bank loader
+                var arr = mng._audioLoops, idx = arr.indexOf(A._bgmLoop),
+                    p = idx >= 0 ? mng._loopParams[idx] : { total: 2 * d.BEAT, start: 0 },
+                    vol = idx >= 0 ? mng._volumeLoops[idx] : d.VOLUME_BGM;
+                if (idx >= 0) { try { arr[idx].stop() } catch (e) {} arr.splice(idx, 1), mng._loopParams.splice(idx, 1), mng._volumeLoops.splice(idx, 1) }
+                A._bgmLoop = mng.addLoop(au, { total: p.total, start: p.start }, vol); // starts at next loop boundary
+                A.setBgmVolume(V.music.bgm)
+            }
+            var $up = $('<p class="bgmup"><label class="bgmfile"><span>반주 · 파일 올리기</span><input type="file" accept="audio/*"></label><a href="index.html" class="bgmreset">기본으로</a></p>');
+            $up.find("input").on("change", function() {
+                var f = this.files && this.files[0];
+                if (f) swapBgm(URL.createObjectURL(f)), V.setBgm(!0), $bgm.val("on"), applyAudio()
+            });
+            $up.find(".bgmreset").on("click", function(e) { e.preventDefault(), swapBgm(d.PATH_BGM) });
+            $m.append($up)
         }
     }, k.prototype._switchVoicebank = function(t) {
         var e = window.Vellum.banks[t];
