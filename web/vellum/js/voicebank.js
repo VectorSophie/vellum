@@ -6,7 +6,7 @@
  */
 (function (g) {
   "use strict";
-  var IDS = ["teto", "adachi", "defoko"];
+  var IDS = ["teto", "adachi", "defoko", "koharune"];
   var V = g.Vellum = g.Vellum || {};
   V.banks = {};
   V.activeId = null;

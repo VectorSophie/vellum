@@ -17,4 +17,9 @@ node scripts/build-bank.js adachi "$SRC/adachi-cv.zip" "아다치 레이 / Adach
 [ -d "$SRC/_defoko" ] || 7z x "$SRC/defoko.rar" -o"$SRC/_defoko" -y >/dev/null
 node scripts/build-bank.js defoko "$SRC/_defoko" "데포코 / Defoko" 0 "Dongle" "9aa3a8,ffffff"
 
+# Koharune Ami (amitaro) — Child CV 3.00. Google-Drive hosted (no direct curl):
+# download "Child CV 3.00" from https://amitaro.net/utau/en_ongen-list.html
+# and save it as scripts/banks-src/koharuneami_0300.zip before running.
+[ -f "$SRC/koharuneami_0300.zip" ] && node scripts/build-bank.js koharune "$SRC/koharuneami_0300.zip" "코하루네 아미 / Koharune Ami" 0 "Gaegu" "ff8fb1,ffd166"
+
 echo "Banks rebuilt into web/vellum/banks/."
