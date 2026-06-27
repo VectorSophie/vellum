@@ -51,11 +51,15 @@
     return row[slot] || row.a; // 'wa' on a consonant row falls back to 'a'
   }
 
-  // Nasal final consonant (ㄴ/ㅁ/ㅇ) -> Japanese ん, played as a short coda. null otherwise.
+  // Final consonant (받침) -> a short coda kana, by Korean's 7-way final neutralization
+  // mapped to the nearest kana the voice set actually has. t-group (ㄷㅅㅈㅊㅌㅎ…) has no
+  // clean kana (Korean's unreleased stop ≈ a glottal cut), so it stays silent. null if no 받침.
+  // Indexed by jong (0..27): ㄱㄲㄳ→く  ㄴㄵㄶ/ㅁㄻ/ㅇ→ん  ㄹㄼㄽㄾㅀ→る  ㅂㅍㅄㄿ→ぷ  ㄺ→く  t-group→null
+  var CODA = [null, "く", "く", "く", "ん", "ん", "ん", null, "る", "く", "ん", "る", "る", "る", "ぷ", "る", "ん", "ぷ", "ぷ", null, null, "ん", null, null, "く", null, "ぷ", null];
   function hangulCoda(ch) {
     var d = decompose(ch);
     if (!d) return null;
-    return (d.jong === 4 || d.jong === 16 || d.jong === 21) ? "ん" : null;
+    return CODA[d.jong] || null;
   }
 
   global.hangulToKana = hangulToKana;
