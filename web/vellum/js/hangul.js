@@ -17,7 +17,10 @@
 
   // 중성 index (0..20) -> vowel "slot"
   //             ㅏ   ㅐ   ㅑ    ㅒ   ㅓ   ㅔ   ㅕ    ㅖ   ㅗ   ㅘ    ㅙ   ㅚ   ㅛ    ㅜ   ㅝ   ㅞ   ㅟ   ㅠ    ㅡ   ㅢ   ㅣ
-  var JUNG_SLOT = ["a","e","ya","e","o","e","yo","e","o","wa","e","e","yo","u","o","e","i","yu","u","i","i"];
+  var JUNG_SLOT = ["a","e","ya","e","o","e","yo","e","o","wa","e","e","yo","u","wo","e","i","yu","u","i","i"];
+  // w-glide slots only exist on the onset-less (ㅇ) row as わ/を; on consonant rows they
+  // fall back to the bare vowel (kwa->ka, kwo->ko) since the kana set has no くゎ etc.
+  var GLIDE_FALLBACK = { wa: "a", wo: "o" };
 
   // consonant rows -> kana per slot (all present in D._list)
   var ROWS = {
@@ -32,7 +35,7 @@
     j:  {a:"じゃ", i:"じ", u:"じゅ", e:"じぇ", o:"じょ", ya:"じゃ", yu:"じゅ", yo:"じょ"},
     ch: {a:"ちゃ", i:"ち", u:"ちゅ", e:"ちぇ", o:"ちょ", ya:"ちゃ", yu:"ちゅ", yo:"ちょ"},
     h:  {a:"は", i:"ひ", u:"ふ", e:"へ", o:"ほ", ya:"ひゃ", yu:"ひゅ", yo:"ひょ"},
-    "": {a:"あ", i:"い", u:"う", e:"え", o:"お", ya:"や", yu:"ゆ", yo:"よ", wa:"わ"} // ㅇ: vowel only
+    "": {a:"あ", i:"い", u:"う", e:"え", o:"お", ya:"や", yu:"ゆ", yo:"よ", wa:"わ", wo:"を"} // ㅇ: vowel only
   };
 
   function decompose(ch) {
@@ -48,7 +51,7 @@
     if (!d) return null;
     var row = ROWS[CHO_ROW[d.cho]];
     var slot = JUNG_SLOT[d.jung];
-    return row[slot] || row.a; // 'wa' on a consonant row falls back to 'a'
+    return row[slot] || row[GLIDE_FALLBACK[slot]] || row.a; // w-glide on consonant rows -> bare vowel
   }
 
   // Final consonant (받침) -> a short coda kana, by Korean's 7-way final neutralization

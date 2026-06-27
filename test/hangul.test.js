@@ -37,4 +37,21 @@ t("no final -> null", () => {
   assert.strictEqual(hangulCoda("a"), null);
 });
 
+// --- vowels / w-diphthongs (limited by the kana inventory: only わ/を exist) ---
+t("와 -> わ, 워 -> を (vowel-initial w-glide)", () => {
+  assert.strictEqual(hangulToKana("와"), "わ");
+  assert.strictEqual(hangulToKana("워"), "を");
+  assert.strictEqual(hangulToKana("원"), "を"); // coda is separate
+});
+t("consonant + w-glide keeps the base vowel kana (no 2-beat split)", () => {
+  assert.strictEqual(hangulToKana("과"), "か"); // kwa -> ka
+  assert.strictEqual(hangulToKana("궈"), "こ"); // kwo -> ko
+});
+t("core CV syllables map correctly (3a lock)", () => {
+  assert.strictEqual(hangulToKana("사"), "さ");
+  assert.strictEqual(hangulToKana("랑"), "ら");
+  assert.strictEqual(hangulToKana("녕"), "にょ"); // n + ㅕ(yo slot)
+  assert.strictEqual(hangulToKana("지"), "じ");
+});
+
 console.log("\n" + pass + " passed, " + fail + " failed");
