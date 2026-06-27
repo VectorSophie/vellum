@@ -10,12 +10,15 @@ mora, and sung — on the beat — by a swappable voice. It sits in the same fam
 
 ## Run locally
 
-The app uses `fetch()`, so it must be served over HTTP (not opened from `file://`):
+The app uses `fetch()`, so it must be served over HTTP (not opened from `file://`).
+Serve from `web/` (not `web/vellum/`) — the page loads `../shared/js/common.js@22`,
+which lives one level up and **defines the engine's `aidn` global**; serving the
+inner folder 404s it and the app silently dies.
 
 ```sh
-cd web/vellum
+cd web
 python -m http.server 8000
-# open http://localhost:8000  → menu → pick a voice → write 가나다
+# open http://localhost:8000/vellum/  → menu → pick a voice → write 가나다
 ```
 
 ## Voicebanks

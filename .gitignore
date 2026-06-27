@@ -1,6 +1,7 @@
 *.log
 .DS_Store
 node_modules/
+tools/_shots/
 scripts/banks-src/
 # generated voicebank audio (rebuild with scripts/build-banks.sh) — kept local-only.
 # manifests stay tracked (the bank registry); only the sliced mp3s are ignored.

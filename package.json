@@ -1,0 +1,15 @@
+{
+  "name": "vellum",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Write Hangul, it sings — a voicebank-pluggable fork of daniwell's tetohira.",
+  "scripts": {
+    "test": "node test/hangul.test.js",
+    "serve": "python -m http.server 8000 --directory web",
+    "build-banks": "bash scripts/build-banks.sh"
+  },
+  "devDependencies": {
+    "adm-zip": "^0.5.17",
+    "playwright": "^1.49.0"
+  }
+}
